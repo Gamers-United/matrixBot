@@ -1,4 +1,5 @@
 import os, json
+sys.path.append('./bot-v2/')
 import discord
 from discord.ext import commands
 from sqlalchemy import create_engine, Column, Integer, String, Table, Text, ForeignKey, PickleType
