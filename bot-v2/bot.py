@@ -1,4 +1,4 @@
-import os, json
+import os, json, sys
 sys.path.append('./bot-v2/')
 import discord
 from discord.ext import commands
