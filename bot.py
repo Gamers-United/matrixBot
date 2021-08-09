@@ -263,7 +263,6 @@ async def on_command_error(ctx, error):
 #run the bot
 try:
     bot.add_cog(PPProject(bot))
-    bot.add_cog(DevCommands(bot))
     bot.load_extension('voice')
     bot.load_extension('dev')
     bot.run(token)
