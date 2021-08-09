@@ -157,26 +157,28 @@ class PPProject(commands.Cog):
 
     @commands.command()
     async def accept(self, ctx, com):
-        guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        db = Session()
-        user = db.query(User).filter_by(did=ctx.author.id).first()
-        if user is None:
-            new_user = User(did=ctx.author.id)
-            db.add(new_user)
-        community = db.query(Community).filter_by(name=com).first()
-        if community is None:
-            await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
-        elif user in community.invited:
-            community.invited.remove(user)
-            community.users.append(user)
-            com_role = guild_ppd.get_role(community.roleid)
-            guildmember = await guild_ppd.fetch_member(ctx.author.id)
-            await guildmember.add_roles(com_role)
-            await ctx.send("Successfully joined community!")
-            db.commit()
+        if ctx.channel.id == 869510758164201532:
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=ctx.author.id).first()
+            if user is None:
+                new_user = User(did=ctx.author.id)
+                db.add(new_user)
+            community = db.query(Community).filter_by(name=com).first()
+            if community is None:
+                await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
+            elif user in community.invited:
+                community.invited.remove(user)
+                community.users.append(user)
+                com_role = guild_ppd.get_role(community.roleid)
+                guildmember = await guild_ppd.fetch_member(ctx.author.id)
+                await guildmember.add_roles(com_role)
+                await ctx.send("Successfully joined community!")
+                db.commit()
+            else:
+                await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
         else:
-            await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
-        
+            await ctx.send("Please use B&C Communities #bot-spam")
     
     @commands.command()
     async def promote(self, ctx, com, member: discord.Member):
