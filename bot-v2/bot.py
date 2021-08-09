@@ -1,4 +1,3 @@
-import mysql.connector
 import os, json
 import discord
 from discord.ext import commands
