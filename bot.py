@@ -266,7 +266,7 @@ async def on_command_error(ctx, error):
 try:
     bot.add_cog(PPProject(bot))
     bot.load_extension('voice')
-    #bot.load_extension('dev')
+    bot.load_extension('dev')
     bot.run(token)
 except KeyboardInterrupt:
     print("Ending")
