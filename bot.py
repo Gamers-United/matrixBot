@@ -32,7 +32,7 @@ with open("settings.json", "r+") as settingsfile:
 engine = create_engine("sqlite+pysqlite:///db.db", echo=echo, future=True)
 Session = sessionmaker(bind=engine)
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix=prefix, intents=intents)
+bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None)
 
 #SQL Alchemy DB Structure
 class Community(Base):
@@ -43,7 +43,6 @@ class Community(Base):
     fullname = Column(String)
     rules = Column(String)
     categoryid = Column(Integer)
-    roleid = Column(Integer)
 
     admins = relationship("User", secondary=admin_association_table, back_populates="groups_admin")
     users = relationship("User", secondary=association_table, back_populates="groups")
@@ -77,83 +76,86 @@ class PPProject(commands.Cog):
 
     @commands.command()
     async def newcommunity(self, ctx, shortname):
-        guild_main = discord.utils.get(bot.guilds, id=int(guildids["MAIN"]))
-        guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        db = Session()
-        user = db.query(User).filter_by(did=ctx.author.id).first()
-        admin_user = user
-        if user is None:
-            new_user = User(did=ctx.author.id)
-            admin_user = new_user
-            db.add(new_user)
-        community = db.query(Community).filter_by(name=shortname).first()
-        new_role = await guild_ppd.create_role(name=shortname, mentionable=True, hoist=True)
-        if community is None:
-            new_community = Community(name=shortname, fullname=shortname, rules="Add rules here")
-            new_community.admins = [admin_user]
-            channel_category = await guild_ppd.create_category(shortname, overwrites={ctx.author: discord.PermissionOverwrite(
-                manage_channels=True, manage_messages=True, move_members=True, mute_members=True, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True, deafen_members=True
-            ), new_role: discord.PermissionOverwrite(view_channel=True, send_messages=True), guild_ppd.default_role: discord.PermissionOverwrite(view_channel=False)})
-            new_community.categoryid = channel_category.id
-            new_community.roleid = new_role.id
-            db.add(new_community)
-            db.commit()
-            role_member = await guild_ppd.fetch_member(ctx.author.id)
-            await role_member.add_roles(new_role)
-            new_text = await guild_ppd.create_text_channel("general", category=channel_category)
-            new_voice = await guild_ppd.create_voice_channel("general", category=channel_category)
-            await ctx.send("New community made: "+str(shortname)+", Checkout the B&C Community Discord to make your community!")
+        if ctx.channel.id == 869510758164201532:
+            guild_main = discord.utils.get(bot.guilds, id=int(guildids["MAIN"]))
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=ctx.author.id).first()
+            admin_user = user
+            if user is None:
+                new_user = User(did=ctx.author.id)
+                admin_user = new_user
+                db.add(new_user)
+            community = db.query(Community).filter_by(name=shortname).first()
+            if community is None:
+                new_community = Community(name=shortname, fullname=shortname, rules="Add rules here")
+                new_community.admins = [admin_user]
+                channel_category = await guild_ppd.create_category(shortname, overwrites={ctx.author: discord.PermissionOverwrite(
+                    manage_channels=True, manage_messages=True, move_members=True, mute_members=True, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True, deafen_members=True
+                ), guild_ppd.default_role: discord.PermissionOverwrite(view_channel=False)})
+                new_community.categoryid = channel_category.id
+                db.add(new_community)
+                db.commit()
+                new_text = await guild_ppd.create_text_channel("general", category=channel_category)
+                new_voice = await guild_ppd.create_voice_channel("general", category=channel_category)
+                await ctx.send("New community made: "+str(shortname)+", Checkout the B&C Community Discord to make your community!")
+            else:
+                await ctx.send("Name already in use!")
         else:
-            await ctx.send("Name already in use!")
+            await ctx.send("Please use B&C Communities #bot-spam")
 
     @commands.command()
     async def deletecommunity(self, ctx, shortname):
-        guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        db = Session()
-        user = db.query(User).filter_by(did=ctx.author.id).first()
-        community = db.query(Community).filter_by(name=shortname).first()
-        if community is None:
-            await ctx.send("Community not found! Make sure to use the exact shortname.")
-        elif user in community.admins:
-            await ctx.send("Deletion started!")
-            #deletion script
-            category = guild_ppd.get_channel(community.categoryid)
-            for channel in category.channels:
-                await channel.delete()
-            await category.delete()
-            role = guild_ppd.get_role(community.roleid)
-            await role.delete()
-            db.delete(community)
-            db.commit()
-            await ctx.send("Deletion finished!")
+        if ctx.channel.id == 869510758164201532:
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=ctx.author.id).first()
+            community = db.query(Community).filter_by(name=shortname).first()
+            if community is None:
+                await ctx.send("Community not found! Make sure to use the exact shortname.")
+            elif user in community.admins:
+                await ctx.send("Deletion started!")
+                #deletion script
+                category = guild_ppd.get_channel(community.categoryid)
+                for channel in category.channels:
+                    await channel.delete()
+                await category.delete()
+                db.delete(community)
+                db.commit()
+                await ctx.send("Deletion finished!")
+            else:
+                await ctx.send("No Permission!")
         else:
-            await ctx.send("No Permission!")
+            await ctx.send("Please use B&C Communities #bot-spam")
 
     @commands.command()
     async def invite(self, ctx, com, member: discord.Member):
-        guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        db = Session()
-        user = db.query(User).filter_by(did=member.id).first()
-        fuser = user
-        if user is None:
-            new_user = User(did=member.id)
-            fuser = new_user
-            db.add(new_user)
-        invitinguser = db.query(User).filter_by(did=ctx.author.id).first()
-        community = db.query(Community).filter_by(name=com).first()
-        if invitinguser in community.admins:
-            if community is None:
-                await ctx.send("Community not found! Make sure to use the exact shortname.")
+        if ctx.channel.id == 869510758164201532:
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=member.id).first()
+            fuser = user
+            if user is None:
+                new_user = User(did=member.id)
+                fuser = new_user
+                db.add(new_user)
+            invitinguser = db.query(User).filter_by(did=ctx.author.id).first()
+            community = db.query(Community).filter_by(name=com).first()
+            if invitinguser in community.admins:
+                if community is None:
+                    await ctx.send("Community not found! Make sure to use the exact shortname.")
+                else:
+                    community.invited.append(fuser)
+                    dm = await member.create_dm()
+                    await dm.send("You have been invited to the B&C Community: "+str(community.name))
+                    await dm.send("Type ```.accept "+str(community.name)+"``` in B&Communities #bot-spam to accept the invite!")
+                    await dm.send("https://discord.gg/8MgJ3ChMtt")
+                    await ctx.send(member.name+" has been invited to "+str(community.name)+"!")
             else:
-                community.invited.append(fuser)
-                dm = await member.create_dm()
-                await dm.send("You have been invited to the B&C Community: "+str(community.name))
-                await dm.send("Type ```.accept "+str(community.name)+"``` in B&Communities #bot-spam to accept the invite!")
-                await dm.send("https://discord.gg/8MgJ3ChMtt")
-                await ctx.send(member.name+" has been invited to "+str(community.name)+"!")
+                await ctx.send("No permission! Contact your Communities admin to add new members.")
+            db.commit()
         else:
-            await ctx.send("No permission! Contact your Communities admin to add new members.")
-        db.commit()
+            await ctx.send("Please use B&C Communities #bot-spam")
 
     @commands.command()
     async def accept(self, ctx, com):
@@ -170,9 +172,11 @@ class PPProject(commands.Cog):
             elif user in community.invited:
                 community.invited.remove(user)
                 community.users.append(user)
-                com_role = guild_ppd.get_role(community.roleid)
                 guildmember = await guild_ppd.fetch_member(ctx.author.id)
-                await guildmember.add_roles(com_role)
+                cat = discord.utils.get(guild_ppd.categories, id=int(community.categoryid))
+                await cat.set_permissions(guildmember, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True)
+                for chan in cat.channels:
+                    await chan.set_permissions(guildmember, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True)
                 await ctx.send("Successfully joined community!")
                 db.commit()
             else:
@@ -181,56 +185,113 @@ class PPProject(commands.Cog):
             await ctx.send("Please use B&C Communities #bot-spam")
 
     @commands.command()
-    async def promote(self, ctx, com, member: discord.Member):
-        guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        db = Session()
-        user = db.query(User).filter_by(did=member.id).first()
-        community = db.query(Community).filter_by(name=com).first()
-        commanduser = db.query(User).filter_by(did=ctx.author.id).first()
-        if community is None:
-            await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
-        if commanduser in community.admins:
-            if user in community.admins:
-                await ctx.send("Already admin")
+    async def leave(self, ctx, com):
+        if ctx.channel.id == 869510758164201532:
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=ctx.author.id).first()
+            if user is None:
+                new_user = User(did=ctx.author.id)
+                db.add(new_user)
+            community = db.query(Community).filter_by(name=com).first()
+            if community is None:
+                await ctx.send("Community not found or you are not part of that community! Make sure to use the exact shortname.")
+            elif user in community.users:
+                community.users.remove(user)
+                guildmember = await guild_ppd.fetch_member(ctx.author.id)
+                cat = discord.utils.get(guild_ppd.categories, id=int(community.categoryid))
+                await cat.set_permissions(guildmember, read_messages=None, send_messages=None, view_channel=None, speak=None, connect=None)
+                for chan in cat.channels:
+                    await chan.set_permissions(guildmember, read_messages=None, send_messages=None, view_channel=None, speak=None, connect=None)
+                await ctx.send("Successfully left community!")
+                db.commit()
             else:
-                if user not in community.users:
-                    await ctx.send("User not part of community!")
-                else:
-                    overwrites = discord.PermissionOverwrite(manage_channels=True, manage_messages=True, move_members=True, mute_members=True, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True, deafen_members=True)
-                    category = guild_ppd.get_channel(community.categoryid)
-                    await category.set_permissions(member, overwrite=overwrites)
-                    community.users.remove(user)
-                    community.admins.append(user)
-                    await ctx.send("Member moved to admin.")
-                    db.commit()
+                await ctx.send("Community not found or you are not part of that community! Make sure to use the exact shortname.")
         else:
-            await ctx.send("No Permission!")
+            await ctx.send("Please use B&C Communities #bot-spam")
+
+    @commands.command()
+    async def kick(self, ctx, duser: discord.Member, com):
+        if ctx.channel.id == 869510758164201532:
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=duser.id).first()
+            if user is None:
+                new_user = User(did=ctx.author.id)
+                db.add(new_user)
+            community = db.query(Community).filter_by(name=com).first()
+            if community is None:
+                await ctx.send("Community not found or you are not part of that community! Make sure to use the exact shortname.")
+            elif user in community.users:
+                community.users.remove(user)
+                cat = discord.utils.get(guild_ppd.categories, id=int(community.categoryid))
+                await cat.set_permissions(duser, read_messages=None, send_messages=None, view_channel=None, speak=None, connect=None)
+                for chan in cat.channels:
+                    await chan.set_permissions(duser, read_messages=None, send_messages=None, view_channel=None, speak=None, connect=None)
+                await ctx.send("Successfully left community!")
+                db.commit()
+            else:
+                await ctx.send("Community not found or you are not part of that community! Make sure to use the exact shortname.")
+        else:
+            await ctx.send("Please use B&C Communities #bot-spam")
+
+    @commands.command()
+    async def promote(self, ctx, com, member: discord.Member):
+        if ctx.channel.id == 869510758164201532:
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=member.id).first()
+            community = db.query(Community).filter_by(name=com).first()
+            commanduser = db.query(User).filter_by(did=ctx.author.id).first()
+            if community is None:
+                await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
+            if commanduser in community.admins:
+                if user in community.admins:
+                    await ctx.send("Already admin")
+                else:
+                    if user not in community.users:
+                        await ctx.send("User not part of community!")
+                    else:
+                        overwrites = discord.PermissionOverwrite(manage_channels=True, manage_messages=True, move_members=True, mute_members=True, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True, deafen_members=True)
+                        category = guild_ppd.get_channel(community.categoryid)
+                        await category.set_permissions(member, overwrite=overwrites)
+                        community.users.remove(user)
+                        community.admins.append(user)
+                        await ctx.send("Member moved to admin.")
+                        db.commit()
+            else:
+                await ctx.send("No Permission!")
+        else:
+            await ctx.send("Please use B&C Communities #bot-spam")
 
     @commands.command()
     async def demote(self, ctx, com, member: discord.Member):
-        guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        db = Session()
-        user = db.query(User).filter_by(did=member.id).first()
-        community = db.query(Community).filter_by(name=com).first()
-        commanduser = db.query(User).filter_by(did=ctx.author.id).first()
-        if community is None:
-            await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
-        if commanduser in community.admins:
-            if user in community.users:
-                await ctx.send("Already user")
-            else:
-                if user not in community.admins:
-                    await ctx.send("User not part of community!")
+        if ctx.channel.id == 869510758164201532:
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            user = db.query(User).filter_by(did=member.id).first()
+            community = db.query(Community).filter_by(name=com).first()
+            commanduser = db.query(User).filter_by(did=ctx.author.id).first()
+            if community is None:
+                await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
+            if commanduser in community.admins:
+                if user in community.users:
+                    await ctx.send("Already user")
                 else:
-                    overwrites = discord.PermissionOverwrite(manage_channels=False, manage_messages=False, move_members=False, mute_members=False, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True, deafen_members=False)
-                    category = guild_ppd.get_channel(community.categoryid)
-                    await category.set_permissions(member, overwrite=overwrites)
-                    community.admins.remove(user)
-                    community.users.append(user)
-                    await ctx.send("Member demoted to user.")
-                    db.commit()
+                    if user not in community.admins:
+                        await ctx.send("User not part of community!")
+                    else:
+                        overwrites = discord.PermissionOverwrite(manage_channels=False, manage_messages=False, move_members=False, mute_members=False, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True, deafen_members=False)
+                        category = guild_ppd.get_channel(community.categoryid)
+                        await category.set_permissions(member, overwrite=overwrites)
+                        community.admins.remove(user)
+                        community.users.append(user)
+                        await ctx.send("Member demoted to user.")
+                        db.commit()
+            else:
+                await ctx.send("No Permission!")
         else:
-            await ctx.send("No Permission!")
+            await ctx.send("Please use B&C Communities #bot-spam")
 
 #main bot definitions
 @bot.event
@@ -261,6 +322,10 @@ async def on_command_error(ctx, error):
         await ctx.send("MLtech Matrix is missing required permissions. Please contact an Admin")
     else:
         print(error)
+
+@bot.command(name=".")
+async def preventresponse(ctx):
+    return
 
 #run the bot
 try:

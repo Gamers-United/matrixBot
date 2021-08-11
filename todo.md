@@ -1,5 +1,6 @@
 # To Do List
-2. Reimplement voicemaster as a Cog w/ Premium Features [Non-Premium features complete]
+1. Fix people using multiple dots triggering the bot.
+2. Add kicking from communities, and leaving communities
 3. Voice leave/join log
 4. Get rid of Dicecord
 5. Get rid of Karl
