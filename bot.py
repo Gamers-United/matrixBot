@@ -228,7 +228,7 @@ class PPProject(commands.Cog):
                 await cat.set_permissions(duser, read_messages=None, send_messages=None, view_channel=None, speak=None, connect=None)
                 for chan in cat.channels:
                     await chan.set_permissions(duser, read_messages=None, send_messages=None, view_channel=None, speak=None, connect=None)
-                await ctx.send("Successfully left community!")
+                await ctx.send("Successfully kicked member from community!")
                 db.commit()
             else:
                 await ctx.send("Community not found or you are not part of that community! Make sure to use the exact shortname.")
