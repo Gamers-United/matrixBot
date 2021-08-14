@@ -130,32 +130,29 @@ class PPProject(commands.Cog):
 
     @commands.command()
     async def invite(self, ctx, com, member: discord.Member):
-        if ctx.channel.id == 869510758164201532:
-            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-            db = Session()
-            user = db.query(User).filter_by(did=member.id).first()
-            fuser = user
-            if user is None:
-                new_user = User(did=member.id)
-                fuser = new_user
-                db.add(new_user)
-            invitinguser = db.query(User).filter_by(did=ctx.author.id).first()
-            community = db.query(Community).filter_by(name=com).first()
-            if invitinguser in community.admins:
-                if community is None:
-                    await ctx.send("Community not found! Make sure to use the exact shortname.")
-                else:
-                    community.invited.append(fuser)
-                    dm = await member.create_dm()
-                    await dm.send("You have been invited to the B&C Community: "+str(community.name))
-                    await dm.send("Type ```.accept "+str(community.name)+"``` in B&Communities #bot-spam to accept the invite!")
-                    await dm.send("https://discord.gg/8MgJ3ChMtt")
-                    await ctx.send(member.name+" has been invited to "+str(community.name)+"!")
+        guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+        db = Session()
+        user = db.query(User).filter_by(did=member.id).first()
+        fuser = user
+        if user is None:
+            new_user = User(did=member.id)
+            fuser = new_user
+            db.add(new_user)
+        invitinguser = db.query(User).filter_by(did=ctx.author.id).first()
+        community = db.query(Community).filter_by(name=com).first()
+        if invitinguser in community.admins:
+            if community is None:
+                await ctx.send("Community not found! Make sure to use the exact shortname.")
             else:
-                await ctx.send("No permission! Contact your Communities admin to add new members.")
-            db.commit()
+                community.invited.append(fuser)
+                dm = await member.create_dm()
+                await dm.send("You have been invited to the B&C Community: "+str(community.name))
+                await dm.send("Type ```.accept "+str(community.name)+"``` in B&Communities #bot-spam to accept the invite!")
+                await dm.send("https://discord.gg/8MgJ3ChMtt")
+                await ctx.send(member.name+" has been invited to "+str(community.name)+"!")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("No permission! Contact your Communities admin to add new members.")
+        db.commit()
 
     @commands.command()
     async def accept(self, ctx, com):
@@ -323,9 +320,10 @@ async def on_command_error(ctx, error):
     else:
         print(error)
 
-@bot.command(name=".")
-async def preventresponse(ctx):
-    return
+#doesn't work new patch necessary.
+#@bot.command(name=".")
+#async def preventresponse(ctx):
+#    return
 
 #run the bot
 try:
