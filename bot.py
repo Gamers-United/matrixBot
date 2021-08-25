@@ -98,11 +98,11 @@ class PPProject(commands.Cog):
                 db.commit()
                 new_text = await guild_ppd.create_text_channel("general", category=channel_category)
                 new_voice = await guild_ppd.create_voice_channel("general", category=channel_category)
-                await ctx.send("New community made: "+str(shortname)+", Checkout the B&C Community Discord to make your community!")
+                await ctx.send("New community made: "+str(shortname)+", Checkout the B&B Community Discord to make your community!")
             else:
                 await ctx.send("Name already in use!")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("Please use B&B Communities #bot-spam")
 
     @commands.command()
     async def deletecommunity(self, ctx, shortname):
@@ -126,7 +126,7 @@ class PPProject(commands.Cog):
             else:
                 await ctx.send("No Permission!")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("Please use B&B Communities #bot-spam")
 
     @commands.command()
     async def invite(self, ctx, com, member: discord.Member):
@@ -146,8 +146,8 @@ class PPProject(commands.Cog):
             else:
                 community.invited.append(fuser)
                 dm = await member.create_dm()
-                await dm.send("You have been invited to the B&C Community: "+str(community.name))
-                await dm.send("Type ```.accept "+str(community.name)+"``` in B&Communities #bot-spam to accept the invite!")
+                await dm.send("You have been invited to the B&B Community: "+str(community.name))
+                await dm.send("Type ```.accept "+str(community.name)+"``` in B&Bommunities #bot-spam to accept the invite!")
                 await dm.send("https://discord.gg/8MgJ3ChMtt")
                 await ctx.send(member.name+" has been invited to "+str(community.name)+"!")
         else:
@@ -179,7 +179,7 @@ class PPProject(commands.Cog):
             else:
                 await ctx.send("Community not found or you have not been invited! Make sure to use the exact shortname.")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("Please use B&B Communities #bot-spam")
 
     @commands.command()
     async def leave(self, ctx, com):
@@ -205,7 +205,7 @@ class PPProject(commands.Cog):
             else:
                 await ctx.send("Community not found or you are not part of that community! Make sure to use the exact shortname.")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("Please use B&B Communities #bot-spam")
 
     @commands.command()
     async def kick(self, ctx, duser: discord.Member, com):
@@ -230,7 +230,7 @@ class PPProject(commands.Cog):
             else:
                 await ctx.send("Community not found or you are not part of that community! Make sure to use the exact shortname.")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("Please use B&B Communities #bot-spam")
 
     @commands.command()
     async def promote(self, ctx, com, member: discord.Member):
@@ -259,7 +259,7 @@ class PPProject(commands.Cog):
             else:
                 await ctx.send("No Permission!")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("Please use B&B Communities #bot-spam")
 
     @commands.command()
     async def demote(self, ctx, com, member: discord.Member):
@@ -288,7 +288,7 @@ class PPProject(commands.Cog):
             else:
                 await ctx.send("No Permission!")
         else:
-            await ctx.send("Please use B&C Communities #bot-spam")
+            await ctx.send("Please use B&B Communities #bot-spam")
 
 #main bot definitions
 @bot.event
