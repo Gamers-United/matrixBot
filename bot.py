@@ -115,7 +115,15 @@ class PPProject(commands.Cog):
                 await ctx.send("Community not found! Make sure to use the exact shortname.")
             elif user in community.admins:
                 await ctx.send("Deletion started!")
-                #deletion script
+                category = guild_ppd.get_channel(community.categoryid)
+                for channel in category.channels:
+                    await channel.delete()
+                await category.delete()
+                db.delete(community)
+                db.commit()
+                await ctx.send("Deletion finished!")
+            elif ctx.author.guild_permissions.administrator:
+                await ctx.send("Deletion started!")
                 category = guild_ppd.get_channel(community.categoryid)
                 for channel in category.channels:
                     await channel.delete()
