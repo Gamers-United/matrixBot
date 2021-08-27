@@ -90,9 +90,10 @@ class PPProject(commands.Cog):
             if community is None:
                 new_community = Community(name=shortname, fullname=shortname, rules="Add rules here")
                 new_community.admins = [admin_user]
+                arole = discord.utils.get(guild_ppd.roles, id=868375117384806470)
                 channel_category = await guild_ppd.create_category(shortname, overwrites={ctx.author: discord.PermissionOverwrite(
                     manage_channels=True, manage_messages=True, move_members=True, mute_members=True, read_messages=True, send_messages=True, view_channel=True, speak=True, connect=True, deafen_members=True
-                ), guild_ppd.default_role: discord.PermissionOverwrite(view_channel=False)})
+                ), guild_ppd.default_role: discord.PermissionOverwrite(view_channel=False), arole: discord.PermissionOverwrite(connect=True, attach_files=True, add_reactions=True, manage_channels=True, manage_messages=True, manage_permissions=True, mention_everyone=True, move_members=True, mute_members=True, priority_speaker=True, read_messages=True, read_message_history=True, send_messages=True, send_tts_messages=True, speak=True, use_slash_commands=True, view_channel=True)})
                 new_community.categoryid = channel_category.id
                 db.add(new_community)
                 db.commit()
