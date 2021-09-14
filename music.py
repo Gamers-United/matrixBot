@@ -102,7 +102,7 @@ class Music(commands.Cog):
         await ctx.send("Song skipped!")
 
     @commands.command()
-    async def remove(self, ctx, number: int):
+    async def remove(self, ctx, index: int):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         if not player.queue:
             return await ctx.send('Nothing queued!')
