@@ -333,6 +333,7 @@ async def on_command_error(ctx, error):
 @bot.command()
 async def help(ctx):
     embed=discord.Embed(title="Matrix Help", description="These are all the commands available, with Matrix.", color=0x00ff00)
+    embed.add_field(name="Music | Controls", value="play 'link or name', pause, resume, volume 'level', eq 'band 0-14' 'level -0.25 to 1.0', reseteq")
     embed.add_field(name="Community | Status", value="newcommunity 'name', deletecommunity 'name'", inline=False)
     embed.add_field(name="Community | Admin", value="invite 'community name' 'member', kick 'member' 'community name', promote 'community name' 'member', demote 'community name' 'member'", inline=False)
     embed.add_field(name="Community | User", value="accept 'community name', leave 'community name'", inline=False)
