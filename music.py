@@ -144,18 +144,18 @@ class Music(commands.Cog):
             seconds = seconds * -1
         track_time = player.position + seconds
         await player.seek(track_time)
-        await ctx.send(f'Moved track to **{lavalink.Utils.format_time(track_time)}**')
+        await ctx.send(f'Moved track to **{lavalink.format_time(track_time)}**')
 
     @commands.command(aliases=['np'])
     async def nowplaying(self, ctx):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         song = 'Nothing'
         if player.current:
-            pos = lavalink.Utils.format_time(player.position)
+            pos = lavalink.format_time(player.position)
             if player.current.stream:
                 dur = 'LIVE'
             else:
-                dur = lavalink.Utils.format_time(player.current.duration)
+                dur = lavalink.format_time(player.current.duration)
             song = f'**[{player.current.title}]({player.current.uri})**\n({pos}/{dur})'
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Now Playing', description=song)
         await ctx.send(embed=embed)
