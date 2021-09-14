@@ -146,8 +146,8 @@ class Music(commands.Cog):
         await player.seek(track_time)
         await ctx.send(f'Moved track to **{lavalink.Utils.format_time(track_time)}**')
 
-    @commands.command()
-    async def now(self, ctx):
+    @commands.command(aliases['np'])
+    async def nowplaying(self, ctx):
         player = self.bot.lavalink.players.get(ctx.guild.id)
         song = 'Nothing'
         if player.current:
