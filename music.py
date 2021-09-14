@@ -13,7 +13,7 @@ class Music(commands.Cog):
 
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
             bot.lavalink = lavalink.Client(832975268825006090)
-            bot.lavalink.add_node('server.mltech.net.au', 2333, 'mltechmaynotpassthispointwithoutpermission', 'eu', 'default-node')  # Host, Port, Password, Region, Name
+            bot.lavalink.add_node('10.100.1.56', 2333, 'mltechmaynotpassthispointwithoutpermission', 'eu', 'default-node')  # Host, Port, Password, Region, Name
             bot.add_listener(bot.lavalink.voice_update_handler, 'on_socket_response')
 
         lavalink.add_event_hook(self.track_hook)
