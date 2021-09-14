@@ -1,6 +1,7 @@
 import re
 import discord
 import lavalink
+import math
 from discord.ext import commands
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
@@ -28,7 +29,7 @@ class Music(commands.Cog):
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            await ctx.send(error.original)
+            await ctx.send("An error has occured!")
 
     async def ensure_voice(self, ctx):
         """ This check ensures that the bot and command author are in the same voicechannel. """
