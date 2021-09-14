@@ -150,7 +150,7 @@ class Music(commands.Cog):
             await player.set_gain(band, level)
             await ctx.send("Set band "+str(band)+" to "+str(level)+".")
 
-    @commands.comand()
+    @commands.command()
     async def reseteq(self,ctx):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.reset_equalizer()
