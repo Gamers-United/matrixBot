@@ -4,6 +4,7 @@ import lavalink
 from discord.ext import commands
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
+time_rx = re.compile('[0-9]+')
 
 class Music(commands.Cog):
     def __init__(self, bot):
