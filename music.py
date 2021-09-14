@@ -129,7 +129,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def seek(self, ctx, time):
-        player = self.bot.lavalink.players.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         if not player.is_playing:
             return await ctx.send('Not playing.')
         pos = '+'
@@ -147,7 +147,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['np'])
     async def nowplaying(self, ctx):
-        player = self.bot.lavalink.players.get(ctx.guild.id)
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         song = 'Nothing'
         if player.current:
             pos = lavalink.Utils.format_time(player.position)
