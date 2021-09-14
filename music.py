@@ -127,7 +127,7 @@ class Music(commands.Cog):
             await ctx.send("Player paused!")
     
     @commands.command()
-    async def resume(self, ctx);
+    async def resume(self, ctx):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         #check for resume
         if player.paused:
