@@ -112,7 +112,7 @@ class Music(commands.Cog):
         await ctx.send('*⃣ | Disconnected.')
     
     @commands.command()
-    async def volume(self, ctx, level):
+    async def volume(self, ctx, level: int):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         if level > 200:
             await ctx.send("Volume too high!")
@@ -130,7 +130,7 @@ class Music(commands.Cog):
             await player.set_pause(True)
 
     @commands.command()
-    async def eq(self, ctx, band, level):
+    async def eq(self, ctx, band: int, level: int):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         if level > 1:
             await ctx.send("Level out of bounds -0.25 to 1.00.")
