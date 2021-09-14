@@ -58,14 +58,10 @@ class Music(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             await guild.change_voice_state(channel=None)
 
-    @commands.command(aliases=['p','resume'])
+    @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
         """ Searches and plays a song from a given query. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        #check for resume
-        if player.paused:
-            await ctx.send("Unpausing player!")
-            await player.set_pause(False)
         #move on to query
         query = query.strip('<>')
         if not url_rx.match(query):
@@ -75,7 +71,6 @@ class Music(commands.Cog):
             return await ctx.send('Nothing found!')
 
         embed = discord.Embed(color=discord.Color.blurple())
-
         # Valid loadTypes are:
         #   TRACK_LOADED    - single video/direct URL)
         #   PLAYLIST_LOADED - direct URL to playlist)
@@ -120,6 +115,7 @@ class Music(commands.Cog):
             await ctx.send("Volume too low!")
         else:
             await player.set_volume(level)
+            await ctx.send("Set volume to "+str(level)+"!")
     
     @commands.command()
     async def pause(self, ctx):
@@ -128,9 +124,19 @@ class Music(commands.Cog):
             await ctx.send("Player already paused!")
         else:
             await player.set_pause(True)
+            await ctx.send("Player paused!")
+    
+    @commands.command()
+    async def resume(self, ctx);
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        #check for resume
+        if player.paused:
+            await ctx.send("Unpausing player!")
+            await player.set_pause(False)
+
 
     @commands.command()
-    async def eq(self, ctx, band: int, level: int):
+    async def eq(self, ctx, band: int, level: float):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         if level > 1:
             await ctx.send("Level out of bounds -0.25 to 1.00.")
@@ -141,8 +147,14 @@ class Music(commands.Cog):
         elif band > 14:
             await ctx.send("Band out of bounds 0 to 14.")
         else:
-            await player.set_gain(int(band), float(level))
+            await player.set_gain(band, level)
             await ctx.send("Set band "+str(band)+" to "+str(level)+".")
+
+    @commands.comand()
+    async def reseteq(self,ctx):
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        await player.reset_equalizer()
+        await ctx.send("EQ Reset!")
 
 def setup(bot):
     bot.add_cog(Music(bot))
