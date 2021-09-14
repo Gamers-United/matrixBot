@@ -130,7 +130,7 @@ class Music(commands.Cog):
             await player.set_pause(True)
 
     @commands.command()
-    async def eq(self, ctx, band, level)
+    async def eq(self, ctx, band, level):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         if level > 1:
             await ctx.send("Level out of bounds -0.25 to 1.00.")
