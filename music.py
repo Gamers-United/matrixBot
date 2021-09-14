@@ -85,7 +85,7 @@ class Music(commands.Cog):
             embed.description = f'{results["playlistInfo"]["name"]} - {len(tracks)} tracks'
         else:
             track = results['tracks'][0]
-            embed.title = 'Track Queued'
+            embed.title = 'Track Queued!'
             embed.description = f'[{track["info"]["title"]}]({track["info"]["uri"]})'
             track = lavalink.models.AudioTrack(track, ctx.author.id, recommended=True)
             player.add(requester=ctx.author.id, track=track)
@@ -93,7 +93,74 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
-    @commands.command(aliases=['dc'])
+    @commands.command()
+    async def skip(self, ctx):
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        await player.skip()
+        await ctx.send("Song skipped!")
+
+    @commands.command()
+    async def remove(self, ctx, number: int):
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        if not player.queue:
+            return await ctx.send('Nothing queued!')
+        if index > len(player.queue) or index < 1:
+            return await ctx.send('Song to remove must be more than one and less than the queue length!')
+        index = index - 1
+        removed = player.queue.pop(index)
+        await ctx.send('Removed *' + removed.title + '* from the queue.')
+
+    @commands.command()
+    async def queue(self, ctx, page: int = 1):
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        items_per_page = 10
+        pages = math.ceil(len(player.queue) / items_per_page)
+
+        start = (page - 1) * items_per_page
+        end = start + items_per_page
+
+        queue_list = ''
+        for index, track in enumerate(player.queue[start:end], start=start):
+        queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
+
+        embed = discord.Embed(colour=discord.Color.blurple(),
+                            description=f'**{len(player.queue)} tracks**\n\n{queue_list}')
+        embed.set_footer(text=f'Viewing page {page}/{pages}!')
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def seek(self, ctx, time):
+        player = self.bot.lavalink.players.get(ctx.guild.id)
+        if not player.is_playing:
+            return await ctx.send('Not playing.')
+        pos = '+'
+        if time.startswith('-'):
+            pos = '-'
+        seconds = time_rx.search(time)
+        if not seconds:
+            return await ctx.send('You need to specify the amount of seconds to skip!')
+        seconds = int(seconds.group()) * 1000
+        if pos == '-':
+            seconds = seconds * -1
+        track_time = player.position + seconds
+        await player.seek(track_time)
+        await ctx.send(f'Moved track to **{lavalink.Utils.format_time(track_time)}**')
+
+    @commands.command()
+    async def now(self, ctx):
+        player = self.bot.lavalink.players.get(ctx.guild.id)
+        song = 'Nothing'
+        if player.current:
+            pos = lavalink.Utils.format_time(player.position)
+            if player.current.stream:
+                dur = 'LIVE'
+            else:
+                dur = lavalink.Utils.format_time(player.current.duration)
+            song = f'**[{player.current.title}]({player.current.uri})**\n({pos}/{dur})'
+        embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Now Playing', description=song)
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['dc','stop'])
     async def disconnect(self, ctx):
         """ Disconnects the player from the voice channel and clears its queue. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
