@@ -67,17 +67,13 @@ class Music(commands.Cog):
         #move on to query
         query = query.strip('<>')
         query_type = str(query[:3])
-        print("DEBUG+QUERYID+"+str(query)+"|"+str(query[:3]))
         if not url_rx.match(query):
             if query_type == "sc:":
                 query = f'scsearch:{query[3:]}'
-                print("Triggering SC search")
             elif query_type == "yt:":
                 query = f'ytsearch:{query[3:]}'
-                print("Triggering YT search")
             else:
                 query = f'ytsearch:{query[3:]}'
-                print("Triggering else search")
         results = await player.node.get_tracks(query)
         if not results or not results['tracks']:
             return await ctx.send('Nothing found!')
