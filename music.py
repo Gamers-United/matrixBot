@@ -61,13 +61,18 @@ class Music(commands.Cog):
             await guild.change_voice_state(channel=None)
 
     @commands.command(aliases=['p'])
-    async def play(self, ctx, *, query: str):
+    async def play(self, ctx, *, query: str, search_type = "yt": str:
         """ Searches and plays a song from a given query. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         #move on to query
         query = query.strip('<>')
         if not url_rx.match(query):
-            query = f'ytsearch:{query}'
+            if search_type == "yt":
+                query = f'ytsearch:{query}'
+            elif search_type == "sc":
+                query = f'scsearch:{query}'
+            else:
+                query = f'ytsearch:{query}'
         results = await player.node.get_tracks(query)
         if not results or not results['tracks']:
             return await ctx.send('Nothing found!')
