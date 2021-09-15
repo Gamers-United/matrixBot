@@ -66,6 +66,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         #move on to query
         query = query.strip('<>')
+        print("DEBUG+QUERYID+"+str(query))
         if not url_rx.match(query):
             if query[:2] == "sc:":
                 query = f'scsearch:{query}'
