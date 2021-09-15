@@ -61,7 +61,7 @@ class Music(commands.Cog):
             await guild.change_voice_state(channel=None)
 
     @commands.command(aliases=['p'])
-    async def play(self, ctx, *, query: str, search_type = "yt": str:
+    async def play(self, ctx, *, query: str, search_type = "yt":
         """ Searches and plays a song from a given query. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         #move on to query
