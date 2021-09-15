@@ -67,9 +67,9 @@ class Music(commands.Cog):
         #move on to query
         query = query.strip('<>')
         if not url_rx.match(query):
-            if query[:2] == "sc":
+            if query[:2] == "sc:":
                 query = f'scsearch:{query}'
-            elif query[:2] == "yt":
+            elif query[:2] == "yt:":
                 query = f'ytsearch:{query}'
             else:
                 query = f'ytsearch:{query}'
