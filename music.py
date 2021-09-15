@@ -73,7 +73,7 @@ class Music(commands.Cog):
             elif query_type == "yt:":
                 query = f'ytsearch:{query[3:]}'
             else:
-                query = f'ytsearch:{query[3:]}'
+                query = f'ytsearch:{query}'
         results = await player.node.get_tracks(query)
         if not results or not results['tracks']:
             return await ctx.send('Nothing found!')
