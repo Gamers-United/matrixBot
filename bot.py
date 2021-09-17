@@ -106,6 +106,32 @@ class PPProject(commands.Cog):
             await ctx.send("Please use B&B Communities #bot-spam")
 
     @commands.command()
+    async def hidecommunity(self, ctx, shortname):
+        if ctx.author.guild_permissions.administrator == True:
+            guild_main = discord.utils.get(bot.guilds, id=int(guildids["MAIN"]))
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            community = db.query(Community).filter_by(name=shortname).first()
+            arole = discord.utils.get(guild_ppd.roles, id=868375117384806470)
+            category = guild_ppd.get_channel(communtiy.categoryid)
+            await category.set_permissions(arole, overwrite=None)
+        else:
+            await ctx.send("What are you doing, you filthy animal!")
+
+    @commands.command()
+    async def showcommunity(self, ctx, shortname):
+        if ctx.author.guild_permissions.administrator == True:
+            guild_main = discord.utils.get(bot.guilds, id=int(guildids["MAIN"]))
+            guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
+            db = Session()
+            community = db.query(Community).filter_by(name=shortname).first()
+            arole = discord.utils.get(guild_ppd.roles, id=868375117384806470)
+            category = guild_ppd.get_channel(communtiy.categoryid)
+            await category.set_permissions(arole, connect=True, attach_files=True, add_reactions=True, manage_channels=True, manage_messages=True, manage_permissions=True, mention_everyone=True, move_members=True, mute_members=True, priority_speaker=True, read_messages=True, read_message_history=True, send_messages=True, send_tts_messages=True, speak=True, use_slash_commands=True, view_channel=True)
+        else:
+            await ctx.send("What are you doing, you filthy animal!")
+
+    @commands.command()
     async def deletecommunity(self, ctx, shortname):
         if ctx.channel.id == 869510758164201532:
             guild_ppd = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
@@ -338,8 +364,8 @@ async def help(ctx):
     embed.add_field(name="Community | Status", value="newcommunity 'name', deletecommunity 'name'", inline=False)
     embed.add_field(name="Community | Admin", value="invite 'community name' 'member', kick 'member' 'community name', promote 'community name' 'member', demote 'community name' 'member'", inline=False)
     embed.add_field(name="Community | User", value="accept 'community name', leave 'community name'", inline=False)
-    embed.add_field(name="Voice | Admin", value="voice setup 'channel id' 'category id', voice setlimit 'number'", inline=False)
     embed.add_field(name="Voice | User", value="voice lock, voice unlock, voice permit 'member', voice reject 'member', voice limit 'number', voice name 'name', voice claim, voice ghost, voice unghost", inline=False)
+    embed.add_field(name="Admin", value="voice setup 'channel id' 'category id', voice setlimit 'number', hidecommunity 'name', showcommunity 'name'", inline=False)
     embed.add_field(name="Development", value="shutdown, reload", inline=False)
     await ctx.send(embed=embed)
 
