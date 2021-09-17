@@ -132,6 +132,7 @@ class PPProject(commands.Cog):
             communitystring = ""
             for c in communities:
                 communitystring = communitystring + ", " + c.name
+            await ctx.send(communitystring)
         else:
             await ctx.send("What are you doing, you filthy animal!")
 
