@@ -113,7 +113,7 @@ class PPProject(commands.Cog):
             db = Session()
             community = db.query(Community).filter_by(name=shortname).first()
             arole = discord.utils.get(guild_ppd.roles, id=868375117384806470)
-            category = guild_ppd.get_channel(communtiy.categoryid)
+            category = guild_ppd.get_channel(community.categoryid)
             await category.set_permissions(arole, overwrite=None)
         else:
             await ctx.send("What are you doing, you filthy animal!")
@@ -126,7 +126,7 @@ class PPProject(commands.Cog):
             db = Session()
             community = db.query(Community).filter_by(name=shortname).first()
             arole = discord.utils.get(guild_ppd.roles, id=868375117384806470)
-            category = guild_ppd.get_channel(communtiy.categoryid)
+            category = guild_ppd.get_channel(community.categoryid)
             await category.set_permissions(arole, connect=True, attach_files=True, add_reactions=True, manage_channels=True, manage_messages=True, manage_permissions=True, mention_everyone=True, move_members=True, mute_members=True, priority_speaker=True, read_messages=True, read_message_history=True, send_messages=True, send_tts_messages=True, speak=True, use_slash_commands=True, view_channel=True)
         else:
             await ctx.send("What are you doing, you filthy animal!")
