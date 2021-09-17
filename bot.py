@@ -57,15 +57,6 @@ class User(Base):
     groups_admin = relationship("Community", secondary=admin_association_table, back_populates="admins")
     pendingjoins = relationship("Community", secondary=invitee_association_table, back_populates="invited")
 
-class MemberVoiceCall(Base):
-    __tablename__ = 'membercallproperties'
-    id = Column(Integer, primary_key=True)
-    did = Column(Integer)
-    member_id = Column(Integer)
-    call_name = Column(String)
-    permission_overwrites = Column(PickleType)
-    user_limit = Column(Integer)
-
 #DB Setup
 Base.metadata.create_all(engine)
 
@@ -115,6 +106,7 @@ class PPProject(commands.Cog):
             arole = discord.utils.get(guild_ppd.roles, id=868375117384806470)
             category = guild_ppd.get_channel(community.categoryid)
             await category.set_permissions(arole, overwrite=None)
+            await ctx.send("Hid community from admin view!")
         else:
             await ctx.send("What are you doing, you filthy animal!")
 
@@ -128,8 +120,21 @@ class PPProject(commands.Cog):
             arole = discord.utils.get(guild_ppd.roles, id=868375117384806470)
             category = guild_ppd.get_channel(community.categoryid)
             await category.set_permissions(arole, connect=True, attach_files=True, add_reactions=True, manage_channels=True, manage_messages=True, manage_permissions=True, mention_everyone=True, move_members=True, mute_members=True, priority_speaker=True, read_messages=True, read_message_history=True, send_messages=True, send_tts_messages=True, speak=True, use_slash_commands=True, view_channel=True)
+            await ctx.send("Showing community to admin view!")
         else:
             await ctx.send("What are you doing, you filthy animal!")
+
+    @commands.command()
+    async def listcommunities(self, ctx):
+        if ctx.author.guild_permissions.administrator == True:
+            db = Session()
+            communities = db.query(Community).all()
+            communitystring = ""
+            for c in communities:
+                communitystring = communitystring + ", " + c.name
+        else:
+            await ctx.send("What are you doing, you filthy animal!")
+
 
     @commands.command()
     async def deletecommunity(self, ctx, shortname):
