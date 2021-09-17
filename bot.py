@@ -131,7 +131,7 @@ class PPProject(commands.Cog):
             communities = db.query(Community).all()
             communitystring = ""
             for c in communities:
-                communitystring = communitystring + ", " + c.name
+                communitystring = communitystring + c.name + ", "  
             await ctx.send(communitystring)
         else:
             await ctx.send("What are you doing, you filthy animal!")
