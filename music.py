@@ -102,10 +102,14 @@ class Music(commands.Cog):
             await player.play()
 
     @commands.command()
-    async def skip(self, ctx):
+    async def skip(self, ctx, number: int = 1):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         await player.skip()
-        await ctx.send("Song skipped!")
+        if number > 1:
+            player.queue = player.queue[number:]
+            await ctx.send("Removed first "+str(number)+" songs!")
+        else:
+            await ctx.send("Song skipped!")
 
     @commands.command()
     async def remove(self, ctx, index: int):
