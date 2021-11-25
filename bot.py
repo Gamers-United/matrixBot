@@ -42,6 +42,7 @@ Session = sessionmaker(bind=engine)
 #Bot Static
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None)
+log = {}
 
 #SQL Alchemy DB Structure
 class Community(Base):
