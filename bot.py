@@ -367,9 +367,9 @@ async def help(ctx):
     embed=discord.Embed(title="Matrix Help", description="These are all the commands available, with Matrix.", color=0x00ff00)
     embed.add_field(name="Music | Basic", value="play 'link or name', pause, resume, nowplaying, seek, queue, remove, skip", inline=False)
     embed.add_field(name="Music | Advanced", value="volume 'level', eq 'band 0-14' 'level -0.25 to 1.0', reseteq", inline=False)
-    embed.add_field(name="Community | Status", value="newcommunity 'name', deletecommunity 'name'", inline=False)
-    embed.add_field(name="Community | Admin", value="invite 'community name' 'member', kick 'member' 'community name', promote 'community name' 'member', demote 'community name' 'member'", inline=False)
-    embed.add_field(name="Community | User", value="accept 'community name', leave 'community name'", inline=False)
+    #embed.add_field(name="Community | Status", value="newcommunity 'name', deletecommunity 'name'", inline=False)
+    #embed.add_field(name="Community | Admin", value="invite 'community name' 'member', kick 'member' 'community name', promote 'community name' 'member', demote 'community name' 'member'", inline=False)
+    #embed.add_field(name="Community | User", value="accept 'community name', leave 'community name'", inline=False)
     embed.add_field(name="Voice | User", value="voice lock, voice unlock, voice permit 'member', voice reject 'member', voice limit 'number', voice name 'name', voice claim, voice ghost, voice unghost", inline=False)
     embed.add_field(name="Admin", value="voice setup 'channel id' 'category id', voice setlimit 'number', hidecommunity 'name', showcommunity 'name'", inline=False)
     embed.add_field(name="Development", value="shutdown, reload", inline=False)
@@ -377,7 +377,7 @@ async def help(ctx):
 
 #run the bot
 try:
-    bot.add_cog(PPProject(bot))
+    #bot.add_cog(PPProject(bot))
     bot.load_extension('voice')
     bot.load_extension('dev')
     bot.load_extension('music')
