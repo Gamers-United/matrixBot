@@ -29,7 +29,7 @@ class Music(commands.Cog):
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            await ctx.send("An error has occured!")
+            await ctx.send("An error has occured!\n"+error)
 
     async def ensure_voice(self, ctx):
         """ This check ensures that the bot and command author are in the same voicechannel. """
