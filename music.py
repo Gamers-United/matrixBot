@@ -64,7 +64,7 @@ class Music(commands.Cog):
     @commands.command()
     async def lyrics(self, ctx):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        return ctx.send(embed=Lyrics.GenerateEmbed(Lyrics.SearchForLyrics(player.current.title)))
+        await ctx.send(embed=Lyrics.GenerateEmbed(Lyrics.SearchForLyrics(player.current.title)))
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
