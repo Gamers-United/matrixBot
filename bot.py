@@ -6,7 +6,9 @@ from sqlalchemy.orm import declarative_base, relationship, sessionmaker
 from types import SimpleNamespace
 
 #static declerations
-prefix = "."
+prefix = "!"
+
+#Community Static
 Base = declarative_base()
 association_table = Table('association', Base.metadata,
     Column('community_id', ForeignKey('communities.id'), primary_key=True),
@@ -21,7 +23,6 @@ invitee_association_table = Table('invitee_association', Base.metadata,
     Column('user_id', ForeignKey('users.id'), primary_key=True)
 )
 with open("settings.json", "r+") as settingsfile:
-    settings = settingsfile
     config = json.load(settingsfile)
     token = config["TOKEN"]
     guildids = {
@@ -29,8 +30,16 @@ with open("settings.json", "r+") as settingsfile:
         "PPD": config["SECONDARY_GUILD"]
     }
     echo = config["DEBUG"]
+    channelids = {
+        "VLOG": config["CHANNELID_VOICELOG"],
+        "ILOG": config["CHANNELID_INFRACTIONLOG"],
+        "ELOG": config["CHANNELID_ERRORLOG"]
+    }
 engine = create_engine("sqlite+pysqlite:///db.db", echo=echo, future=True)
 Session = sessionmaker(bind=engine)
+
+
+#Bot Static
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None)
 
@@ -334,6 +343,7 @@ class PPProject(commands.Cog):
 #main bot definitions
 @bot.event
 async def on_ready():
+    print("Bot's name is "+str(bot.user))
     try:
         guild = discord.utils.get(bot.guilds, id=int(guildids["MAIN"]))
         print("Found main guild of ID: "+str(guild.id)+" | Name of: "+str(guild.name))
@@ -342,11 +352,18 @@ async def on_ready():
         print("Could not find main guild!")
     try:
         guild = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        print("Found private plus project discord guild of ID: "+str(guild.id)+" | Name of: "+str(guild.name))
+        print("Found HQ discord guild of ID: "+str(guild.id)+" | Name of: "+str(guild.name))
         print("Members online: "+str(guild.member_count))
     except AttributeError:
-        print("Could not find private plus project guild!")
-    print("Bot's name is "+str(bot.user))
+        print("Could not find HQ guild!")
+    try:
+        log = {
+            "VOICE": bot.get_channel(int(channelids["VLOG"])),
+            "INFRACTIONS": bot.get_channel(int(channelids["VLOG"])),
+            "ERROR": bot.get_channel(int(channelids["ELOG"])),
+        }
+    except:
+        print("Error finding channels")
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -361,17 +378,33 @@ async def on_command_error(ctx, error):
     else:
         print(error)
 
+#bot logging
+@bot.event
+async def on_voice_state_update(member, before, after):
+    embed=discord.Embed(title="New Voice State", description="Member Name: "+str(member.name))
+    embed.add_field(name="AFK", value=before.afk, inline=False)
+    embed.add_field(name="Channel", value=before.channel.id, inline=False)
+    embed.add_field(name="Deafened", value=before.deaf, inline=False)
+    embed.add_field(name="Muted", value=before.mute, inline=False)
+    embed.add_field(name="Requested To Speak Timestamp", value=before.requested_to_speak_at, inline=False)
+    embed.add_field(name="Self Deafened", value=before.self_deaf, inline=False)
+    embed.add_field(name="Self Muted", value=before.self_mute, inline=False)
+    embed.add_field(name="Streaming", value=before.self_stream, inline=False)
+    embed.add_field(name="Video", value=before.self_video, inline=False)
+    embed.add_field(name="Supressed", value=before.suppress, inline=False)
+    await log["VOICE"].send(embed=embed)
+
 #help command
 @bot.command()
 async def help(ctx):
     embed=discord.Embed(title="Matrix Help", description="These are all the commands available, with Matrix.", color=0x00ff00)
-    embed.add_field(name="Music | Basic", value="play 'link or name', pause, resume, nowplaying, seek, queue, remove, skip", inline=False)
+    embed.add_field(name="Music | Basic", value="play 'link or name', pause, resume, nowplaying (np), seek, queue, remove, skip", inline=False)
     embed.add_field(name="Music | Advanced", value="volume 'level', eq 'band 0-14' 'level -0.25 to 1.0', reseteq", inline=False)
     #embed.add_field(name="Community | Status", value="newcommunity 'name', deletecommunity 'name'", inline=False)
     #embed.add_field(name="Community | Admin", value="invite 'community name' 'member', kick 'member' 'community name', promote 'community name' 'member', demote 'community name' 'member'", inline=False)
     #embed.add_field(name="Community | User", value="accept 'community name', leave 'community name'", inline=False)
     embed.add_field(name="Voice | User", value="voice lock, voice unlock, voice permit 'member', voice reject 'member', voice limit 'number', voice name 'name', voice claim, voice ghost, voice unghost", inline=False)
-    embed.add_field(name="Admin", value="voice setup 'channel id' 'category id', voice setlimit 'number', hidecommunity 'name', showcommunity 'name'", inline=False)
+    embed.add_field(name="Admin", value="voice setup 'channel id' 'category id', voice setlimit 'number'", inline=False)
     embed.add_field(name="Development", value="shutdown, reload", inline=False)
     await ctx.send(embed=embed)
 

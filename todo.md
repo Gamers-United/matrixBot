@@ -1,7 +1,5 @@
 # To Do List
-1. Fix people using multiple dots triggering the bot.
-2. Voice leave/join log
-3. Karoke lyrics for music bot
-4. replace Dicecord
-5. Include larger amount of lavalink filters; see https://github.com/freyacodes/Lavalink/blob/master/IMPLEMENTATION.md
-6. Add music streaming from PC app to bot.
+1. Karoke lyrics for music bot
+2. replace Dicecord
+3. Include larger amount of lavalink filters; see https://github.com/freyacodes/Lavalink/blob/master/IMPLEMENTATION.md
+4. Add music streaming from PC app to bot.
