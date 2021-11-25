@@ -382,7 +382,10 @@ async def on_command_error(ctx, error):
 async def on_voice_state_update(member, before, after):
     embed=discord.Embed(title="New Voice State", description="Member Name: "+str(member.name))
     embed.add_field(name="AFK", value=after.afk, inline=False)
-    embed.add_field(name="Channel", value=after.channel.id, inline=False)
+    try:
+        embed.add_field(name="Channel", value=after.channel.id, inline=False)
+    except AttributeError:
+        embed.add_field(name="Channel", value="N/A", inline=False)
     embed.add_field(name="Deafened", value=after.deaf, inline=False)
     embed.add_field(name="Muted", value=after.mute, inline=False)
     embed.add_field(name="Requested To Speak Timestamp", value=after.requested_to_speak_at, inline=False)
