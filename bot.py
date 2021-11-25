@@ -358,9 +358,9 @@ async def on_ready():
     except AttributeError:
         print("Could not find HQ guild!")
     try:
-        log.append("VOICE": bot.get_channel(int(channelids["VLOG"])))
-        log.append("INFRACTIONS": bot.get_channel(int(channelids["VLOG"])))
-        log.append("ERROR": bot.get_channel(int(channelids["ELOG"])))
+        log["VOICE"] = bot.get_channel(int(channelids["VLOG"]))
+        log["INFRACTIONS"] = bot.get_channel(int(channelids["VLOG"]))
+        log["ERROR"] = bot.get_channel(int(channelids["ELOG"]))
     except:
         print("Error finding channels")
 
