@@ -385,7 +385,7 @@ async def on_voice_state_update(member, before, after):
     embed=discord.Embed(title="New Voice State", description=str(member.name)+" "+str(timenow))
     embed.add_field(name="AFK", value=after.afk, inline=False)
     try:
-        embed.add_field(name="Channel", value=str(after.channel.id)+"\n"+after.channel.guild.name+" | "+after.channel.name, inline=False)
+        embed.add_field(name="Channel", value=str(after.channel.id)+"\n"+after.channel.category.name+" | "+after.channel.guild.name+" | "+after.channel.name, inline=False)
     except AttributeError:
         embed.add_field(name="Channel", value="N/A", inline=False)
     embed.add_field(name="Deafened", value=after.deaf, inline=False)
