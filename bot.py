@@ -358,11 +358,9 @@ async def on_ready():
     except AttributeError:
         print("Could not find HQ guild!")
     try:
-        log = {
-            "VOICE": bot.get_channel(int(channelids["VLOG"])),
-            "INFRACTIONS": bot.get_channel(int(channelids["VLOG"])),
-            "ERROR": bot.get_channel(int(channelids["ELOG"])),
-        }
+        log.append("VOICE": bot.get_channel(int(channelids["VLOG"])))
+        log.append("INFRACTIONS": bot.get_channel(int(channelids["VLOG"])))
+        log.append("ERROR": bot.get_channel(int(channelids["ELOG"])))
     except:
         print("Error finding channels")
 
@@ -383,16 +381,16 @@ async def on_command_error(ctx, error):
 @bot.event
 async def on_voice_state_update(member, before, after):
     embed=discord.Embed(title="New Voice State", description="Member Name: "+str(member.name))
-    embed.add_field(name="AFK", value=before.afk, inline=False)
-    embed.add_field(name="Channel", value=before.channel.id, inline=False)
-    embed.add_field(name="Deafened", value=before.deaf, inline=False)
-    embed.add_field(name="Muted", value=before.mute, inline=False)
-    embed.add_field(name="Requested To Speak Timestamp", value=before.requested_to_speak_at, inline=False)
-    embed.add_field(name="Self Deafened", value=before.self_deaf, inline=False)
-    embed.add_field(name="Self Muted", value=before.self_mute, inline=False)
-    embed.add_field(name="Streaming", value=before.self_stream, inline=False)
-    embed.add_field(name="Video", value=before.self_video, inline=False)
-    embed.add_field(name="Supressed", value=before.suppress, inline=False)
+    embed.add_field(name="AFK", value=after.afk, inline=False)
+    embed.add_field(name="Channel", value=after.channel.id, inline=False)
+    embed.add_field(name="Deafened", value=after.deaf, inline=False)
+    embed.add_field(name="Muted", value=after.mute, inline=False)
+    embed.add_field(name="Requested To Speak Timestamp", value=after.requested_to_speak_at, inline=False)
+    embed.add_field(name="Self Deafened", value=after.self_deaf, inline=False)
+    embed.add_field(name="Self Muted", value=after.self_mute, inline=False)
+    embed.add_field(name="Streaming", value=after.self_stream, inline=False)
+    embed.add_field(name="Video", value=after.self_video, inline=False)
+    embed.add_field(name="Supressed", value=after.suppress, inline=False)
     await log["VOICE"].send(embed=embed)
 
 #help command
