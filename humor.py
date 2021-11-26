@@ -1,4 +1,4 @@
-import discord
+import discord, random
 from discord.ext import commands
 
 class Humor(commands.Cog):
