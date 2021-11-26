@@ -1,4 +1,4 @@
-import requests, json, discord
+import requests, json, discord, re
 from bs4 import BeautifulSoup
 
 auth = "QvjH6ZEacPNNXoud80FUphH0nAEhwnv41gNYwSZaz_mcDo1NJMNf2aDhc6rW4X09"
@@ -28,17 +28,17 @@ class Lyrics():
         return embed    
     def lyrics_from_song_api_path(song_api_path):
         song_url = genius + song_api_path
-        print(song_url)
         response = requests.get(song_url, params={'access_token':auth})
         json = response.json()
-        print(json)
         path = json["response"]["song"]["path"]
-        page_url = "http://genius.com" + path
+        page_url = "https://genius.com" + path
         page = requests.get(page_url)
-        html = BeautifulSoup(page.text, "html.parser")
-        [h.extract() for h in html('script')]
-        lyrics = html.find("div", class_="lyrics").get_text()
+        html = BeautifulSoup(page.text.replace("<br/>", "\n"), "html.parser")
+        lyrics = html.find("div", class_=re.compile("^lyrics$|Lyrics__Root")).get_text()
+        lyrics = lyrics[:-29]
         return lyrics
     def ProduceLyrics(results, selection: int):
         lyrics = Lyrics.lyrics_from_song_api_path(results[selection]["result"]["api_path"])
         return discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=lyrics)
+
+print(Lyrics.lyrics_from_song_api_path("/songs/2369650"))
