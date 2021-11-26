@@ -40,5 +40,3 @@ class Lyrics():
     def ProduceLyrics(results, selection: int):
         lyrics = Lyrics.lyrics_from_song_api_path(results[selection]["result"]["api_path"])
         return discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=lyrics)
-
-print(Lyrics.lyrics_from_song_api_path("/songs/2369650"))
