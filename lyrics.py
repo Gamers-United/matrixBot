@@ -2,8 +2,8 @@ import requests, json, discord
 from bs4 import BeautifulSoup
 
 auth = "QvjH6ZEacPNNXoud80FUphH0nAEhwnv41gNYwSZaz_mcDo1NJMNf2aDhc6rW4X09"
-genius = "https://api.genius.com/"
-search = genius + "search"
+genius = "https://api.genius.com"
+search = genius + "/search"
 
 class BearerAuth(requests.auth.AuthBase):
     def __call__(self, r):
