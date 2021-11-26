@@ -76,7 +76,6 @@ class Music(commands.Cog):
     async def play(self, ctx, *, query: str):
         """ Searches and plays a song from a given query. """
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        #move on to query
         query = query.strip('<>')
         query_type = str(query[:3])
         if not url_rx.match(query):
@@ -91,12 +90,6 @@ class Music(commands.Cog):
             return await ctx.send('Nothing found!')
 
         embed = discord.Embed(color=discord.Color.blurple())
-        # Valid loadTypes are:
-        #   TRACK_LOADED    - single video/direct URL)
-        #   PLAYLIST_LOADED - direct URL to playlist)
-        #   SEARCH_RESULT   - query prefixed with either ytsearch: or scsearch:.
-        #   NO_MATCHES      - query yielded no results
-        #   LOAD_FAILED     - most likely, the video encountered an exception during loading.
         if results['loadType'] == 'PLAYLIST_LOADED':
             tracks = results['tracks']
             for track in tracks:
