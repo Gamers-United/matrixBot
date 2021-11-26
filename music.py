@@ -68,7 +68,7 @@ class Music(commands.Cog):
         await ctx.send(embed=Lyrics.GenerateEmbed(results))
         def check(message):
             return message.author == ctx.author
-        msg = await self.bot.wait_for('message', check=check, timeout=30)
+        msg.content = await self.bot.wait_for('message', check=check, timeout=30)
         selection = int(msg)
         await ctx.send(embed=Lyrics.ProduceLyrics(results, selection))
 
