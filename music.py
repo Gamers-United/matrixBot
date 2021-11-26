@@ -68,8 +68,8 @@ class Music(commands.Cog):
         await ctx.send(embed=Lyrics.GenerateEmbed(results))
         def check(message):
             return message.author == ctx.author
-        msg.content = await self.bot.wait_for('message', check=check, timeout=30)
-        selection = int(msg)
+        msg = await self.bot.wait_for('message', check=check, timeout=30)
+        selection = int(msg.content)
         await ctx.send(embed=Lyrics.ProduceLyrics(results, selection))
 
     @commands.command(aliases=['p'])
