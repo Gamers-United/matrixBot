@@ -97,7 +97,7 @@ async def help(ctx):
     embed.add_field(name="Fun | Jokes", value="""joke
     dadjoke
     copypasta""", inline=False)
-    embed.add_field(name="Fun | Random", value="""roll '3d6' (Dice Syntax at https://d20.readthedocs.io/en/latest/start.html#dice-syntax)
+    embed.add_field(name="Fun | Random", value="""roll '3d6' (Syntax: https://d20.readthedocs.io/en/latest/start.html#dice-syntax)
     reorder '1,2,3,4' (Comma Seperated List)
     pick '1,2,3,4' (Comma Seperated List)""", inline=False)
     embed.add_field(name="Voice | User", value="""voice lock
