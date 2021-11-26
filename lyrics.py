@@ -30,6 +30,7 @@ class Lyrics():
         song_url = genius + song_api_path
         response = requests.get(song_url, auth=BearerAuth())
         json = response.json()
+        print(json)
         path = json["response"]["song"]["path"]
         page_url = "http://genius.com" + path
         page = requests.get(page_url)
