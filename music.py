@@ -35,7 +35,7 @@ class Music(commands.Cog):
 
     async def cog_command_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
-            await ctx.send("An error has occured!\n"+error)
+            await ctx.send("An error has occured!\n"+str(error))
 
     async def ensure_voice(self, ctx):
         """ This check ensures that the bot and command author are in the same voicechannel. """
@@ -71,7 +71,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = Lyrics.SearchForLyrics(player.current.title)
         await ctx.send(embed=Lyrics.GenerateEmbed(results))
-        msg = await self.wait_for('message', check=check(ctx.author), timeout=30)
+        msg = await self.bot.wait_for('message', check=check(ctx.author), timeout=30)
         selection = int(msg)
         await ctx.send(embed=Lyrics.ProduceLyrics(results, selection))
 
