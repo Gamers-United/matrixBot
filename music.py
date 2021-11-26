@@ -8,11 +8,6 @@ from lyrics import Lyrics
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 time_rx = re.compile('[0-9]+')
 
-def check(message):
-    def inner_check(message):
-        return message.author == author
-    return inner_check
-
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -71,7 +66,9 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = Lyrics.SearchForLyrics(player.current.title)
         await ctx.send(embed=Lyrics.GenerateEmbed(results))
-        msg = await self.bot.wait_for('message', check=check(ctx.author), timeout=30)
+        def check(message):
+            return message.author == ctx.author
+        msg = await self.bot.wait_for('message', check=check, timeout=30)
         selection = int(msg)
         await ctx.send(embed=Lyrics.ProduceLyrics(results, selection))
 
