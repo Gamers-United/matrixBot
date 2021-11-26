@@ -12,13 +12,13 @@ class Random(commands.Cog):
         await ctx.send(embed=embed)
     @commands.command()
     async def reorder(self, ctx, request:str):
-        values = request.split(',')
+        values = request.strip().split(',')
         random.shuffle(values)
         embed = discord.Embed(title="Reordered Result", description=str(values))
         await ctx.send(embed=embed)
     @commands.command()
     async def pick(self, ctx, request:str):
-        values = request.split(',')
+        values = request.strip().split(',')
         values = random.choice(values)
         embed = discord.Embed(title="Picked Result", description=str(values))
         await ctx.send(embed=embed)
