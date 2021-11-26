@@ -38,5 +38,5 @@ class Lyrics():
         lyrics = html.find("div", class_="lyrics").get_text()
         return lyrics
     def ProduceLyrics(results, selection: int):
-        lyrics = (results[selection]["result"]["api_path"])
+        lyrics = lyrics_from_song_api_path(results[selection]["result"]["api_path"])
         return discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=lyrics)
