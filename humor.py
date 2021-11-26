@@ -8,7 +8,7 @@ class Humor(commands.Cog):
     @commands.command()
     async def joke(self, ctx):
         """Provides a regular joke"""
-        lines = open("jokes.txt").read().split("|")
+        lines = open("jokes.txt").read().splitlines()
         myline = random.choice(lines)
         await ctx.send(myline)
 
