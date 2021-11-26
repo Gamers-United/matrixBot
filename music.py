@@ -71,7 +71,7 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = Lyrics.SearchForLyrics(player.current.title)
         await ctx.send(embed=Lyrics.GenerateEmbed(results))
-        msg = await client.wait_for('message', check=check(ctx.author), timeout=30)
+        msg = await self.wait_for('message', check=check(ctx.author), timeout=30)
         selection = int(msg)
         await ctx.send(embed=Lyrics.ProduceLyrics(results, selection))
 
