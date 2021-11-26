@@ -28,7 +28,7 @@ class Lyrics():
         return embed    
     def lyrics_from_song_api_path(song_api_path):
         song_url = genius + song_api_path
-        response = requests.get(song_url, auth=BearerAuth())
+        response = requests.get(song_url, auth=BearerAuth(), params={'access_token':auth})
         json = response.json()
         print(json)
         path = json["response"]["song"]["path"]
