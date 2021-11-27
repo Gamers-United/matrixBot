@@ -6,9 +6,9 @@ class Random(commands.Cog):
         self.bot = bot
     @commands.command()
     async def roll(self, ctx, request:str):
-        embed = discord.Embed(title="Roll Result", description="Need help with the syntax? View the docs: https://d20.readthedocs.io/en/latest/start.html#dice-syntax")
         roll = d20.roll(request)
-        embed.add_field(name="Results", value=str(roll))
+        embed = discord.Embed(title="Roll Result", description=str(roll))
+        embed.add_field(name="Need Help?", value="View the docs: https://d20.readthedocs.io/en/latest/start.html#dice-syntax")
         await ctx.send(embed=embed)
     @commands.command()
     async def reorder(self, ctx, request:str):
