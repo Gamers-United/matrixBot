@@ -65,6 +65,7 @@ class Music(commands.Cog):
     async def lyrics(self, ctx):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         results = Lyrics.SearchForLyrics(player.current.title)
+        print(results)
         await ctx.send(embed=Lyrics.GenerateEmbed(results))
         def check(message):
             return message.author == ctx.author
