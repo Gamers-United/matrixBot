@@ -17,7 +17,6 @@ class Lyrics():
         }
         r = requests.get(search, params=params, auth=BearerAuth())
         rson = r.json()
-        print(rson)
         if rson["meta"]["status"] == 200:
             return rson["response"]["hits"]
         else:
