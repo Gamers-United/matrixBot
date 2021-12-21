@@ -20,6 +20,7 @@ class Lyrics():
         if rson["meta"]["status"] == 200:
             return rson["response"]["hits"]
         else:
+            print("Error No Lyrics Found")
             return None
     def GenerateEmbed(hits):
         embed=discord.Embed(title="Lyric Search Results", description="Type number in chat for correct song")
@@ -37,3 +38,6 @@ class Lyrics():
         lyrics = html.find("div", class_=re.compile("^lyrics$|Lyrics__Root")).get_text()
         lyrics = lyrics[:-29]
         return lyrics
+    def ProduceLyrics(results, selection: int):
+        lyrics = Lyrics.lyrics_from_song_api_path(results[selection]["result"]["api_path"])
+        return discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=lyrics)
