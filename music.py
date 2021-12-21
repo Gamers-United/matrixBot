@@ -75,7 +75,7 @@ class Music(commands.Cog):
             n=4095
             chunks = [lyr[i:i+n] for i in range(0, len(lyr), n)]
             for item in chunks:
-                if chunks.index(item) == 1:
+                if chunks.index(item) == 0:
                     final = discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=item)
                     await ctx.send(embed=final)
                 else:
