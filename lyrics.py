@@ -17,10 +17,10 @@ class Lyrics():
         }
         r = requests.get(search, params=params, auth=BearerAuth())
         rson = r.json()
+        print(rson)
         if rson["meta"]["status"] == 200:
             return rson["response"]["hits"]
         else:
-            print("Error No Lyrics Found")
             return None
     def GenerateEmbed(hits):
         embed=discord.Embed(title="Lyric Search Results", description="Type number in chat for correct song")
