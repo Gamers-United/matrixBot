@@ -70,7 +70,20 @@ class Music(commands.Cog):
             return message.author == ctx.author
         msg = await self.bot.wait_for('message', check=check, timeout=30)
         selection = int(msg.content) - 1
-        await ctx.send(embed=Lyrics.ProduceLyrics(results, selection))
+        lyrics = Lyrics.lyrics_from_song_api_path(results[selection]["result"]["api_path"])
+        if(len(lyrics)>4095):
+            n=4095
+            chunks = [str[i:i+n] for i in range(0, len(str), n)]
+            for item in chunks:
+                if chunks.index(item) == 1:
+                    final = discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=item)
+                    await ctx.send(embed=final)
+                else:
+                    final = discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]+" Continued"), description=item)
+                    await ctx.send(embed=final)
+        else:
+            final = discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=lyrics)
+            await ctx.send(embed=final)
 
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
