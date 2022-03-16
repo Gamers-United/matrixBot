@@ -161,7 +161,7 @@ class Music(commands.Cog):
     async def shuffle(self, ctx):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
         player.set_shuffle(not player.shuffle)
-        await ctx.send("Changed shuffling status to "+str(not player.shuffle))
+        await ctx.send("Changed shuffling status to "+str(player.shuffle))
 
     @commands.command()
     async def seek(self, ctx, time):
