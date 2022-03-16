@@ -156,6 +156,11 @@ class Music(commands.Cog):
         embed = discord.Embed(colour=discord.Color.blurple(), description=f'**{len(player.queue)} tracks**\n\n{queue_list}')
         embed.set_footer(text=f'Viewing page {page}/{pages}!')
         await ctx.send(embed=embed)
+    
+    @commands.command()
+    async def shuffle(self, ctx):
+        player = self.bot.lavalink.player_manager.get(ctx.guild.id)
+        await player.shuffle()
 
     @commands.command()
     async def seek(self, ctx, time):
