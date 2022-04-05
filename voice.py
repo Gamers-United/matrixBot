@@ -303,5 +303,5 @@ class voice(commands.Cog):
         conn.commit()
         conn.close()
 
-def setup(bot):
-    bot.add_cog(voice(bot))
+async def setup(bot):
+    await bot.add_cog(voice(bot))

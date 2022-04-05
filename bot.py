@@ -3,11 +3,12 @@ import discord
 from discord.ext import commands
 from types import SimpleNamespace
 from datetime import datetime
+import asyncio
 
 #Bot Static
 prefix = "!"
 intents = discord.Intents.all()
-bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None)
+bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None, case_insensitive=True)
 log = {}
 with open("settings.json", "r+") as settingsfile:
     config = json.load(settingsfile)
@@ -26,6 +27,7 @@ with open("settings.json", "r+") as settingsfile:
 #main bot definitions
 @bot.event
 async def on_ready():
+    bot.appInfo = await bot.application_info()
     print("Bot's name is "+str(bot.user))
     try:
         guild = discord.utils.get(bot.guilds, id=int(guildids["MAIN"]))
@@ -116,13 +118,13 @@ async def help(ctx):
     await ctx.send(embed=embed)
 
 #run the bot
-try:
-    bot.load_extension('randomresults')
-    bot.load_extension('voice')
-    bot.load_extension('dev')
-    bot.load_extension('music')
-    bot.load_extension('humor')
-    bot.run(token)
-except KeyboardInterrupt:
-    print("Ending")
-    bot.close()
+async def main():
+    async with bot:
+        await bot.start(token)
+        await bot.load_extension('randomresults')
+        await bot.load_extension('voice')
+        await bot.load_extension('dev')
+        await bot.load_extension('music')
+        await bot.load_extension('humor')
+
+asyncio.run(main())

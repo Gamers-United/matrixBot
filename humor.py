@@ -26,5 +26,5 @@ class Humor(commands.Cog):
         myline = random.choice(lines)
         await ctx.send(myline)
 
-def setup(bot):
-    bot.add_cog(Humor(bot))
+async def setup(bot):
+    await bot.add_cog(Humor(bot))

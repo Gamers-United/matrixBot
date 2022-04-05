@@ -17,10 +17,16 @@ class DevCommands(commands.Cog):
     async def reload(self, ctx):
         if ctx.author.guild_permissions.administrator == True:
             await ctx.send("Bot reloading!")
-            self.bot.unload_extension('voice')
-            self.bot.load_extension('voice')
+            await self.bot.unload_extension('voice')
+            await self.bot.load_extension('voice')
+            await self.bot.unload_extension('randomresults')
+            await self.bot.load_extension('randomresults')
+            await self.bot.unload_extension('music')
+            await self.bot.load_extension('music')
+            await self.bot.unload_extension('humor')
+            await self.bot.load_extension('humor')
         else:
             await ctx.send("Don't shut down the bot, you filthy animal!")
 
-def setup(bot):
-    bot.add_cog(DevCommands(bot))
+async def setup(bot):
+    await bot.add_cog(DevCommands(bot))
