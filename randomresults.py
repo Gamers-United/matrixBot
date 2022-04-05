@@ -29,5 +29,5 @@ class Random(commands.Cog):
         embed = discord.Embed(title="Picked Result", description=str(values))
         await ctx.send(embed=embed)
 
-await def setup(bot):
-    async bot.add_cog(Random(bot))
+async def setup(bot):
+    await bot.add_cog(Random(bot))

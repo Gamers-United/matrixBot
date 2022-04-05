@@ -27,6 +27,11 @@ with open("settings.json", "r+") as settingsfile:
 #main bot definitions
 @bot.event
 async def on_ready():
+    await bot.load_extension('randomresults')
+    #await bot.load_extension('voice')
+    await bot.load_extension('dev')
+    await bot.load_extension('music')
+    await bot.load_extension('humor')
     bot.appInfo = await bot.application_info()
     print("Bot's name is "+str(bot.user))
     try:
@@ -121,10 +126,5 @@ async def help(ctx):
 async def main():
     async with bot:
         await bot.start(token)
-        await bot.load_extension('cogs.randomresults')
-        await bot.load_extension('cogs.voice')
-        await bot.load_extension('cogs.dev')
-        await bot.load_extension('cogs.music')
-        await bot.load_extension('cogs.humor')
 
 asyncio.run(main())

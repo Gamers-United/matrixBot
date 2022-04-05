@@ -29,16 +29,16 @@ class Music(commands.Cog):
     
     async def cog_load(self):
         await self.bot.wait_until_ready()
-        await lavapy.NodePool.createNode(client=bot, host="10.100.1.56", port=19999,
-        password="mltechmaynotpassthispointwithoutpermission", region=VoiceRegion.sydney,
-        spotifyClient=spotify.SpotifyClient(clientID="", clientSecret=""),
+        await lavapy.NodePool.createNode(client=self.bot, host="10.100.1.56", port=19999,
+        password="mltechmaynotpassthispointwithoutpermission",
+        #spotifyClient=spotify.SpotifyClient(clientID="", clientSecret=""),
         identifier="Main")
         print("Lavalink Is Setup & Ready")
 
     # Handle the listeners
     @commands.Cog.listener()
     async def on_lavapy_track_start(self, player: CustomPlayer, track: lavapy.Track) -> None:
-        await player.context.send(embed=Embed(title="Now Playing:", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.now()))
+        await player.context.send(embed=Embed(title="Now Playing:", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
 
     @commands.Cog.listener()
     async def on_lavapy_track_end(self, player, track, reason):
@@ -46,12 +46,12 @@ class Music(commands.Cog):
     
     @commands.Cog.listener()
     async def on_lavapy_track_exception(self, player: CustomPlayer, track: lavapy.Track, exception: Dict[str, str]) -> None:
-        await player.context.send(embed=Embed(title="An error has occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.now()))
+        await player.context.send(embed=Embed(title="An error has occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
         await player.playNext()
     
     @commands.Cog.listener()
     async def on_lavapy_track_stuck(self, player: CustomPlayer, track: lavapy.Track, threshold: float) -> None:
-        await player.context.send(embed=Embed(title="A playback error hass occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.now()))
+        await player.context.send(embed=Embed(title="A playback error hass occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
         await player.playNext()
 
     async def cog_before_invoke(self, ctx):
@@ -98,7 +98,7 @@ class Music(commands.Cog):
     async def play(self, ctx: discord.ext.commands.Context, *, query: str = None):
         """ Searches and plays a song from a given query. """
         if not ctx.voice_client:
-            await ctx.invoke(self.join)
+            await ctx.invoke(self.connect)
         player: CustomPlayer = ctx.voice_client
         if player.isPaused == True and query is None:
             await player.resume()
@@ -110,46 +110,46 @@ class Music(commands.Cog):
             return
         #handle playing!!!!
         if re.compile("https://www.youtube.com/watch\?v=.+").match(query):
-            selectitem = False
-            result = lavapy.YoutubeTrack.search(query, returnFirst=selectitem, partial=False)
+            selectitem = True
+            result = await lavapy.YoutubeTrack.search(query, returnFirst=selectitem, partial=False)
         elif re.compile("https://music.youtube.com/watch\?v=.+").match(query):
-            selectitem = False
-            result = lavapy.YoutubeMusicTrack.search(query, returnFirst=selectitem, partial=False)
+            selectitem = True
+            result = await lavapy.YoutubeMusicTrack.search(query, returnFirst=selectitem, partial=False)
         elif re.compile("https://music.youtube.com/playlist\?list=.+").match(query):
-            selectitem = False
-            result = YoutubeMusicPlaylist.search(query, returnFirst=selectitem, partial=True)
+            selectitem = True
+            result = await YoutubeMusicPlaylist.search(query, returnFirst=selectitem, partial=False)
         elif re.compile("https://soundcloud.com/(?!discover).+").match(query) and "sets" not in query:
-            selectitem = False
-            result = lavapy.SoundcloudTrack.search(query, returnFirst=selectitem, partial=False)
+            selectitem = True
+            result = await lavapy.SoundcloudTrack.search(query, returnFirst=selectitem, partial=False)
         elif re.compile("https://soundcloud.com/(?!discover).+").match(query) and "sets" in query:
             await ctx.send("Sorry! We can not handle soundcloud playlists.")
             return
         elif re.compile(".+\.mp3").match(query):
-            selectitem = False
-            result = lavapy.LocalTrack.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://www.youtube.com/playlist\?list=.+").match(query):
-            selectitem = False
-            result = lavapy.YoutubePlaylist.search(query, returnFirst=selectitem, partial=True)
-        elif re.compile("https://open\.spotify\.com/track").match(query):
-            selectitem = False
-            result = spotify.SpotifyTrack.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://open\.spotify\.com/playlist").match(query):
-            selectitem = False
-            result = spotify.SpotifyPlaylist.search(query, returnFirst=selectitem, partial=True)
-        elif re.compile("https://open\.spotify\.com/track/album").match(query):
-            selectitem = False
-            result = spotify.SpotifyAlbum.search(query, returnFirst=selectitem, partial=True)
-        else:
             selectitem = True
-            result = lavapy.YoutubeTrack.search(query, returnFirst=selectitem, partial=True)
+            result = await lavapy.LocalTrack.search(query, returnFirst=selectitem, partial=False)
+        elif re.compile("https://www.youtube.com/playlist\?list=.+").match(query):
+            selectitem = True
+            result = await lavapy.YoutubePlaylist.search(query, returnFirst=selectitem, partial=False)
+        elif re.compile("https://open\.spotify\.com/track").match(query):
+            selectitem = True
+            result = await spotify.SpotifyTrack.search(query, returnFirst=selectitem, partial=False)
+        elif re.compile("https://open\.spotify\.com/playlist").match(query):
+            selectitem = True
+            result = await spotify.SpotifyPlaylist.search(query, returnFirst=selectitem, partial=False)
+        elif re.compile("https://open\.spotify\.com/track/album").match(query):
+            selectitem = True
+            result = await spotify.SpotifyAlbum.search(query, returnFirst=selectitem, partial=False)
+        else:
+            selectitem = False
+            result = await lavapy.YoutubeTrack.search(query, returnFirst=selectitem, partial=False)
         if result is None:
             await ctx.send("No results were found")
             return
-        elif selectitem == True:
+        elif selectitem == False:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
             for item in result:
-                embed.add_field(name=str(item.title), value=str(item.uri), inline=False)
+                itemListEmbed.add_field(name=(str(result.index(item))+". "+str(item.title)), value=str(item.uri), inline=False)
             await ctx.send(embed=itemListEmbed)
 
             #await for response
@@ -159,7 +159,7 @@ class Music(commands.Cog):
             selection = await self.bot.wait_for('message', check=check)
             #process the selection to add to the track object.
             try:
-                selectionint = int(selection)
+                selectionint = int(selection.content)
                 result = result[selectionint]
             except ValueError:
                 await ctx.send("Invalid selection")
