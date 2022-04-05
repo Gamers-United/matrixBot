@@ -121,10 +121,10 @@ async def help(ctx):
 async def main():
     async with bot:
         await bot.start(token)
-        await bot.load_extension('randomresults')
-        await bot.load_extension('voice')
-        await bot.load_extension('dev')
-        await bot.load_extension('music')
-        await bot.load_extension('humor')
+        await bot.load_extension('cogs.randomresults')
+        await bot.load_extension('cogs.voice')
+        await bot.load_extension('cogs.dev')
+        await bot.load_extension('cogs.music')
+        await bot.load_extension('cogs.humor')
 
 asyncio.run(main())
