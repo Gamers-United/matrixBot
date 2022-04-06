@@ -148,9 +148,9 @@ class Music(commands.Cog):
         elif selectitem == False:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
-            top5 = result[:5]
+            top5 = result[:4]
             for item in top5:
-                itemListEmbed.add_field(name=(str(result.index(item))+". "+str(item.title)), value=str(item.uri), inline=False)
+                itemListEmbed.add_field(name=(str(result.index(item)+1)+". "+str(item.title)), value=str(item.uri), inline=False)
             await ctx.send(embed=itemListEmbed)
 
             #await for response
@@ -160,7 +160,7 @@ class Music(commands.Cog):
             selection = await self.bot.wait_for('message', check=check)
             #process the selection to add to the track object.
             try:
-                selectionint = int(selection.content)
+                selectionint = int(selection.content)-1
                 result = result[selectionint]
             except ValueError:
                 await ctx.send("Invalid selection")
@@ -346,15 +346,15 @@ class Music(commands.Cog):
         await ctx.send(view=buttonLIB.filterButtons(ctx))
 
     @commands.command()
-    async def volume(self, ctx, level: float):
+    async def volume(self, ctx, level: int):
         player: CustomPlayer = ctx.voice_client
-        if level > 5:
+        if level > 1000:
             await ctx.send("Volume too high!")
         elif level < 0:
             await ctx.send("Volume too low!")
         else:
-            await player.setVolume(level)
-            await ctx.send(f"Set volume to {level*100}%")
+            await player.setVolume(level/2)
+            await ctx.send(f"Set volume to {level/2}%")
 
     @commands.command()
     async def deleteFilter(self,ctx):
