@@ -78,6 +78,7 @@ class Music(commands.Cog):
         #setup the player
         player: CustomPlayer = await channel.connect(cls=CustomPlayer)
         player.context = ctx
+        await ctx.guild.change_voice_state(self_deaf=True)
         await ctx.send(f"Connected to {channel.mention}")
 
     @commands.command(aliases=['dc','stop','leave'])
@@ -148,7 +149,7 @@ class Music(commands.Cog):
         elif selectitem == False:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
-            top5 = result[:4]
+            top5 = result[:5]
             for item in top5:
                 itemListEmbed.add_field(name=(str(result.index(item)+1)+". "+str(item.title)), value=str(item.uri), inline=False)
             await ctx.send(embed=itemListEmbed)
