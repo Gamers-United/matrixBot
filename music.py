@@ -31,7 +31,7 @@ class Music(commands.Cog):
         await self.bot.wait_until_ready()
         await lavapy.NodePool.createNode(client=self.bot, host="10.100.1.56", port=19999,
         password="mltechmaynotpassthispointwithoutpermission",
-        #spotifyClient=spotify.SpotifyClient(clientID="", clientSecret=""),
+        spotifyClient=spotify.SpotifyClient(clientID="0de30a1427ad404f877dd2ef005942ba", clientSecret="c63891d0313442489e39aeb05419f209"),
         identifier="Main")
         print("Lavalink Is Setup & Ready")
 
