@@ -148,7 +148,8 @@ class Music(commands.Cog):
         elif selectitem == False:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
-            for item in result[:5]:
+            top5 = result[:5]
+            for item in top5:
                 itemListEmbed.add_field(name=(str(result.index(item))+". "+str(item.title)), value=str(item.uri), inline=False)
             await ctx.send(embed=itemListEmbed)
 
@@ -335,9 +336,9 @@ class Music(commands.Cog):
     @commands.command(aliases=['unpause'])
     async def resume(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if player.paused:
+        if player.isPaused:
             await ctx.send("Unpausing player!")
-            await player.set_pause(False)
+            await player.resume()
 
     #filters
     @commands.command()
