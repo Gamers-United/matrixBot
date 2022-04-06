@@ -142,7 +142,7 @@ class Music(commands.Cog):
             result = await spotify.SpotifyAlbum.search(query, returnFirst=selectitem, partial=False)
         else:
             selectitem = False
-            result = await lavapy.YoutubeTrack.search(query, returnFirst=selectitem, partial=False)
+            result = await lavapy.YoutubeMusicTrack.search(query, returnFirst=selectitem, partial=False)
         if result is None:
             await ctx.send("No results were found")
             return
@@ -198,7 +198,7 @@ class Music(commands.Cog):
         if not player.queue:
             await ctx.send('Nothing queued!')
             return
-        elif index > len(player.queue): 
+        elif index > len(player.queue.tracks): 
             await ctx.send('Song to remove must be less than the queue length!')
             return
         elif index < 1:
@@ -262,7 +262,7 @@ class Music(commands.Cog):
         ## CASE 1
         try:
             t = re.search("\n([0-9]\.[0-9]+)\n", time)
-            time = float(t.group(1)) * 60
+            time = int(float(t.group(1)) * 60)
         except:
             pass
             # I guess it's not this format...
@@ -271,7 +271,7 @@ class Music(commands.Cog):
         try:
             t = re.search("([0-9]+:[0-9]+)", time)
             r = t.group(1).split(":")
-            time = (r[0] * 60) + r[1]
+            time = (int(r[0]) * 60) + int(r[1])
         except:
             pass
             # I guess it's not this format...
@@ -279,11 +279,11 @@ class Music(commands.Cog):
         ## CASE 3
         try:
             t = re.findall("([0-9\.]+([ms]| [ms]))", time)
-            ovalue = t[0].group(1)
+            ovalue = int(t[0].group(1))
             otype = t[0].group(2)
             otime = ovalue * time_dict[otype]
             try:
-                tvalue = t[1].group(1)
+                tvalue = int(t[1].group(1))
                 ttype = t[1].group(2)
                 ttime = ttime * time_dict[ttype]
             except:
@@ -297,7 +297,7 @@ class Music(commands.Cog):
         ## CASE 4
         try:
             t = re.search("\n([0-9]+\n)", time)
-            time = t.group(1).strip("\n")
+            time = int(t.group(1).strip("\n"))
         except:
             pass
             # I guess it's not this format...
@@ -320,11 +320,16 @@ class Music(commands.Cog):
         if player.track.isStream:
             dur = 'LIVE'
         else:
-            dur = f"{str(datetime.timedelta(seconds=player.position))}\\{str(datetime.timedelta(seconds=player.track.length))}"
+            #player current
+            playerMinutes, playerSeconds = divmod(player.position, 60)
+            #song total
+            songMinutes, songSeconds = divmod(player.track.length, 60)
+            #format string
+            dur = f"{str(playerMinutes)}:{str(playerSeconds)} out of {str(songMinutes)}:{str(songSeconds)}"
             song = f'**[{player.track.title}]({player.track.uri})**\n({dur})'
         embed = discord.Embed(colour=discord.Color.blurple(), title='Now Playing', description=song)
         await ctx.send(embed=embed)
-        
+
     @commands.command()
     async def pause(self, ctx):
         player: CustomPlayer = ctx.voice_client
@@ -344,7 +349,7 @@ class Music(commands.Cog):
     #filters
     @commands.command()
     async def setFilter(self, ctx):
-        await ctx.send(view=buttonLIB.filterButtons(ctx))
+        await ctx.send(view=buttonLIB.filterButtons(ctx=ctx))
 
     @commands.command()
     async def volume(self, ctx, level: int):
