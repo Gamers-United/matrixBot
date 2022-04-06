@@ -78,7 +78,7 @@ class Music(commands.Cog):
         #setup the player
         player: CustomPlayer = await channel.connect(cls=CustomPlayer)
         player.context = ctx
-        await ctx.guild.change_voice_state(self_deaf=True)
+        await ctx.guild.change_voice_state(channel=channel,self_deaf=True)
         await ctx.send(f"Connected to {channel.mention}")
 
     @commands.command(aliases=['dc','stop','leave'])
