@@ -148,7 +148,7 @@ class Music(commands.Cog):
         elif selectitem == False:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
-            for item in result:
+            for item in result[:5]:
                 itemListEmbed.add_field(name=(str(result.index(item))+". "+str(item.title)), value=str(item.uri), inline=False)
             await ctx.send(embed=itemListEmbed)
 
