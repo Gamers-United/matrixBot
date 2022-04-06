@@ -42,17 +42,17 @@ class Music(commands.Cog):
 
     @commands.Cog.listener()
     async def on_lavapy_track_end(self, player, track, reason):
-        await player.playNext()
+        await player.playNext(track)
     
     @commands.Cog.listener()
     async def on_lavapy_track_exception(self, player: CustomPlayer, track: lavapy.Track, exception: Dict[str, str]) -> None:
         await player.context.send(embed=Embed(title="An error has occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
-        await player.playNext()
+        await player.playNext(track)
     
     @commands.Cog.listener()
     async def on_lavapy_track_stuck(self, player: CustomPlayer, track: lavapy.Track, threshold: float) -> None:
         await player.context.send(embed=Embed(title="A playback error hass occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
-        await player.playNext()
+        await player.playNext(track)
 
     async def cog_before_invoke(self, ctx):
         """ Command before-invoke handler. """
@@ -203,8 +203,12 @@ class Music(commands.Cog):
             return
         elif index < 1:
             await ctx.send("Song to remove must have an index higher than or equal to 1.")
+            return
         elif index == 1:
-            await player.queue.next()
+            try:
+                await player.queue.next()
+            except lavapy.QueueEmpty:
+                await player.stop()
         index = index - 1
         removed = player.queue.tracks.pop(index)
         await ctx.send(f"Removed *{removed.title}* from the queue.")
@@ -231,7 +235,11 @@ class Music(commands.Cog):
     @commands.command()
     async def shuffle(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        player.queue.shuffle()
+        if len(player.queue.tracks) == 0:
+            await ctx.send("No tracks to shuffle!")
+            return
+        else:
+            player.queue.shuffle()
         await ctx.send(f"Shuffled the queue")
 
     @commands.command()
@@ -285,7 +293,7 @@ class Music(commands.Cog):
             try:
                 tvalue = int(t[1].group(1))
                 ttype = t[1].group(2)
-                ttime = ttime * time_dict[ttype]
+                ttime = tvalue * time_dict[ttype]
             except:
                 pass
                 # I guess this only contains either minutes or seconds...
@@ -307,8 +315,8 @@ class Music(commands.Cog):
             return
 
         #seek the player
-        await player.seek(time)
-        await ctx.send(f'Moved track to **{str(datetime.timedelta(seconds=time))}**')
+        await player.seek(int(time))
+        await ctx.send(f'Moved track to **{str(datetime.timedelta(seconds=int(time)))}**')
 
     @commands.command(aliases=['np'])
     async def nowplaying(self, ctx):

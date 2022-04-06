@@ -4,7 +4,8 @@ from musicplayer import CustomPlayer
 import lavapy
 
 filterOptions = [
-    discord.SelectOption(label="Equalizer", default=True),
+    discord.selectOption(label="Select Filter", default=True),
+    discord.SelectOption(label="Equalizer"),
     discord.SelectOption(label="Karaoke"),
     discord.SelectOption(label="Timescale"),
     discord.SelectOption(label="Tremolo"),

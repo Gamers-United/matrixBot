@@ -16,9 +16,11 @@ class CustomPlayer(lavapy.Player):
         self.context: Optional[commands.Context] = None
 
     # handle the next track
-    async def playNext(self) -> None:
+    async def playNext(self, prevTrack = None) -> None:
         if self.queue.isEmpty:
             await self.context.send("Queue is complete. Disconnecting.")
             await self.destroy()
+        elif self.isRepeating:
+            await self.play(prevTrack)
         else:
             await self.play(self.queue.next())
