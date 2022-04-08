@@ -180,7 +180,7 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         try:
             if number == 1:
-                await player.playNext()
+                await player.play(player.queue.next())
             elif number > 1:
                 player.queue.tracks = player.queue.tracks[number:]
                 await ctx.send("Removed first "+str(number)+" songs!")
