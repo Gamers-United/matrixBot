@@ -1,7 +1,6 @@
 import re
 import discord
-import lavapy
-from lavapy.ext import spotify
+import pomice
 import math
 import asyncio
 from discord.ext import commands
@@ -15,44 +14,43 @@ from musicplayer import CustomPlayer
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 time_rx = re.compile('[0-9]+')
 
-class YoutubeMusicPlaylist(lavapy.YoutubePlaylist):
-    _trackCls: Type[lavapy.Track] = lavapy.YoutubeMusicTrack
+# class YoutubeMusicPlaylist(lavapy=):
+#     _trackCls: Type[lavapy.Track] = lavapy.YoutubeMusicTrack
 
-    def __repr__(self) -> str:
-        return f"<Lavapy YoutubeMusicPlaylist (Name={self.name}) (Track count={len(self.tracks)})>"
-
+#     def __repr__(self) -> str:
+#         return f"<Lavapy YoutubeMusicPlaylist (Name={self.name}) (Track count={len(self.tracks)})>"
 
 class Music(commands.Cog):
     #initalization
     def __init__(self, bot):
         self.bot: discord.ext.commands.bot = bot
+        self.pomice = pomice.NodePool()
     
     async def cog_load(self):
         await self.bot.wait_until_ready()
-        await lavapy.NodePool.createNode(client=self.bot, host="10.100.1.56", port=19999,
-        password="mltechmaynotpassthispointwithoutpermission",
-        spotifyClient=spotify.SpotifyClient(clientID="0de30a1427ad404f877dd2ef005942ba", clientSecret="c63891d0313442489e39aeb05419f209"),
-        identifier="Main")
+        await self.pomice.create_node(
+            bot=self.bot,
+            host="10.100.1.56",
+            port="19999",
+            password="mltechmaynotpassthispointwithoutpermission",
+            identifier="Main",
+            spotify_client_id="0de30a1427ad404f877dd2ef005942ba",
+            spotify_client_secret="c63891d0313442489e39aeb05419f209"
+        )
         print("Lavalink Is Setup & Ready")
 
     # Handle the listeners
     @commands.Cog.listener()
-    async def on_lavapy_track_start(self, player: CustomPlayer, track: lavapy.Track) -> None:
-        await player.context.send(embed=Embed(title="Now Playing:", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
+    async def on_pomice_track_end(self, player: CustomPlayer, track: pomice.Track, _) -> None:
+        await player.handleNextTrack()
 
     @commands.Cog.listener()
-    async def on_lavapy_track_end(self, player, track, reason):
-        await player.playNext(track)
+    async def on_pomice_track_stuck(self, player: CustomPlayer, track: pomice.Track, _):
+        await player.handleNextTrack()
     
     @commands.Cog.listener()
-    async def on_lavapy_track_exception(self, player: CustomPlayer, track: lavapy.Track, exception: Dict[str, str]) -> None:
-        await player.context.send(embed=Embed(title="An error has occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
-        await player.playNext(track)
-    
-    @commands.Cog.listener()
-    async def on_lavapy_track_stuck(self, player: CustomPlayer, track: lavapy.Track, threshold: float) -> None:
-        await player.context.send(embed=Embed(title="A playback error hass occured", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
-        await player.playNext(track)
+    async def on_pomice_track_exception(self, player: CustomPlayer, track: pomice.Track, _) -> None:
+        await player.handleNextTrack()
 
     async def cog_before_invoke(self, ctx):
         """ Command before-invoke handler. """
@@ -98,60 +96,34 @@ class Music(commands.Cog):
     @commands.command(aliases=['p'])
     async def play(self, ctx: discord.ext.commands.Context, *, query: str = None):
         """ Searches and plays a song from a given query. """
-        if not ctx.voice_client:
-            await ctx.invoke(self.connect)
         player: CustomPlayer = ctx.voice_client
-        if player.isPaused == True and query is None:
-            await player.resume()
+        if not player:
+            await ctx.invoke(self.connect)
+        if player.is_paused == True and query is None:
+            await player.set_pause(False)
             await ctx.send("Unpausing player!")
             return
         if not player:
             #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
             await ctx.send("You are not in a voice channel.")
             return
-        #handle playing!!!!
-        if re.compile("https://www.youtube.com/watch\?v=.+").match(query):
-            selectitem = True
-            result = await lavapy.YoutubeTrack.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://music.youtube.com/watch\?v=.+").match(query):
-            selectitem = True
-            result = await lavapy.YoutubeMusicTrack.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://music.youtube.com/playlist\?list=.+").match(query):
-            selectitem = True
-            result = await YoutubeMusicPlaylist.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://soundcloud.com/(?!discover).+").match(query) and "sets" not in query:
-            selectitem = True
-            result = await lavapy.SoundcloudTrack.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://soundcloud.com/(?!discover).+").match(query) and "sets" in query:
-            await ctx.send("Sorry! We can not handle soundcloud playlists.")
-            return
-        elif re.compile(".+\.mp3").match(query):
-            selectitem = True
-            result = await lavapy.LocalTrack.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://www.youtube.com/playlist\?list=.+").match(query):
-            selectitem = True
-            result = await lavapy.YoutubePlaylist.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://open\.spotify\.com/track").match(query):
-            selectitem = True
-            result = await spotify.SpotifyTrack.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://open\.spotify\.com/playlist").match(query):
-            selectitem = True
-            result = await spotify.SpotifyPlaylist.search(query, returnFirst=selectitem, partial=False)
-        elif re.compile("https://open\.spotify\.com/track/album").match(query):
-            selectitem = True
-            result = await spotify.SpotifyAlbum.search(query, returnFirst=selectitem, partial=False)
-        else:
-            selectitem = False
-            result = await lavapy.YoutubeMusicTrack.search(query, returnFirst=selectitem, partial=False)
-        if result is None:
+        #handle playing
+        results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytmsearch)
+
+        if not results:
             await ctx.send("No results were found")
             return
-        elif selectitem == False:
+        if isinstance(results, pomice.Playlist):
+            for track in results.tracks:
+                await player.queue.put(track)
+        elif len(reuslts) == 1:
+            await player.queue.put(results[0])
+        else:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
             top5 = result[:5]
             for item in top5:
-                itemListEmbed.add_field(name=(str(result.index(item)+1)+". "+str(item.title)), value=str(item.uri), inline=False)
+                itemListEmbed.add_field(name=(str(result.index(item)+1)+". "+str(item.info["title"])), value=str(item.info["uri"]), inline=False)
             await ctx.send(embed=itemListEmbed)
 
             #await for response
@@ -165,70 +137,66 @@ class Music(commands.Cog):
                 result = result[selectionint]
             except ValueError:
                 await ctx.send("Invalid selection")
-        # Play the track(s)
-        if player.isPlaying:
-            if isinstance(result, lavapy.MultiTrack):
-                player.queue.addIterable(result.tracks)
-            else:
-                player.queue.add(result)
-            return
-        await player.play(result)
+        #make sure the player is playing at this stage
+        if not player.is_playing:
+            await player.handleNextTrack()
 
     #managment commands
     @commands.command()
     async def skip(self, ctx, number: int = 1):
         player: CustomPlayer = ctx.voice_client
-        try:
-            if number == 1:
-                await player.playNext()
-            elif number > 1:
-                player.queue.tracks = player.queue.tracks[number:]
-                await ctx.send("Removed first "+str(number)+" songs!")
-            else:
-                await ctx.send("Song skipped!")
-        except lavapy.QueueEmpty:
-            await ctx.send("Queue is empty!")
+        if number == 1:
             await player.stop()
-        except lavapy.RepeatException:
-            await ctx.send("Player is currently repeating the current song. Use !repeat to cancel this.")
+            await ctx.send("Song skipped!")
+        elif number > 1:
+            if player.queue.qsize() < number:
+                return await ctx.send("Requested to skip more songs than in queue!")  
+            for i in range(1,number):
+                player.queue.get_nowait()
+            return await ctx.send("Removed first "+str(number)+" songs!")
 
     @commands.command()
     async def remove(self, ctx, index: int):
         player: CustomPlayer = ctx.voice_client
-        if not player.queue:
+        if player.queue.qsize() == 0:
             await ctx.send('Nothing queued!')
             return
-        elif index > len(player.queue.tracks): 
-            await ctx.send('Song to remove must be less than the queue length!')
+        elif index > player.queue.qsize(): 
+            await ctx.send('Can not remove a song past the number of songs in queue!')
             return
         elif index < 1:
             await ctx.send("Song to remove must have an index higher than or equal to 1.")
             return
         elif index == 1:
-            try:
-                await player.queue.next()
-            except lavapy.QueueEmpty:
-                await player.stop()
+            await player.stop()
         index = index - 1
-        removed = player.queue.tracks.pop(index)
-        await ctx.send(f"Removed *{removed.title}* from the queue.")
+        #rotate the queue so that the song can be popped from the left hand side, and then rotate back.
+        player.queue._queue.rotate(index)
+        removed = player.queue._queue.pop()
+        player.queue._queue.rotate((index * -1))
+        title = removed.info["title"]
+        await ctx.send(f"Removed *{title}* from the queue.")
 
     @commands.command()
     async def queue(self, ctx, page: int = 1):
         player: CustomPlayer = ctx.voice_client
+        queue = player.queue._queue.copy()
+        songs = []
+        for i in range(1, player.queue.qsize()):
+            songs.append(player.queue._queue.pop())
 
         #probably should eventually be moved into the config?
         items_per_page = 10
-        pages = math.ceil(len(player.queue.tracks) / items_per_page)
+        pages = math.ceil(len(songs) / items_per_page)
 
         start = (page - 1) * items_per_page
         end = start + items_per_page
 
         queue_list = ''
-        for index, track in enumerate(player.queue.tracks[start:end], start=start):
+        for index, track in enumerate(songs[start:end], start=start):
             queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
 
-        embed = discord.Embed(colour=discord.Color.blurple(), description=f'**{len(player.queue.tracks)} tracks**\n\n{queue_list}')
+        embed = discord.Embed(colour=discord.Color.blurple(), description=f'**{len(songs)} tracks**\n\n{queue_list}')
         embed.set_footer(text=f'Viewing page {page}/{pages}!')
         await ctx.send(embed=embed)
     
@@ -341,7 +309,7 @@ class Music(commands.Cog):
     @commands.command()
     async def pause(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if player.isPaused:
+        if player.is_paused:
             await ctx.send("Player already paused!")
         else:
             await player.pause()
@@ -350,7 +318,7 @@ class Music(commands.Cog):
     @commands.command(aliases=['unpause'])
     async def resume(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if player.isPaused:
+        if player.is_paused:
             await ctx.send("Unpausing player!")
             await player.resume()
 
