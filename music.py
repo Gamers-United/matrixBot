@@ -154,6 +154,7 @@ class Music(commands.Cog):
                 return await ctx.send("Requested to skip more songs than in queue!")  
             for i in range(1,number):
                 player.queue.get_nowait()
+            await player.stop()
             return await ctx.send("Removed first "+str(number)+" songs!")
 
     @commands.command()

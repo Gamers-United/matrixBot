@@ -28,7 +28,7 @@ class CustomPlayer(pomice.Player):
         try:
             track: pomice.Track = self.queue.get_nowait()
         except asyncio.QueueEmpty:
-            return await self.teardown()
+            return await self.exit()
 
         await self.play(track)
 
