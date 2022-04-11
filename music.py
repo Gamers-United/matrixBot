@@ -225,7 +225,7 @@ class Music(commands.Cog):
     @commands.command()
     async def seek(self, ctx, time: str):
         player: CustomPlayer = ctx.voice_client
-        if not player.isPlaying:
+        if not player.is_playing:
             return await ctx.send('Nothing playing!')
 
         # Possible REGEX searches
