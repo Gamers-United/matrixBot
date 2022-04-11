@@ -116,7 +116,7 @@ class Music(commands.Cog):
         if isinstance(results, pomice.Playlist):
             for track in results.tracks:
                 await player.queue.put(track)
-        elif len(reuslts) == 1:
+        elif len(results) == 1:
             await player.queue.put(results[0])
         else:
             # generate embed and send it out here
