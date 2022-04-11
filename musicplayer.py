@@ -33,9 +33,9 @@ class CustomPlayer(pomice.Player):
         await self.play(track)
 
         if track.is_stream:
-            await self.context.send(embed=discord.Embed(title="Now Playing Live:", description=f"**{track.title}({player.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
+            await self.context.send(embed=discord.Embed(title="Now Playing Live:", description=f"**{track.title}({self.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
         else:
-            await self.context.send(embed=discord.Embed(title="Now Playing:", description=f"**{track.title}({player.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
+            await self.context.send(embed=discord.Embed(title="Now Playing:", description=f"**{track.title}({self.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
 
     async def exit(self):
         """closes the player down in the guild"""
