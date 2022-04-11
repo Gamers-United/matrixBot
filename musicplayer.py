@@ -8,6 +8,7 @@ from discord import VoiceChannel, Embed, Colour
 from lyrics import Lyrics
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union
 from contextlib import suppress
+import datetime
 
 class CustomPlayer(pomice.Player):
     """Custom player class"""
