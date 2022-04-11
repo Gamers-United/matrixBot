@@ -26,10 +26,6 @@ class CustomPlayer(pomice.Player):
         if self.is_repeating:
             await self.play(self.repeatedTrack)
             return
-
-        if self.np:
-            with supress(discord.HTTPException):
-                await self.controller.delete()
         
         try:
             track: pomice.Track = self.queue.get_nowait()
@@ -55,8 +51,6 @@ class CustomPlayer(pomice.Player):
         """closes the player down in the guild"""
         with suppress((discord.HTTPException), (KeyError)):
             await self.destroy()
-            if self.controller:
-                await self.controller.delete()
 
     async def addContext(self, ctx: commands.Context):
         """Add a context variable for now playing messages"""

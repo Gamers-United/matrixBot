@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from musicplayer import CustomPlayer
-import lavapy
+import pomice
 
 filterOptions = [
     discord.SelectOption(label="Select Filter", default=True),
@@ -55,12 +55,11 @@ class filterButtons(discord.ui.View):
     def __init__(self, *, timeout=120, ctx: discord.ext.commands.Context):
         super().__init__(timeout=timeout)
         self.ctx = ctx
-    
+
     @discord.ui.select(placeholder="Select Filter", options=filterOptions)
     async def eqButton(self,select:discord.ui.select,interaction:discord.Interaction):
-        await self.ctx.send(view=filterButtonsOptions(self.ctx, filterArgumentOptions[select.value], select.value))
+        await self.ctx.send(view=filterButtonsOptions(self.ctx, filterArgumentOptions[interaction.values[0]], interaction.values[0]))
 
-        
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
             return False
@@ -125,13 +124,12 @@ class filterButtonsOptions(discord.ui.View):
     async def submitButton(self,button:discord.ui.button,interaction:discord.Interaction):
         player: CustomPlayer = self.ctx.voice_client
         if self.type == "Equalizer":
-            if player.filters["Equalizer"] is None:
-                eq = lavapy.Equalizer.flat()
-                eq.equalizerName = "Equalizer"
+            if player.filter is None:
+                eq = pomice.filters.Equalizer()
             else:
                 eq = player.filters["Equalizer"]
             eq.levels[int(self.valuea)] = float(self.valueb)
-            await player.addFilter(eq)
+            await player.set_filter(eq, fast_apply=True)
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
