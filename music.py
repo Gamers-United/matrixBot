@@ -99,6 +99,7 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         if not player:
             await ctx.invoke(self.connect)
+        player: CustomPlayer = ctx.voice_client
         if not player:
             #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
             await ctx.send("You are not in a voice channel.")
