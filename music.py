@@ -184,8 +184,9 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         queue = player.queue._queue.copy()
         songs = []
-        for i in range(1, player.queue.qsize()):
-            songs.append(player.queue._queue.pop())
+        for i in range(0, queue.qsize()):
+            songs.append(queue.pop())
+        print(songs)
 
         #probably should eventually be moved into the config?
         items_per_page = 10
@@ -332,13 +333,13 @@ class Music(commands.Cog):
     @commands.command()
     async def volume(self, ctx, level: int):
         player: CustomPlayer = ctx.voice_client
-        if level > 1000:
+        if level > 500:
             await ctx.send("Volume too high!")
         elif level < 0:
             await ctx.send("Volume too low!")
         else:
-            await player.setVolume(level/2)
-            await ctx.send(f"Set volume to {level/2}%")
+            await player.set_volume(level)
+            await ctx.send(f"Set volume to {level}%")
 
     @commands.command()
     async def deleteFilter(self,ctx):
