@@ -186,7 +186,6 @@ class Music(commands.Cog):
         songs = []
         for i in range(0, player.queue.qsize()):
             songs.append(queue.pop())
-        print(songs)
 
         #probably should eventually be moved into the config?
         items_per_page = 10
