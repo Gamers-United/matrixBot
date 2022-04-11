@@ -37,7 +37,7 @@ class CustomPlayer(pomice.Player):
         else:
             await self.context.send(embed=discord.Embed(title="Now Playing:", description=f"{track.title}", url=track.uri, colour=Colour.green(), timestamp=datetime.datetime.now()))
 
-    async def exit(Self):
+    async def exit(self):
         """closes the player down in the guild"""
         with suppress((discord.HTTPException), (KeyError)):
             await self.destroy()
