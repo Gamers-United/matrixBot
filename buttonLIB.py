@@ -58,7 +58,7 @@ class filterButtons(discord.ui.View):
     
     @discord.ui.select(placeholder="Select Filter", options=filterOptions)
     async def eqButton(self,select:discord.ui.select,interaction:discord.Interaction):
-        await ctx.send(view=filterButtonsOptions(self.ctx, filterArgumentOptions[select.value], select.value))
+        await self.ctx.send(view=filterButtonsOptions(self.ctx, filterArgumentOptions[select.value], select.value))
 
         
     async def interaction_check(self, interaction: discord.Interaction):
