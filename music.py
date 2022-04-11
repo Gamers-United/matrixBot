@@ -99,13 +99,13 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         if not player:
             await ctx.invoke(self.connect)
-        if player.is_paused == True and query is None:
-            await player.set_pause(False)
-            await ctx.send("Unpausing player!")
-            return
         if not player:
             #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
             await ctx.send("You are not in a voice channel.")
+            return
+        if player.is_paused == True and query is None:
+            await player.set_pause(False)
+            await ctx.send("Unpausing player!")
             return
         #handle playing
         results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytmsearch)
