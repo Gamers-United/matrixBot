@@ -288,9 +288,11 @@ class Music(commands.Cog):
             return
 
         #seek the player
-        await player.seek(int(time))
+        #DEBUG!!!!
+        print(time)
+        await player.seek(float(time))
         await ctx.send(f'Moved track to **{str(datetime.timedelta(seconds=int(time)))}**')
-
+ 
     @commands.command(aliases=['np'])
     async def nowplaying(self, ctx):
         player: CustomPlayer = ctx.voice_client
@@ -351,7 +353,7 @@ class Music(commands.Cog):
     @commands.command()
     async def lyrics(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        results = Lyrics.SearchForLyrics(player.track.title)
+        results = Lyrics.SearchForLyrics(player.current.title)
         if len(results) == 0:
             await ctx.send("No Lyrics Found")
         else:
