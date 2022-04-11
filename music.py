@@ -184,7 +184,7 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         queue = player.queue._queue.copy()
         songs = []
-        for i in range(0, queue.qsize()):
+        for i in range(0, player.queue.qsize()):
             songs.append(queue.pop())
         print(songs)
 
