@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Ty
 import datetime
 import buttonLIB
 from musicplayer import CustomPlayer
+from random import shuffle
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 time_rx = re.compile('[0-9]+')
@@ -94,7 +95,7 @@ class Music(commands.Cog):
             await ctx.send("The bot has left the channel.")
 
     @commands.command(aliases=['p'])
-    async def play(self, ctx: discord.ext.commands.Context, *, query: str = None):
+    async def play(seshufflelf, ctx: discord.ext.commands.Context, *, query: str = None):
         """ Searches and plays a song from a given query. """
         player: CustomPlayer = ctx.voice_client
         if not player:
@@ -138,6 +139,7 @@ class Music(commands.Cog):
                 await player.queue.put(result)
             except ValueError:
                 await ctx.send("Invalid selection")
+        await ctx.send("Song added to Queue")
         #make sure the player is playing at this stage
         if not player.is_playing:
             await player.handleNextTrack()
@@ -181,6 +183,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def queue(self, ctx, page: int = 1):
+        await ctx.invoke(self.nowplaying)
         player: CustomPlayer = ctx.voice_client
         queue = player.queue._queue.copy()
         songs = []
@@ -205,17 +208,17 @@ class Music(commands.Cog):
     @commands.command()
     async def shuffle(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if len(player.queue.tracks) == 0:
+        if player.queue.qsize() == 0:
             await ctx.send("No tracks to shuffle!")
             return
         else:
-            player.queue.shuffle()
+            shuffle(player.queue._queue)
         await ctx.send(f"Shuffled the queue")
 
     @commands.command()
     async def repeat(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if player.isRepeating:
+        if player.is_repeating:
             player.stopRepeat()
             await ctx.send("Stopped repeating player!")
         else:
@@ -231,7 +234,7 @@ class Music(commands.Cog):
         # Possible REGEX searches
         # HIGHEST TO LOWEST PRIORITY
         # FIND TYPE: <minutes>.<partial minutes> -- \n([0-9]\.[0-9]+)\n -- group contains e.g. 5.5, split by "." and times second part by 60.
-        # FIND TYPE: <minutes>:<seconds> -- ([0-9]+:[0-9]+) -- group contains e.g. 5:30, split by ";"
+        # FIND TYPE: <minutes>:<seconds> -- ([0-9]+:[0-9]+) -- group contains e.g. 5:30, split by ":"
         # FIND TYPE: <minutes>M+<seconds> -- ([0-9\.]+([ms]| [ms])) -- for each match, group 1 is value, group 2 is unit (possibly including a \n)
         # IF NOTHING ELSE MATCHES. INTERPRET AS SECONDS BY ITSELF -- \n([0-9]+\n)
         # OTHERWISE ERROR
@@ -239,7 +242,7 @@ class Music(commands.Cog):
 
         ## CASE 1
         try:
-            t = re.search("\n([0-9]\.[0-9]+)\n", time)
+            t = re.search("([0-9]\.[0-9]+)", time)
             time = int(float(t.group(1)) * 60)
         except:
             pass

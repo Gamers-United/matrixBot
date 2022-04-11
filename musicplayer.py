@@ -17,10 +17,16 @@ class CustomPlayer(pomice.Player):
         self.queue = asyncio.Queue()
         self.context: commands.Context = None
         self.np: discord.Message = None
+        self.is_repeating = False
+        self.repeatedTrack: pomice.Track = None
 
     # handle the next track
     async def handleNextTrack(self) -> None:
         """Handles the next track playing, and now playing prompt with context"""
+        if self.is_repeating:
+            await self.play(self.repeatedTrack)
+            return
+
         if self.np:
             with supress(discord.HTTPException):
                 await self.controller.delete()
@@ -33,9 +39,17 @@ class CustomPlayer(pomice.Player):
         await self.play(track)
 
         if track.is_stream:
-            await self.context.send(embed=discord.Embed(title="Now Playing Live:", description=f"**{track.title}({self.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
+            await self.context.send(embed=discord.Embed(title="Now Playing Live:", description=f"**[{track.title}]({self.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
         else:
-            await self.context.send(embed=discord.Embed(title="Now Playing:", description=f"**{track.title}({self.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
+            await self.context.send(embed=discord.Embed(title="Now Playing:", description=f"**[{track.title}]({self.current.uri})**", colour=Colour.green(), timestamp=datetime.datetime.now()))
+
+    async def stopRepeat(self):
+        self.is_repeating = False
+        self.repeatedTrack = None
+
+    async def startRepeat(self):
+        self.is_repeating = True
+        self.repeatedTrack = self.current
 
     async def exit(self):
         """closes the player down in the guild"""
