@@ -299,12 +299,12 @@ class Music(commands.Cog):
             dur = 'LIVE'
         else:
             #player current
-            playerMinutes, playerSeconds = divmod(player.position, 60)
+            playerMinutes, playerSeconds = divmod((player.position/1000), 60)
             #song total
-            songMinutes, songSeconds = divmod(player.current.length, 60)
+            songMinutes, songSeconds = divmod((player.current.length/1000), 60)
             #format string
-            dur = f"{str(playerMinutes)}:{str(playerSeconds)} out of {str(songMinutes)}:{str(songSeconds)}"
-            song = f'**[{player.current.title}]({player.current.uri})**\n({dur})'
+            dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
+            song = f'**[{player.current.title}]({player.current.uri})**\n{dur}'
         embed = discord.Embed(colour=discord.Color.blurple(), title='Now Playing', description=song)
         await ctx.send(embed=embed)
 
