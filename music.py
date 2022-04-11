@@ -121,7 +121,7 @@ class Music(commands.Cog):
         else:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
-            top5 = result[:5]
+            top5 = results[:5]
             for item in top5:
                 itemListEmbed.add_field(name=(str(result.index(item)+1)+". "+str(item.info["title"])), value=str(item.info["uri"]), inline=False)
             await ctx.send(embed=itemListEmbed)
@@ -134,7 +134,8 @@ class Music(commands.Cog):
             #process the selection to add to the track object.
             try:
                 selectionint = int(selection.content)-1
-                result = result[selectionint]
+                result = results[selectionint]
+                await player.queue.put(result)
             except ValueError:
                 await ctx.send("Invalid selection")
         #make sure the player is playing at this stage
