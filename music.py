@@ -292,19 +292,19 @@ class Music(commands.Cog):
     async def nowplaying(self, ctx):
         player: CustomPlayer = ctx.voice_client
         song = 'Nothing'
-        if player.track is None:
+        if player.current is None:
             await ctx.send("Nothing playing... Play something now with !play")
             return
-        if player.track.isStream:
+        if player.current.is_stream:
             dur = 'LIVE'
         else:
             #player current
             playerMinutes, playerSeconds = divmod(player.position, 60)
             #song total
-            songMinutes, songSeconds = divmod(player.track.length, 60)
+            songMinutes, songSeconds = divmod(player.current.length, 60)
             #format string
             dur = f"{str(playerMinutes)}:{str(playerSeconds)} out of {str(songMinutes)}:{str(songSeconds)}"
-            song = f'**[{player.track.title}]({player.track.uri})**\n({dur})'
+            song = f'**[{player.current.title}]({player.current.uri})**\n({dur})'
         embed = discord.Embed(colour=discord.Color.blurple(), title='Now Playing', description=song)
         await ctx.send(embed=embed)
 
