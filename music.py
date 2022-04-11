@@ -95,7 +95,7 @@ class Music(commands.Cog):
             await ctx.send("The bot has left the channel.")
 
     @commands.command(aliases=['p'])
-    async def play(seshufflelf, ctx: discord.ext.commands.Context, *, query: str = None):
+    async def play(self, ctx: discord.ext.commands.Context, *, query: str = None):
         """ Searches and plays a song from a given query. """
         player: CustomPlayer = ctx.voice_client
         if not player:
