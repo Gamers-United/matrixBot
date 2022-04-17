@@ -121,7 +121,7 @@ class Music(commands.Cog):
             await player.queue.put(results[0])
         else:
             # generate embed and send it out here
-            itemListEmbed = discord.Embed(colour=discord.Color.blurple(), title="Song Search Results", description="Type number in chat for correct song")
+            itemListEmbed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results", description="Type number in chat for correct song")
             top5 = results[:5]
             for item in top5:
                 itemListEmbed.add_field(name=(str(results.index(item)+1)+". "+str(item.info["title"])), value=str(item.info["uri"]), inline=False)
