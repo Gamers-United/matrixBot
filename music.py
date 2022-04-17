@@ -75,9 +75,8 @@ class Music(commands.Cog):
                 await ctx.send("You must be in a voice channel in order to use the join command.")
                 return
         #setup the player
-        player: CustomPlayer = await channel.connect(cls=CustomPlayer)
+        player: CustomPlayer = await channel.connect(cls=CustomPlayer, self_deaf=True) 
         player.context = ctx
-        await ctx.guild.change_voice_state(channel=channel,self_deaf=True)
         await ctx.send(f"Connected to {channel.mention}")
 
     @commands.command(aliases=['dc','stop','leave'])
@@ -188,7 +187,7 @@ class Music(commands.Cog):
         queue = player.queue._queue.copy()
         songs = []
         for i in range(0, player.queue.qsize()):
-            songs.append(queue.pop())
+            songs.append(queue.popleft())
 
         #probably should eventually be moved into the config?
         items_per_page = 10
@@ -310,7 +309,7 @@ class Music(commands.Cog):
             #format string
             dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
             song = f'**[{player.current.title}]({player.current.uri})**\n{dur}'
-        embed = discord.Embed(colour=discord.Color.blurple(), title='Now Playing', description=song)
+        embed = discord.Embed(colour=discord.Color.dark_red(), title='Now Playing', description=song)
         await ctx.send(embed=embed)
 
     @commands.command()
