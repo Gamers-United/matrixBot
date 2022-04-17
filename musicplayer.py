@@ -51,7 +51,3 @@ class CustomPlayer(pomice.Player):
         """closes the player down in the guild"""
         with suppress((discord.HTTPException), (KeyError)):
             await self.destroy()
-
-    async def addContext(self, ctx: commands.Context):
-        """Add a context variable for now playing messages"""
-        self.context = ctx
