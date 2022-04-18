@@ -28,7 +28,7 @@ with open("settings.json", "r+") as settingsfile:
 @bot.event
 async def on_ready():
     await bot.load_extension('randomresults')
-    #await bot.load_extension('voice')
+    await bot.load_extension('voice')
     await bot.load_extension('dev')
     await bot.load_extension('music')
     await bot.load_extension('humor')
@@ -115,7 +115,8 @@ async def help(ctx):
     queue 'page'
     lyrics (for the current song)
     remove 'number in queue to remove'
-    skip 'number to skip (default of 1)'""", inline=False)
+    skip 'number to skip (default of 1)'
+    suggested""", inline=False)
     embed.add_field(name="Music | Advanced", value="""volume 'level' (0 to 500%)
     setFilter (GUI Command)
     deleteFilter (GUI Command)""", inline=False)
