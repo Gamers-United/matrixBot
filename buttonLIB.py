@@ -139,3 +139,37 @@ class filterButtonsOptions(discord.ui.View):
 
     async def on_timeout(self):
         await self.ctx.send("Timed out!")
+
+playlistURLs = {
+    "Volume 1 - Pop": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0RbBze4S_GfDFfS_-eCVhTS",
+    "Volume 2 - LoFi": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0Tfycktq-HD32LuDwexZAFq",
+    "Volume 3 - Car GO FAST": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0QO3m7AJDQnTww7wQEKXWMq",
+    "Volume 4 - Jazz": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0QCi1TBjNf_JwA__8YEJcHy",
+    "Volume 5 - Dance/Electronic Dance": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0TBUtDJuaGEIrXnRqhN3Zwp",
+    "Volume 6 - Synthwave": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0SjsSguqmpAjAYIly0giyI5",
+    "Volume 7 - Upbeat EDM": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0TRFyq23HJTN7bhKrdYD5-n",
+    "Volume 8 - Piano": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0S4pzW4yuaGrV7S8HOMmBUk"
+}
+
+class playlistSelector(discord.ui.Select):
+    def __init__(self, music, ctx):
+        self.music = music
+        self.ctx = ctx
+        options = [
+            discord.SelectOption(label="Select Playlist", default=True),
+            discord.SelectOption(label="Volume 1 - Pop"),
+            discord.SelectOption(label="Volume 2 - LoFi"),
+            discord.SelectOption(label="Volume 3 - Car GO FAST"),
+            discord.SelectOption(label="Volume 4 - Jazz"),
+            discord.SelectOption(label="Volume 5 - Dance/Electronic Dance"),
+            discord.SelectOption(label="Volume 6 - Synthwave"),
+            discord.SelectOption(label="Volume 7 - Upbeat EDM"),
+            discord.SelectOption(label="Volume 8 - Piano"),
+        ]
+    async def callback(self, interaction: discord.Interaction):
+        await ctx.invoke(music.play, query=playlistURLs[self.values[0]])
+
+class playlistPlayer(discord.ui.View):
+    def __init__(self, *, timeout=120, music, ctx: discord.ext.commands.Context):
+        super().__init__(timeout=timeout)
+        self.add_item(playlistSelector(music=music, ctx=ctx))
