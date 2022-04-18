@@ -289,7 +289,7 @@ class Music(commands.Cog):
         #seek the player
         #DEBUG!!!!
         print(time)
-        await player.seek(float(time))
+        await player.seek(float(time*1000))
         await ctx.send(f'Moved track to **{str(datetime.timedelta(seconds=int(time)))}**')
  
     @commands.command(aliases=['np'])
@@ -318,7 +318,7 @@ class Music(commands.Cog):
         if player.is_paused:
             await ctx.send("Player already paused!")
         else:
-            await player.pause()
+            await player.set_pause(True)
             await ctx.send("Player paused!")
     
     @commands.command(aliases=['unpause'])
@@ -326,7 +326,7 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         if player.is_paused:
             await ctx.send("Unpausing player!")
-            await player.resume()
+            await player.set_pause(False)
 
     #filters
     @commands.command()
