@@ -58,7 +58,7 @@ class filterButtons(discord.ui.View):
 
     @discord.ui.select(placeholder="Select Filter", options=filterOptions)
     async def eqButton(self,select:discord.ui.select,interaction:discord.Interaction):
-        await self.ctx.send(view=filterButtonsOptions(self.ctx, filterArgumentOptions[interaction.values[0]], interaction.values[0]))
+        await self.ctx.send(view=filterButtonsOptions(ctx=self.ctx, setup=filterArgumentOptions[interaction.values[0]], strtype=interaction.values[0]))
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:

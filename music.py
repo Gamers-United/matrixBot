@@ -329,11 +329,11 @@ class Music(commands.Cog):
             await player.set_pause(False)
 
     #filters
-    @commands.command()
-    async def setFilter(self, ctx):
+    @commands.command(aliases=['setFilter', 'newFilter'])
+    async def filter(self, ctx):
         await ctx.send(view=buttonLIB.filterButtons(ctx=ctx))
 
-    @commands.command()
+    @commands.command(aliases=['v'])
     async def volume(self, ctx, level: int):
         player: CustomPlayer = ctx.voice_client
         if level > 500:
@@ -344,8 +344,8 @@ class Music(commands.Cog):
             await player.set_volume(level)
             await ctx.send(f"Set volume to {level}%")
 
-    @commands.command()
-    async def deleteFilter(self,ctx):
+    @commands.command(aliases=['removeFilter', 'rFilter', 'rfilter'])
+    async def delfilter(self,ctx):
         await ctx.send(view=buttonLIB.deleteFilterButtons(ctx))
 
     #lyrics
