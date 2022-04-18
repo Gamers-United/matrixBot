@@ -344,7 +344,7 @@ class Music(commands.Cog):
             await player.set_volume(level)
             await ctx.send(f"Set volume to {level}%")
 
-    @commands.command(aliases=['removeFilter', 'rFilter', 'rfilter'])
+    @commands.command(aliases=['removeFilter', 'rFilter'])
     async def delfilter(self,ctx):
         await ctx.send(view=buttonLIB.deleteFilterButtons(ctx))
 
