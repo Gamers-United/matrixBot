@@ -166,6 +166,7 @@ class playlistSelector(discord.ui.Select):
             discord.SelectOption(label="Volume 7 - Upbeat EDM"),
             discord.SelectOption(label="Volume 8 - Piano"),
         ]
+        super().__init__(placeholder="Select Playlist", max_values=1,min_values=1,options=options)
     async def callback(self, interaction: discord.Interaction):
         await ctx.invoke(music.play, query=playlistURLs[self.values[0]])
 
