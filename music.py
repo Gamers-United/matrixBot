@@ -380,14 +380,14 @@ class Music(commands.Cog):
     @commands.command(aliases=["suggested", "sp", "playlists", "suggest"])
     async def suggestedPlaylists(self, ctx):
         playlistembed = discord.Embed(colour=discord.Color.gold(), title="Suggested Playlists", description="100 Songs Each. Curated by the B&B Team")
-        playlistembed.add_field(name="Volume 1 - Pop", value="Maroon 5, Galantis, Imagine Dragons, Coldplay...")
-        playlistembed.add_field(name="Volume 2 - LoFi", value="Kupla, Lena Raine, Kalido, Yasumu...")
-        playlistembed.add_field(name="Volume 3 - Car GO FAST", value="LXST CXNTURY, $atori Zoom...")
-        playlistembed.add_field(name="Volume 4 - Jazz", value="Maynard Freguson, Michel Camilo, Budy Rich...")
-        playlistembed.add_field(name="Volume 5 - Dance/Electronic Dance", value="Martin Garrix, Strange Fruits...")
-        playlistembed.add_field(name="Volume 6 - Synthwave", value="Gemini Drive, Electronics Gems, Eagle Eyed Tiger...")
-        playlistembed.add_field(name="Volume 7 - Upbeat EDM", value="Tobu...")
-        playlistembed.add_field(name="Volume 8 - Piano", value="Sheet Music Boss, Taylor Swift (Long Pond), Beethoven...")
+        playlistembed.add_field(inline=False, name="Volume 1 - Pop", value="Maroon 5, Galantis, Imagine Dragons, Coldplay...")
+        playlistembed.add_field(inline=False, name="Volume 2 - LoFi", value="Kupla, Lena Raine, Kalido, Yasumu...")
+        playlistembed.add_field(inline=False, name="Volume 3 - Car GO FAST", value="LXST CXNTURY, $atori Zoom...")
+        playlistembed.add_field(inline=False, name="Volume 4 - Jazz", value="Maynard Freguson, Michel Camilo, Budy Rich...")
+        playlistembed.add_field(inline=False, name="Volume 5 - Dance/Electronic Dance", value="Martin Garrix, Strange Fruits...")
+        playlistembed.add_field(inline=False, name="Volume 6 - Synthwave", value="Gemini Drive, Electronics Gems, Eagle Eyed Tiger...")
+        playlistembed.add_field(inline=False, name="Volume 7 - Upbeat EDM", value="Tobu...")
+        playlistembed.add_field(inline=False, name="Volume 8 - Piano", value="Sheet Music Boss, Taylor Swift (Long Pond), Beethoven...")
         await ctx.send(embed=playlistembed, view=buttonLIB.playlistPlayer(ctx=ctx, music=self))
 
 async def setup(bot):

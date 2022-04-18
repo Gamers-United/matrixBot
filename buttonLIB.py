@@ -168,7 +168,7 @@ class playlistSelector(discord.ui.Select):
         ]
         super().__init__(placeholder="Select Playlist", max_values=1,min_values=1,options=options)
     async def callback(self, interaction: discord.Interaction):
-        await ctx.invoke(music.play, query=playlistURLs[self.values[0]])
+        await self.ctx.invoke(self.music.play, query=playlistURLs[self.values[0]])
 
 class playlistPlayer(discord.ui.View):
     def __init__(self, *, timeout=120, music, ctx: discord.ext.commands.Context):
