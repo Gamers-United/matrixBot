@@ -9,6 +9,7 @@ from lyrics import Lyrics
 from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union
 from contextlib import suppress
 import datetime
+from config import settings as dsettings
 
 class CustomPlayer(pomice.Player):
     """Custom player class"""
@@ -34,10 +35,7 @@ class CustomPlayer(pomice.Player):
 
         await self.play(track)
 
-        if track.is_stream:
-            await self.context.send(embed=discord.Embed(title="Now Playing Live:", description=f"**[{track.title}]({track.uri})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
-        else:
-            await self.context.send(embed=discord.Embed(title="Now Playing:", description=f"**[{track.title}]({track.uri})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+        await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def stopRepeat(self):
         self.is_repeating = False

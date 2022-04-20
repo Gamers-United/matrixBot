@@ -4,61 +4,61 @@ from discord.ext import commands
 from types import SimpleNamespace
 from datetime import datetime
 import asyncio
+from config import settings as dsettings
 
 #Bot Static
 prefix = "!"
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None, case_insensitive=True)
-log = {}
-with open("settings.json", "r+") as settingsfile:
-    config = json.load(settingsfile)
-    token = config["TOKEN"]
-    guildids = {
-        "MAIN": config["MAIN_GUILD"],
-        "PPD": config["SECONDARY_GUILD"]
-    }
-    echo = config["DEBUG"]
-    channelids = {
-        "VLOG": config["CHANNELID_VOICELOG"],
-        "ILOG": config["CHANNELID_INFRACTIONLOG"],
-        "ELOG": config["CHANNELID_ERRORLOG"]
-    }
+bot.channels = {}
 
 #main bot definitions
 @bot.event
 async def on_ready():
-    await bot.load_extension('randomresults')
-    await bot.load_extension('voice')
-    await bot.load_extension('dev')
-    await bot.load_extension('music')
-    await bot.load_extension('humor')
+    #only load modules that are in config
+    if dsettings.jokes:
+        await bot.load_extension('randomresults')
+        await bot.load_extension('humor')
+    if dsettings.voice:
+        await bot.load_extension('voice')
+    if dsettings.music:
+        await bot.load_extension('music')
+    if dsettings.development:
+        await bot.load_extension('dev')
+    
+    #hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
     print("Bot's name is "+str(bot.user))
+    
+    #startup info print
     try:
-        guild = discord.utils.get(bot.guilds, id=int(guildids["MAIN"]))
-        print("Found main guild of ID: "+str(guild.id)+" | Name of: "+str(guild.name))
-        print("Members online: "+str(guild.member_count))
+        guild = discord.utils.get(bot.guilds, id=int(dsettings.guild_main))
+        print(f"Found main guild of ID: {str(guild.id)} | Name of: {str(guild.name)}")
+        print(f"Members online: {str(guild.member_count)}")
     except AttributeError:
         print("Could not find main guild!")
     try:
-        guild = discord.utils.get(bot.guilds, id=int(guildids["PPD"]))
-        print("Found HQ discord guild of ID: "+str(guild.id)+" | Name of: "+str(guild.name))
-        print("Members online: "+str(guild.member_count))
+        guild = discord.utils.get(bot.guilds, id=int(dsettings.guild_secondary))
+        print(f"Found HQ discord guild of ID: {str(guild.id)} | Name of: {str(guild.name)}")
+        print(f"Members online: {str(guild.member_count)}")
     except AttributeError:
         print("Could not find HQ guild!")
+
+    #save these channels for later use
     try:
-        log["VOICE"] = bot.get_channel(int(channelids["VLOG"]))
-        log["INFRACTIONS"] = bot.get_channel(int(channelids["VLOG"]))
-        log["ERROR"] = bot.get_channel(int(channelids["ELOG"]))
+        bot.channels["VOICE"] = bot.get_channel(int(dsettings.channelid_voice_log))
+        bot.channels["INFRACTIONS"] = bot.get_channel(int(dsettings.channelid_infraction_log))
+        bot.channels["ERROR"] = bot.get_channel(int(dsettings.channelid_error_log))
     except:
         print("Error finding channels")
 
+#bot command error
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send("Command not found!")
     if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Missing a required argument. Do "+str(prefix)+"help")
+        await ctx.send(f"Missing a required argument. Do {str(prefix)}help")
     if isinstance(error, commands.MissingPermissions):
         await ctx.send("You do not have the required permissions to run this command.")
     if isinstance(error, commands.BotMissingPermissions):
@@ -118,8 +118,8 @@ async def help(ctx):
     skip 'number to skip (default of 1)'
     suggested""", inline=False)
     embed.add_field(name="Music | Advanced", value="""volume 'level' (0 to 500%)
-    setFilter (GUI Command)
-    deleteFilter (GUI Command)""", inline=False)
+    filter (GUI Command)
+    delfilter (GUI Command)""", inline=False)
     embed.add_field(name="Fun | Jokes", value="""joke
     dadjoke
     copypasta""", inline=False)
@@ -144,6 +144,6 @@ async def help(ctx):
 #run the bot
 async def main():
     async with bot:
-        await bot.start(token)
+        await bot.start(dsettings.token)
 
 asyncio.run(main())

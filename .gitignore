@@ -1,3 +1,6 @@
 *.db
 settings.json
 __pycache__/**
+.vscode
+# Ignore dynaconf secret files
+.secrets.*

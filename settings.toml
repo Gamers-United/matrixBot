@@ -1,0 +1,109 @@
+# General
+debug = false
+
+## Guild IDs for health checks & channel ID lookups
+guild_main = "676007173154930699"
+guild_secondary = "868373231822831636"
+
+## Channel IDS used for logging
+channelid_voice_log = "913295328801849355"
+channelid_infraction_log = "913295490148339712"
+channelid_error_log = "913285807807279144"
+
+## Extensions
+jokes = true
+music = true
+development = true
+voice = true
+
+## Lyrics
+genius_api = "https://api.genius.com"
+genius_route_search = "/search"
+
+## Music
+lavalink_host = "10.100.1.56"
+lavalink_port = "19999"
+lavalink_identifier = "Main"
+
+# Locale
+
+## Development
+shutdown = "Matrix is shutting down"
+reload = "Matrix is reloading..."
+nopermission = "No permission, you filthy animal!"
+
+## Lyrics
+lyrics_search_result = "Lyric Search Results"
+lyrics_search_description = "Type number in chat for correct song"
+
+## Music
+song_exception = "An exception has occured while playing this track. Skipping."
+no_voice = "You must be in a voice channel in order to use the join command."
+bot_connected = "The player must be connected to use this command."
+bot_leave = "The player has left the channel."
+unpause = "Unpausing the player!"
+no_results = "No results were found."
+search_results_title = "Song Search Results"
+search_results_description = "Type number in chat according to the song you would like to play."
+search_invalid_selection = "Invalid selection."
+search_added_to_queue = "Song added to Queue!"
+skip_song = "Song skipped!"
+skip_larger_than_queue = "Requested to skip more songs than in queue!"
+no_queue = "Nothing queued!"
+remove_larger_than_queue = "Can not remove a song past the number of songs in queue!"
+remove_out_of_bounds = "Song to remove must have an index higher than or equal to 1."
+shuffle_complete = "Shuffled the queue."
+repeat_on = "Started repeating player!"
+repeat_off = "Stopped repeating player!"
+not_playing = "Nothing playing!"
+now_playing_title = "Now Playing"
+paused = "Player paused!"
+unpaused = "Unpausing player!"
+already_paused = "Player already paused!"
+seek_invalid_time = "Invalid time"
+volume_too_high = "Volume too high!"
+volume_too_low = "Volume too low!"
+lyrics_not_found = "No Lyrics Found"
+suggested_playlists_title = "Suggested Playlists"
+suggested_playlists_description = "100 Songs Each. Curated by the B&B Team"
+
+### Playlists
+select_playlist = "Select Playlist"
+playlist_1_name = "Volume 1 - Pop"
+playlist_1_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0RbBze4S_GfDFfS_-eCVhTS"
+playlist_1_artists = "Maroon 5, Galantis, Imagine Dragons, Coldplay..."
+
+playlist_2_name = "Volume 2 - LoFi"
+playlist_2_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0Tfycktq-HD32LuDwexZAFq"
+playlist_2_artists = "Kupla, Lena Raine, Kalido, Yasumu..."
+
+playlist_3_name = "Volume 3 - Car GO FAST"
+playlist_3_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0QO3m7AJDQnTww7wQEKXWMq"
+playlist_3_artists = "LXST CXNTURY, $atori Zoom..."
+
+playlist_4_name = "Volume 4 - Jazz"
+playlist_4_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0QCi1TBjNf_JwA__8YEJcHy"
+playlist_4_artists = "Maynard Freguson, Michel Camilo, Budy Rich..."
+
+playlist_5_name = "Volume 5 - Dance/Electronic Dance"
+playlist_5_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0TBUtDJuaGEIrXnRqhN3Zwp"
+playlist_5_artists = "Martin Garrix, Strange Fruits..."
+
+playlist_6_name = "Volume 6 - Synthwave"
+playlist_6_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0SjsSguqmpAjAYIly0giyI5"
+playlist_6_artists = "Gemini Drive, Electronics Gems, Eagle Eyed Tiger..."
+
+playlist_7_name = "Volume 7 - Upbeat EDM"
+playlist_7_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0TRFyq23HJTN7bhKrdYD5-n"
+playlist_7_artists = "Tobu..."
+
+playlist_8_name = "Volume 8 - Piano"
+playlist_8_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0S4pzW4yuaGrV7S8HOMmBUk"
+playlist_8_artists = "Sheet Music Boss, Taylor Swift (Long Pond), Beethoven..."
+
+## Randomness-related commands
+roll_result = "Roll Result"
+reorder_result = "Reordered Result"
+pick_result = "Picked Result"
+
+## Voice channel movement related commands

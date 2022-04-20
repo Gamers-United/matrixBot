@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from musicplayer import CustomPlayer
 import pomice
+from config import settings as dsettings
 
 filterOptions = [
     discord.SelectOption(label="Select Filter", default=True),
@@ -141,14 +142,14 @@ class filterButtonsOptions(discord.ui.View):
         await self.ctx.send("Timed out!")
 
 playlistURLs = {
-    "Volume 1 - Pop": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0RbBze4S_GfDFfS_-eCVhTS",
-    "Volume 2 - LoFi": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0Tfycktq-HD32LuDwexZAFq",
-    "Volume 3 - Car GO FAST": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0QO3m7AJDQnTww7wQEKXWMq",
-    "Volume 4 - Jazz": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0QCi1TBjNf_JwA__8YEJcHy",
-    "Volume 5 - Dance/Electronic Dance": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0TBUtDJuaGEIrXnRqhN3Zwp",
-    "Volume 6 - Synthwave": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0SjsSguqmpAjAYIly0giyI5",
-    "Volume 7 - Upbeat EDM": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0TRFyq23HJTN7bhKrdYD5-n",
-    "Volume 8 - Piano": "https://music.youtube.com/playlist?list=PLQI_5xLXAX0S4pzW4yuaGrV7S8HOMmBUk"
+    dsettings.playlist_1_name: dsettings.playlist_1_url,
+    dsettings.playlist_2_name: dsettings.playlist_2_url,
+    dsettings.playlist_3_name: dsettings.playlist_3_url,
+    dsettings.playlist_4_name: dsettings.playlist_4_url,
+    dsettings.playlist_5_name: dsettings.playlist_5_url,
+    dsettings.playlist_6_name: dsettings.playlist_6_url,
+    dsettings.playlist_7_name: dsettings.playlist_7_url,
+    dsettings.playlist_8_name: dsettings.playlist_8_url
 }
 
 class playlistSelector(discord.ui.Select):
@@ -156,15 +157,15 @@ class playlistSelector(discord.ui.Select):
         self.music = music
         self.ctx = ctx
         options = [
-            discord.SelectOption(label="Select Playlist", default=True),
-            discord.SelectOption(label="Volume 1 - Pop"),
-            discord.SelectOption(label="Volume 2 - LoFi"),
-            discord.SelectOption(label="Volume 3 - Car GO FAST"),
-            discord.SelectOption(label="Volume 4 - Jazz"),
-            discord.SelectOption(label="Volume 5 - Dance/Electronic Dance"),
-            discord.SelectOption(label="Volume 6 - Synthwave"),
-            discord.SelectOption(label="Volume 7 - Upbeat EDM"),
-            discord.SelectOption(label="Volume 8 - Piano"),
+            discord.SelectOption(label=dsettings.select_playlist, default=True),
+            discord.SelectOption(label=dsettings.playlist_1_name),
+            discord.SelectOption(label=dsettings.playlist_2_name),
+            discord.SelectOption(label=dsettings.playlist_3_name),
+            discord.SelectOption(label=dsettings.playlist_4_name),
+            discord.SelectOption(label=dsettings.playlist_5_name),
+            discord.SelectOption(label=dsettings.playlist_6_name),
+            discord.SelectOption(label=dsettings.playlist_7_name),
+            discord.SelectOption(label=dsettings.playlist_8_name),
         ]
         super().__init__(placeholder="Select Playlist", max_values=1,min_values=1,options=options)
     async def callback(self, interaction: discord.Interaction):
@@ -174,3 +175,10 @@ class playlistPlayer(discord.ui.View):
     def __init__(self, *, timeout=120, music, ctx: discord.ext.commands.Context):
         super().__init__(timeout=timeout)
         self.add_item(playlistSelector(music=music, ctx=ctx))
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user != self.ctx.author:
+            return False
+        else:
+            return True
