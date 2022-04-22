@@ -1,5 +1,5 @@
 # To Do List
-0. bigger fix record for np timestamps, placeholder does not work in addFilter-- needs debug in general, more stuff with repeat.
+0. fix GUI filter rewritten, add GUI to np. Skipping unpauses but does not fix unpause status.
 1. replace Dicecord 50%, need to do deck stuff which requires DB
 2. Include larger amount of lavalink filters; see https://github.com/freyacodes/Lavalink/blob/master/IMPLEMENTATION.md. only EQ
 3. Add music streaming from PC app to bot.

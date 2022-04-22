@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
 from musicplayer import CustomPlayer
-import lavapy
+import pomice
+from config import settings as dsettings
 
 filterOptions = [
     discord.SelectOption(label="Select Filter", default=True),
@@ -55,12 +56,11 @@ class filterButtons(discord.ui.View):
     def __init__(self, *, timeout=120, ctx: discord.ext.commands.Context):
         super().__init__(timeout=timeout)
         self.ctx = ctx
-    
+
     @discord.ui.select(placeholder="Select Filter", options=filterOptions)
     async def eqButton(self,select:discord.ui.select,interaction:discord.Interaction):
-        await ctx.send(view=filterButtonsOptions(self.ctx, filterArgumentOptions[select.value], select.value))
+        await self.ctx.send(view=filterButtonsOptions(ctx=self.ctx, setup=filterArgumentOptions[interaction.values[0]], strtype=interaction.values[0]))
 
-        
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
             return False
@@ -125,13 +125,12 @@ class filterButtonsOptions(discord.ui.View):
     async def submitButton(self,button:discord.ui.button,interaction:discord.Interaction):
         player: CustomPlayer = self.ctx.voice_client
         if self.type == "Equalizer":
-            if player.filters["Equalizer"] is None:
-                eq = lavapy.Equalizer.flat()
-                eq.equalizerName = "Equalizer"
+            if player.filter is None:
+                eq = pomice.filters.Equalizer()
             else:
                 eq = player.filters["Equalizer"]
             eq.levels[int(self.valuea)] = float(self.valueb)
-            await player.addFilter(eq)
+            await player.set_filter(eq, fast_apply=True)
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
@@ -141,3 +140,45 @@ class filterButtonsOptions(discord.ui.View):
 
     async def on_timeout(self):
         await self.ctx.send("Timed out!")
+
+playlistURLs = {
+    dsettings.playlist_1_name: dsettings.playlist_1_url,
+    dsettings.playlist_2_name: dsettings.playlist_2_url,
+    dsettings.playlist_3_name: dsettings.playlist_3_url,
+    dsettings.playlist_4_name: dsettings.playlist_4_url,
+    dsettings.playlist_5_name: dsettings.playlist_5_url,
+    dsettings.playlist_6_name: dsettings.playlist_6_url,
+    dsettings.playlist_7_name: dsettings.playlist_7_url,
+    dsettings.playlist_8_name: dsettings.playlist_8_url
+}
+
+class playlistSelector(discord.ui.Select):
+    def __init__(self, music, ctx):
+        self.music = music
+        self.ctx = ctx
+        options = [
+            discord.SelectOption(label=dsettings.select_playlist, default=True),
+            discord.SelectOption(label=dsettings.playlist_1_name),
+            discord.SelectOption(label=dsettings.playlist_2_name),
+            discord.SelectOption(label=dsettings.playlist_3_name),
+            discord.SelectOption(label=dsettings.playlist_4_name),
+            discord.SelectOption(label=dsettings.playlist_5_name),
+            discord.SelectOption(label=dsettings.playlist_6_name),
+            discord.SelectOption(label=dsettings.playlist_7_name),
+            discord.SelectOption(label=dsettings.playlist_8_name),
+        ]
+        super().__init__(placeholder="Select Playlist", max_values=1,min_values=1,options=options)
+    async def callback(self, interaction: discord.Interaction):
+        await self.ctx.invoke(self.music.play, query=playlistURLs[self.values[0]])
+
+class playlistPlayer(discord.ui.View):
+    def __init__(self, *, timeout=120, music, ctx: discord.ext.commands.Context):
+        super().__init__(timeout=timeout)
+        self.add_item(playlistSelector(music=music, ctx=ctx))
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user != self.ctx.author:
+            return False
+        else:
+            return True
