@@ -29,12 +29,14 @@ class CustomPlayer(pomice.Player):
             return
         
         try:
-            track: pomice.Track = self.queue.get_nowait()
-        except asyncio.QueueEmpty:
-            return await self.exit()
+            try:
+                track: pomice.Track = self.queue.get_nowait()
+            except asyncio.QueueEmpty:
+                return await self.exit()
 
-        await self.play(track)
-
+            await self.play(track)
+        except Exception as e:
+            print(e)
         await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def stopRepeat(self):
