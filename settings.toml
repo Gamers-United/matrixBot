@@ -24,6 +24,7 @@ genius_route_search = "/search"
 lavalink_host = "10.100.1.56"
 lavalink_port = "19999"
 lavalink_identifier = "Main"
+items_per_page = 10
 
 # Locale
 
