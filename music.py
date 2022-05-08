@@ -172,22 +172,21 @@ class Music(commands.Cog):
         songs = []
         for i in range(0, player.queue.qsize()):
             songs.append(queue.popleft())
+        if len(songs) > 0 :
+            pages = math.ceil(len(songs) / dsettings.items_per_page)
+            start = (page - 1) * dsettings.items_per_page
+            end = start + dsettings.items_per_page
+            queue_list = ''
+            time_remaining = 0
+            for index, track in enumerate(songs[start:end], start=start):
+                queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
+                time_remaining = time_remaining + track.length
 
-        pages = math.ceil(len(songs) / dsettings.items_per_page)
-        start = (page - 1) * dsettings.items_per_page
-        end = start + dsettings.items_per_page
-        queue_list = ''
-        time_remaining = 0
-        pomice.Track()
-        for index, track in enumerate(songs[start:end], start=start):
-            queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
-            time_remaining = time_remaining + track.length
-
-        embed = discord.Embed(colour=discord.Color.blurple(), description=f'**{len(songs)} tracks**\n\n{queue_list}')
-        #player current
-        playerMinutes, playerSeconds = divmod((time_remaining/1000), 60)
-        embed.set_footer(text=f'Viewing page {page}/{pages}! Time Remaining: {playerMinutes}m{playerSeconds}s')
-        await ctx.send(embed=embed)
+            embed = discord.Embed(colour=discord.Color.blurple(), description=f'**{len(songs)} tracks**\n\n{queue_list}')
+            #player current
+            playerMinutes, playerSeconds = divmod((time_remaining/1000), 60)
+            embed.set_footer(text=f'Viewing page {page}/{pages}! Time Remaining: {playerMinutes}m{playerSeconds}s')
+            await ctx.send(embed=embed)
 
     @commands.command()
     async def shuffle(self, ctx):
