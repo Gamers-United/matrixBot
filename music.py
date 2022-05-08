@@ -293,7 +293,7 @@ class Music(commands.Cog):
             #format string
             dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
             song = f'**[{player.current.title}]({player.current.uri})**\n{dur}'
-        embed = discord.Embed(colour=discord.Color.dark_red(), title=dsettings.now_paying_title, description=song)
+        embed = discord.Embed(colour=discord.Color.dark_red(), title=dsettings.now_playing_title, description=song)
         await ctx.send(embed=embed)
 
     @commands.command()
