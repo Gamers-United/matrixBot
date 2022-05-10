@@ -193,8 +193,9 @@ class songButton(discord.ui.Button):
         self.interacted = True
 
 class addSong(discord.ui.View):
-    def __init__(self, *, timeout=120):
+    def __init__(self, *, timeout=120, ctx):
         super().__init__(timeout=timeout)
+        self.ctx = ctx
         self.buttona = songButton("1")
         self.buttonb = songButton("2")
         self.buttonc = songButton("3")

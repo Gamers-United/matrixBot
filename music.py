@@ -108,13 +108,17 @@ class Music(commands.Cog):
                 itemListEmbed.add_field(name=(str(results.index(item)+1)+". "+str(item.info["title"])), value=str(item.info["uri"]), inline=False)
 
             #NEW -- Use buttons now
-            buttons = buttonLIB.addSong()
+            buttons = buttonLIB.addSong(ctx=ctx)
             await ctx.send(embed=itemListEmbed, view=buttons)
             def check(interaction: discord.Interaction):
-                if interaction.user != ctx.author:
-                    return False
-                else:
-                    return True
+                try:
+                    if interaction.user != ctx.author:
+                        return False
+                    else:
+                        return True
+                except AttributeError:
+                    return
+
             await self.bot.wait_for('interaction', check=check)
             selectionint = None
             for item in buttons.buttons:
