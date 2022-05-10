@@ -186,7 +186,7 @@ class playlistPlayer(discord.ui.View):
 class songButton(discord.ui.Button):
     def __init__(self, number):
         super().__init__(style=discord.ButtonStyle.success, label=number)
-        self.number = number
+        self.number = int(number)
         self.interacted = False
     
     async def callback(self, interaction: discord.Interaction):
