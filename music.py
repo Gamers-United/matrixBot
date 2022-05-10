@@ -119,11 +119,8 @@ class Music(commands.Cog):
             await self.bot.wait_for('interaction', check=check)
             selectionint = None
             for item in buttons.buttons:
-                try:
                     if item.interacted == True:
                         selection = item.number
-                except AttributeError:
-                    return
             
             #process the selection to add to the track object.
             try:
