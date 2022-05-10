@@ -194,6 +194,7 @@ class songButton(discord.ui.Button):
 
 class addSong(discord.ui.View):
     def __init__(self, *, timeout=120):
+        super().__init__(timeout=timeout)
         self.buttona = songButton("1")
         self.buttonb = songButton("2")
         self.buttonc = songButton("3")
@@ -205,7 +206,6 @@ class addSong(discord.ui.View):
         self.add_item(self.buttond)
         self.add_item(self.buttone)
         self.buttons = [self.buttona, self.buttonb, self.buttonc, self.buttond, self.buttone]
-        super().__init__(timeout=timeout)
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
