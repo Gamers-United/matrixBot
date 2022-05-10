@@ -117,11 +117,10 @@ class Music(commands.Cog):
                     return True
 
             await self.bot.wait_for('interaction', check=check)
-            await asyncio.sleep(1)
             selectionint = None
             for item in buttons.buttons:
                     if item.interacted == True:
-                        selection = item.number
+                        selectionint = item.number
             
             #process the selection to add to the track object.
             try:
