@@ -182,3 +182,33 @@ class playlistPlayer(discord.ui.View):
             return False
         else:
             return True
+
+class songButton(discord.ui.Button):
+    def __init__(self, number):
+        super().__init__(style=discord.ButtonStyle.success, label=number)
+        self.number = number
+    
+    async def callback(self, interaction: discord.Interaction):
+        self.interaction = interaction
+        self.interacted = True
+
+class addSong(discord.ui.View):
+    def __init__(self, *, timeout=120):
+        self.buttona = songButton("1")
+        self.buttonb = songButton("2")
+        self.buttonc = songButton("3")
+        self.buttond = songButton("4")
+        self.buttone = songButton("5")
+        self.add_item(self.buttona)
+        self.add_item(self.buttonb)
+        self.add_item(self.buttonc)
+        self.add_item(self.buttond)
+        self.add_item(self.buttone)
+        self.buttons = [self.buttona, self.buttonb, self.buttonc, self.buttond, self.buttone]
+        super().__init__(timeout=timeout)
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user != self.ctx.author:
+            return False
+        else:
+            return True

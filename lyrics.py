@@ -28,7 +28,7 @@ class Lyrics():
         response = requests.get(song_url, params={'access_token':dsettings.genius_token})
         json = response.json()
         path = json["response"]["song"]["path"]
-        page_url = dsettings.genius_api + path
+        page_url = dsettings.genius_path + path
         page = requests.get(page_url)
         html = BeautifulSoup(page.text.replace("<br/>", "\n"), "html.parser")
         lyrics = html.find("div", class_=re.compile("^lyrics$|Lyrics__Root")).get_text()

@@ -102,20 +102,27 @@ class Music(commands.Cog):
             await player.queue.put(results[0])
         else:
             # generate embed and send it out here
-            itemListEmbed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results", description="Type number in chat for correct song")
+            itemListEmbed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results")
             top5 = results[:5]
             for item in top5:
                 itemListEmbed.add_field(name=(str(results.index(item)+1)+". "+str(item.info["title"])), value=str(item.info["uri"]), inline=False)
-            await ctx.send(embed=itemListEmbed)
 
-            #await for response
-            def check(m):
-                return ctx.author == m.author
-        
-            selection = await self.bot.wait_for('message', check=check)
+            #NEW -- Use buttons now
+            buttons = buttonLIB.addSong()
+            await ctx.send(embed=itemListEmbed, view=buttons)
+            def check(interaction: discord.Interaction):
+                if interaction.user != ctx.author:
+                    return False
+                else:
+                    return True
+            await self.bot.wait_for('interaction', check=check)
+            selectionint = None
+            for item in buttons.buttons:
+                if item.interacted == True:
+                    selection = item.number
+            
             #process the selection to add to the track object.
             try:
-                selectionint = int(selection.content)-1
                 result = results[selectionint]
                 await player.queue.put(result)
             except ValueError:

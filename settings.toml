@@ -19,6 +19,7 @@ voice = true
 ## Lyrics
 genius_api = "https://api.genius.com"
 genius_route_search = "/search"
+genius_path = "https://genius.com"
 
 ## Music
 lavalink_host = "10.100.1.56"
