@@ -111,19 +111,19 @@ class Music(commands.Cog):
             buttons = buttonLIB.addSong(ctx=ctx)
             await ctx.send(embed=itemListEmbed, view=buttons)
             def check(interaction: discord.Interaction):
-                try:
-                    if interaction.user != ctx.author:
-                        return False
-                    else:
-                        return True
-                except AttributeError:
-                    return
+                if interaction.user != ctx.author:
+                    return False
+                else:
+                    return True
 
             await self.bot.wait_for('interaction', check=check)
             selectionint = None
             for item in buttons.buttons:
-                if item.interacted == True:
-                    selection = item.number
+                try:
+                    if item.interacted == True:
+                        selection = item.number
+                except AttributeError:
+                    return
             
             #process the selection to add to the track object.
             try:
