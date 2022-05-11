@@ -82,6 +82,7 @@ class Music(commands.Cog):
         if not player:
             await ctx.invoke(self.connect)
         player: CustomPlayer = ctx.voice_client
+        
         if not player:
             #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
             return
@@ -91,10 +92,10 @@ class Music(commands.Cog):
             return
         #handle playing
         results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytmsearch)
-
         if not results:
             await ctx.send(dsettings.no_results)
             return
+
         if isinstance(results, pomice.Playlist):
             for track in results.tracks:
                 await player.queue.put(track)
@@ -105,7 +106,7 @@ class Music(commands.Cog):
             itemListEmbed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results")
             top5 = results[:5]
             for item in top5:
-                itemListEmbed.add_field(name=(str(results.index(item)+1)+". "+str(item.info["title"])), value=str(item.info["uri"]), inline=False)
+                itemListEmbed.add_field(name=(f"{str(results.index(item)+1)}. {str(item.title)} - {item.author}"), value=str(item.info["uri"]), inline=False)
 
             #NEW -- Use buttons now
             buttons = buttonLIB.addSong(ctx=ctx)
@@ -128,6 +129,7 @@ class Music(commands.Cog):
                 await player.queue.put(result)
             except ValueError:
                 await ctx.send(dsettings.search_invalid_selection)
+
         await ctx.send(dsettings.search_added_to_queue)
         #make sure the player is playing at this stage
         if not player.is_playing:
