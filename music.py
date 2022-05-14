@@ -106,7 +106,7 @@ class Music(commands.Cog):
             itemListEmbed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results")
             top5 = results[:5]
             for item in top5:
-                itemListEmbed.add_field(name=(f"{str(results.index(item)+1)}. {str(item.title)} - {item.author}"), value=str(item.info["uri"]), inline=False)
+                itemListEmbed.add_field(name=(f"{str(results.index(item)+1)}. {str(item.title)} - {str(item.author)}"), value=str(item.info["uri"]), inline=False)
 
             #NEW -- Use buttons now
             buttons = buttonLIB.addSong(ctx=ctx)
@@ -195,7 +195,7 @@ class Music(commands.Cog):
             embed = discord.Embed(colour=discord.Color.blurple(), description=f'**{len(songs)} tracks**\n\n{queue_list}')
             #player current
             playerMinutes, playerSeconds = divmod((time_remaining/1000), 60)
-            embed.set_footer(text=f'Viewing page {page}/{pages}! Time Remaining: {playerMinutes}m{playerSeconds}s')
+            embed.set_footer(text=f'Viewing page {page}/{pages}! Time Remaining: {int(playerMinutes)}m{int(playerSeconds)}s')
             await ctx.send(embed=embed)
 
     @commands.command()
