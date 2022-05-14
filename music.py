@@ -170,8 +170,11 @@ class Music(commands.Cog):
         #rotate the queue so that the song can be popped from the left hand side, and then rotate back.
         # [a, b, c, d, e] - removing c
         player.queue._queue.rotate(index) # Move 3 to the right (index) [c, d, e, a, b]
+        print(player.queue._queue)
         removed = player.queue._queue.popleft() # Remove left most song from queue
+        print(player.queue._queue)
         player.queue._queue.rotate(((index-1) * -1)) # Rotate 3 to the left (index)
+        print(player.queue._queue)
         title = removed.info["title"]
         await ctx.send(f"Removed *{title}* from the queue.")
 
