@@ -40,6 +40,7 @@ class CustomPlayer(pomice.Player):
             print(e)
         request = self.youtube.videos().list(part="snippet", id=track.identifier)
         response = request.execute()
+        print(response)
         await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}](https://youtube.com/channel/{response.snippet.channelId})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def stopRepeat(self):
