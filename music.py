@@ -169,12 +169,9 @@ class Music(commands.Cog):
             return
         #rotate the queue so that the song can be popped from the left hand side, and then rotate back.
         # [a, b, c, d, e] - removing c
-        player.queue._queue.rotate(index) # Move 3 to the right (index) [c, d, e, a, b]
-        print(player.queue._queue)
-        removed = player.queue._queue.popleft() # Remove left most song from queue
-        print(player.queue._queue)
-        player.queue._queue.rotate(((index-1) * -1)) # Rotate 3 to the left (index)
-        print(player.queue._queue)
+        player.queue._queue.rotate(index * -1) # Move 3 to the right (index) [c, d, e, a, b]
+        removed = player.queue._queue.popleft() # Remove left most song from queue [d, e, a, b]
+        player.queue._queue.rotate((index-1)) # Rotate 2 to the left (index) [a, b, d, e]
         title = removed.info["title"]
         await ctx.send(f"Removed *{title}* from the queue.")
 
@@ -305,7 +302,7 @@ class Music(commands.Cog):
             songMinutes, songSeconds = divmod((player.current.length/1000), 60)
             #format string
             dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
-            song = f'**[{player.current.title}]({player.current.uri}) - {player.current.author}**\n{dur}'
+            song = f'**[{player.current.title}]({player.current.uri})** | **{player.current.author}**\n{dur}'
         embed = discord.Embed(colour=discord.Color.dark_red(), title=dsettings.now_playing_title, description=song)
         await ctx.send(embed=embed)
 
