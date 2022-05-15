@@ -37,7 +37,7 @@ class CustomPlayer(pomice.Player):
             await self.play(track)
         except Exception as e:
             print(e)
-        await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+        await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri}) - {track.author}**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def stopRepeat(self):
         self.is_repeating = False

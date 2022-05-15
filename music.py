@@ -153,7 +153,7 @@ class Music(commands.Cog):
             return await ctx.send("Removed first "+str(number)+" songs!")
 
     @commands.command()
-    async def remove(self, ctx, index: int):
+    async def remove(self, ctx, index: int = 0):
         player: CustomPlayer = ctx.voice_client
         if player.queue.qsize() == 0:
             await ctx.send(dsettings.no_queue)
@@ -161,12 +161,12 @@ class Music(commands.Cog):
         elif index > player.queue.qsize(): 
             await ctx.send(dsettings.remove_larger_than_queue)
             return
-        elif index < 1:
+        elif index < 0:
             await ctx.send(dsettings.remove_out_of_bounds)
             return
-        elif index == 1:
+        elif index == 0:
             await player.stop()
-        index = index - 1
+            return
         #rotate the queue so that the song can be popped from the left hand side, and then rotate back.
         # [a, b, c, d, e] - removing c
         player.queue._queue.rotate(index) # Move 3 to the right (index) [c, d, e, a, b]
@@ -305,7 +305,7 @@ class Music(commands.Cog):
             songMinutes, songSeconds = divmod((player.current.length/1000), 60)
             #format string
             dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
-            song = f'**[{player.current.title}]({player.current.uri})**\n{dur}'
+            song = f'**[{player.current.title}]({player.current.uri}) - {player.current.author}**\n{dur}'
         embed = discord.Embed(colour=discord.Color.dark_red(), title=dsettings.now_playing_title, description=song)
         await ctx.send(embed=embed)
 
