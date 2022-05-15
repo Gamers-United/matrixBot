@@ -169,6 +169,7 @@ class Music(commands.Cog):
             return
         #rotate the queue so that the song can be popped from the left hand side, and then rotate back.
         # [a, b, c, d, e] - removing c
+        index = index - 1
         player.queue._queue.rotate(index * -1) # Move 3 to the right (index) [c, d, e, a, b]
         removed = player.queue._queue.popleft() # Remove left most song from queue [d, e, a, b]
         player.queue._queue.rotate((index-1)) # Rotate 2 to the left (index) [a, b, d, e]

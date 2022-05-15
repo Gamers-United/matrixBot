@@ -28,7 +28,6 @@ lavalink_identifier = "Main"
 items_per_page = 10
 
 # Locale
-
 ## Development
 shutdown = "Matrix is shutting down"
 reload = "Matrix is reloading..."
@@ -103,9 +102,9 @@ playlist_8_name = "Volume 8 - Piano"
 playlist_8_url = "https://music.youtube.com/playlist?list=PLQI_5xLXAX0S4pzW4yuaGrV7S8HOMmBUk"
 playlist_8_artists = "Sheet Music Boss, Taylor Swift (Long Pond), Beethoven..."
 
-## Randomness-related commands
+## Randomresults
 roll_result = "Roll Result"
 reorder_result = "Reordered Result"
 pick_result = "Picked Result"
 
-## Voice channel movement related commands
+## Voice

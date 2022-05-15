@@ -10,6 +10,9 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Ty
 from contextlib import suppress
 import datetime
 from config import settings as dsettings
+import googleapiclient.discovery
+import googleapiclient.errors
+import json
 
 class CustomPlayer(pomice.Player):
     """Custom player class"""
@@ -20,6 +23,7 @@ class CustomPlayer(pomice.Player):
         self.np: discord.Message = None
         self.is_repeating = False
         self.repeatedTrack: pomice.Track = None
+        self.youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=dsettings.google_api_key)
 
     # handle the next track
     async def handleNextTrack(self) -> None:
@@ -27,17 +31,18 @@ class CustomPlayer(pomice.Player):
         if self.is_repeating:
             await self.play(self.repeatedTrack)
             return
-        
         try:
             try:
                 track: pomice.Track = self.queue.get_nowait()
             except asyncio.QueueEmpty:
                 return await self.exit()
-
             await self.play(track)
         except Exception as e:
             print(e)
-        await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **{track.author}**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+        request = self.youtube.videos().list(part="snippet", id=track.identifier)
+        response = request.execute()
+        responsej = json.loads(response)
+        await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}](https://youtube.com/channel/{responsej.snippet.channelId})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def stopRepeat(self):
         self.is_repeating = False
