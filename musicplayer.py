@@ -38,6 +38,7 @@ class CustomPlayer(pomice.Player):
             await self.play(track)
         except Exception as e:
             print(e)
+            return
         code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
         request = self.youtube.videos().list(part="snippet", id=code)
         response = request.execute()
