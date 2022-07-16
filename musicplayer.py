@@ -23,7 +23,6 @@ class CustomPlayer(pomice.Player):
         self.is_repeating = False
         self.repeatedTrack: pomice.Track = None
         self.youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=dsettings.google_api_key)
-        self.bot: discord.ext.commands.bot = None
 
     # handle the next track
     async def handleNextTrack(self) -> None:

@@ -41,7 +41,7 @@ class Music(commands.Cog):
     async def on_pomice_track_stuck(self, player: CustomPlayer, track: pomice.Track, _):
         await player.handleNextTrack()
         try:
-            await player.bot.channels["VOICE"].send(_)
+            await self.bot.channels["VOICE"].send(_)
         except Exception as e:
             print(e)
         await player.context.send(dsettings.song_stuck)
@@ -50,7 +50,7 @@ class Music(commands.Cog):
     async def on_pomice_track_exception(self, player: CustomPlayer, track: pomice.Track, _) -> None:
         await player.context.send(dsettings.song_exception)
         try:
-            await player.bot.channels["VOICE"].send(_)
+            await self.bot.channels["VOICE"].send(_)
         except Exception as e:
             print(e)
         await player.handleNextTrack()
@@ -68,7 +68,6 @@ class Music(commands.Cog):
         #setup the player
         player: CustomPlayer = await channel.connect(cls=CustomPlayer, self_deaf=True) 
         player.context = ctx
-        player.bot = self.bot
         await ctx.send(f"Connected to {channel.mention}")
 
     @commands.command(aliases=['dc','stop','leave'])
