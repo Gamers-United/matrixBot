@@ -28,8 +28,7 @@ class CustomPlayer(pomice.Player):
     async def handleNextTrack(self) -> None:
         """Handles the next track playing, and now playing prompt with context"""
         if self.is_repeating:
-            await self.play(self.repeatedTrack)
-            return
+            return await self.play(self.repeatedTrack)
         try:
             try:
                 track: pomice.Track = self.queue.get_nowait()
@@ -38,7 +37,7 @@ class CustomPlayer(pomice.Player):
             await self.play(track)
         except Exception as e:
             print(e)
-            return
+            return await self.exit()
         code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
         request = self.youtube.videos().list(part="snippet", id=code)
         response = request.execute()
