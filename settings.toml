@@ -8,7 +8,7 @@ guild_secondary = "868373231822831636"
 ## Channel IDS used for logging
 channelid_voice_log = "913295328801849355"
 channelid_infraction_log = "913295490148339712"
-channelid_error_log = "913285807807279144"
+channelid_error_log = "880267418428141588"
 
 ## Extensions
 jokes = true
@@ -38,6 +38,7 @@ lyrics_search_result = "Lyric Search Results"
 lyrics_search_description = "Type number in chat for correct song"
 
 ## Music
+song_stuck = "The song is stuck. Skipping."
 song_exception = "An exception has occured while playing this track. Skipping."
 no_voice = "You must be in a voice channel in order to use the join command."
 bot_connected = "The player must be connected to use this command."
