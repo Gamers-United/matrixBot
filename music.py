@@ -106,12 +106,11 @@ class Music(commands.Cog):
         if not results:
             await ctx.send(dsettings.no_results)
             return
-        print(results)
         if isinstance(results, pomice.Playlist):
             for track in results.tracks:
-                await player.queue.put(track)
+                player.queue.put(track)
         elif len(results) == 1:
-            await player.queue.put(results[0])
+            player.queue.put(results[0])
         else:
             # generate embed and send it out here
             itemListEmbed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results")
