@@ -184,10 +184,10 @@ class Music(commands.Cog):
 
     @commands.command()
     async def queue(self, ctx, page: int = 1):
-        if player is None:
-            await ctx.send("Player is not connected!")
         await ctx.invoke(self.nowplaying)
         player: CustomPlayer = ctx.voice_client
+        if player is None:
+            await ctx.send("Player is not connected!")
         songs = player.queue.copy()
         if len(songs) > 0 :
             pages = math.ceil(len(songs) / dsettings.items_per_page)
