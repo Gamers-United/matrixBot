@@ -193,6 +193,7 @@ class Music(commands.Cog):
             end = start + dsettings.items_per_page
             queue_list = ''
             time_remaining = 0
+            print(f"{start};{end}")
             for index, track in enumerate(songs[start:end], start=start):
                 queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
                 time_remaining = time_remaining + track.length
