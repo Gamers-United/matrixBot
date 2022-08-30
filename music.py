@@ -100,6 +100,7 @@ class Music(commands.Cog):
             return
         #handle playing
         results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytsearch)
+        print(results)
         if not results:
             await ctx.send(dsettings.no_results)
             return
