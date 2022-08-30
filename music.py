@@ -209,7 +209,7 @@ class Music(commands.Cog):
     @commands.command()
     async def shuffle(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if player.queue.count() == 0:
+        if player.queue.count == 0:
             await ctx.send(dsettings.no_queue)
             return
         else:
