@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Ty
 import datetime
 import buttonLIB
 from musicplayer import CustomPlayer
-from random import shuffle
 from config import settings as dsettings
 
 class Music(commands.Cog):
@@ -18,7 +17,7 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot: discord.ext.commands.bot = bot
         self.pomice = pomice.NodePool()
-    
+
     async def cog_load(self):
         await self.bot.wait_until_ready()
         await self.pomice.create_node(
@@ -153,10 +152,10 @@ class Music(commands.Cog):
             await player.set_pause(False)
             await ctx.send(dsettings.skip_song)
         elif number > 1:
-            if player.queue.qsize() < number:
+            if player.queue.count() < number:
                 return await ctx.send(dsettings.skip_larger_than_queue)  
             for i in range(1,number):
-                player.queue.get_nowait()
+                player.queue.pop()
             await player.stop()
             await player.set_pause(False)
             return await ctx.send("Removed first "+str(number)+" songs!")
@@ -164,10 +163,10 @@ class Music(commands.Cog):
     @commands.command()
     async def remove(self, ctx, index: int = 0):
         player: CustomPlayer = ctx.voice_client
-        if player.queue.qsize() == 0:
+        if player.queue.count() == 0:
             await ctx.send(dsettings.no_queue)
             return
-        elif index > player.queue.qsize(): 
+        elif index > player.queue.count(): 
             await ctx.send(dsettings.remove_larger_than_queue)
             return
         elif index < 0:
@@ -176,22 +175,18 @@ class Music(commands.Cog):
         elif index == 0:
             await player.stop()
             return
-        #rotate the queue so that the song can be popped from the left hand side, and then rotate back.
-        # [a, b, c, d, e] - removing c
-        index = index - 1
-        player.queue._queue.rotate(index * -1) # Move 3 to the right (index) [c, d, e, a, b]
-        removed = player.queue._queue.popleft() # Remove left most song from queue [d, e, a, b]
-        player.queue._queue.rotate((index-1)) # Rotate 2 to the left (index) [a, b, d, e]
-        title = removed.info["title"]
+        track = player.queue.__getitem__(index)
+        player.queue.remove(track)
+        title = track.info["title"]
         await ctx.send(f"Removed *{title}* from the queue.")
 
     @commands.command()
     async def queue(self, ctx, page: int = 1):
         await ctx.invoke(self.nowplaying)
         player: CustomPlayer = ctx.voice_client
-        queue = player.queue._queue.copy()
+        queue = player.queue.copy()
         songs = []
-        for i in range(0, player.queue.qsize()):
+        for i in range(0, player.queue.count()):
             songs.append(queue.popleft())
         if len(songs) > 0 :
             pages = math.ceil(len(songs) / dsettings.items_per_page)
@@ -212,11 +207,11 @@ class Music(commands.Cog):
     @commands.command()
     async def shuffle(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if player.queue.qsize() == 0:
+        if player.queue.count() == 0:
             await ctx.send(dsettings.no_queue)
             return
         else:
-            shuffle(player.queue._queue)
+            player.queue.shuffle()
         await ctx.send(dsettings.shuffle_complete)
 
     @commands.command()

@@ -98,7 +98,6 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
     elif before.deaf and not after.deaf:
         embed.add_field(name="Was Undeafened By An Admin", value=f"{before.channel.guild.name}")
     await bot.channels["VOICE"].send(embed=embed)
-        
 
 #help command
 @bot.command()
@@ -147,4 +146,5 @@ async def main():
     async with bot:
         await bot.start(dsettings.token)
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())

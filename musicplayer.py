@@ -17,7 +17,7 @@ class CustomPlayer(pomice.Player):
     """Custom player class"""
     def __init__(self, bot: commands.Bot, channel: VoiceChannel) -> None:
         super().__init__(bot, channel)
-        self.queue = asyncio.Queue()
+        self.queue = pomice.Queue()
         self.context: commands.Context = None
         self.np: discord.Message = None
         self.is_repeating = False
@@ -31,8 +31,8 @@ class CustomPlayer(pomice.Player):
             return await self.play(self.repeatedTrack)
         try:
             try:
-                track: pomice.Track = self.queue.get_nowait()
-            except asyncio.QueueEmpty:
+                track: pomice.Track = self.queue.pop()
+            except pomice.exceptions.QueueEmpty:
                 return await self.exit()
             await self.play(track)
         except Exception as e:
