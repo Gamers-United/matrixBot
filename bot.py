@@ -64,14 +64,11 @@ async def on_command_error(ctx, error):
         await ctx.send("You do not have the required permissions to run this command.")
     if isinstance(error, commands.BotMissingPermissions):
         await ctx.send("MLtech Matrix is missing required permissions. Please contact an Admin")
+    if isinstance(error, commands.CommandInvokeError):
+        print(f"An error has occured: {error}. Traceback:")
+        print(traceback.format_exc())
     else:
         print(error)
-
-@bot.event
-async def on_error(event, *args, **kwargs):
-    print(f"An error has occured: {event}. Traceback:")
-    print(traceback.format_exc())
-    print(f"Additional data: {args} {kwargs}")
 
 #bot logging
 @bot.event
