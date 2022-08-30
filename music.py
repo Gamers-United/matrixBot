@@ -106,7 +106,7 @@ class Music(commands.Cog):
         if not results:
             await ctx.send(dsettings.no_results)
             return
-
+        print(results)
         if isinstance(results, pomice.Playlist):
             for track in results.tracks:
                 await player.queue.put(track)
@@ -136,7 +136,7 @@ class Music(commands.Cog):
 
             #process the selection to add to the track object.
             try:
-                result = results[selectionint]
+                result = results[selectionint-1]
                 player.queue.put(result)
             except ValueError:
                 await ctx.send(dsettings.search_invalid_selection)
