@@ -196,6 +196,7 @@ class Music(commands.Cog):
             queue_list = ''
             time_remaining = 0
             print(f"{start}->{type(start)};{end}->{type(end)}")
+            a = songs[start:end]
             for index, track in enumerate(songs[start:end], start=start):
                 queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
                 time_remaining = time_remaining + track.length
