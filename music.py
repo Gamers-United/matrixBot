@@ -131,7 +131,10 @@ class Music(commands.Cog):
                     if item.interacted == True:
                         selectionint = item.number
 
-            print("".join(results))
+            a = ""
+            for track in results:
+                a += f"{track.title},{track.author}:"
+            print(a)
 
             #process the selection to add to the track object.
             try:
