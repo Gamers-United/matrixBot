@@ -131,9 +131,10 @@ class Music(commands.Cog):
                     if item.interacted == True:
                         selectionint = item.number
 
+            print("".join(results))
+
             #process the selection to add to the track object.
             try:
-                print(str(results))
                 result = results[selectionint-1]
                 await player.queue.put(result)
             except ValueError:
