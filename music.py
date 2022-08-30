@@ -134,6 +134,7 @@ class Music(commands.Cog):
             #process the selection to add to the track object.
             try:
                 result = results[selectionint]
+                print(player.queue)
                 await player.queue.put(result)
             except ValueError:
                 await ctx.send(dsettings.search_invalid_selection)
