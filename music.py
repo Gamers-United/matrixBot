@@ -186,10 +186,7 @@ class Music(commands.Cog):
     async def queue(self, ctx, page: int = 1):
         await ctx.invoke(self.nowplaying)
         player: CustomPlayer = ctx.voice_client
-        queue = player.queue.copy()
-        songs = []
-        for i in range(0, player.queue.count()):
-            songs.append(queue.popleft())
+        songs = player.queue.copy()
         if len(songs) > 0 :
             pages = math.ceil(len(songs) / dsettings.items_per_page)
             start = (page - 1) * dsettings.items_per_page
