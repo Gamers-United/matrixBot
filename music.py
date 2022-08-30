@@ -3,6 +3,7 @@ import discord
 import pomice
 import math
 import asyncio
+import traceback
 from discord.ext import commands
 from discord import VoiceChannel, Embed, Colour
 from lyrics import Lyrics
@@ -43,6 +44,7 @@ class Music(commands.Cog):
             await self.bot.get_channel(int(dsettings.channelid_error_log)).send(_)
         except Exception as e:
             print(e)
+            print(''.join(traceback.format_tb(e.__traceback__)))
         await player.context.send(dsettings.song_stuck)
  
     @commands.Cog.listener()
@@ -52,6 +54,7 @@ class Music(commands.Cog):
             await self.bot.get_channel(int(dsettings.channelid_error_log)).send(_)
         except Exception as e:
             print(e)
+            print(''.join(traceback.format_tb(e.__traceback__)))
         await player.handleNextTrack()
 
     #commands
