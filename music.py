@@ -184,10 +184,13 @@ class Music(commands.Cog):
 
     @commands.command()
     async def queue(self, ctx, page: int = 1):
-        await ctx.invoke(self.nowplaying)
         player: CustomPlayer = ctx.voice_client
         if player is None:
-            await ctx.send("Player is not connected!")
+            return await ctx.send(dsettings.not_playing)
+        if not player.is_playing:
+            return await ctx.send(dsettings.not_playing)
+
+        await ctx.invoke(self.nowplaying)
         songs = player.queue.copy()
         if len(songs) > 0 :
             pages = math.ceil(len(songs) / dsettings.items_per_page)
@@ -195,7 +198,6 @@ class Music(commands.Cog):
             end = start + dsettings.items_per_page
             queue_list = ''
             time_remaining = 0
-            print(f"{start}->{type(start)};{end}->{type(end)}")
             for index, track in enumerate(songs._queue[start:end], start=start):
                 queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
                 time_remaining = time_remaining + track.length
@@ -209,6 +211,11 @@ class Music(commands.Cog):
     @commands.command()
     async def shuffle(self, ctx):
         player: CustomPlayer = ctx.voice_client
+        if player is None:
+            return await ctx.send(dsettings.not_playing)
+        if not player.is_playing:
+            return await ctx.send(dsettings.not_playing)
+
         if player.queue.count == 0:
             await ctx.send(dsettings.no_queue)
             return
@@ -219,6 +226,11 @@ class Music(commands.Cog):
     @commands.command()
     async def repeat(self, ctx):
         player: CustomPlayer = ctx.voice_client
+        if player is None:
+            return await ctx.send(dsettings.not_playing)
+        if not player.is_playing:
+            return await ctx.send(dsettings.not_playing)
+            
         if player.queue.is_looping():
             player.queue.disable_loop()
             await ctx.send(dsettings.repeat_off)
@@ -229,6 +241,8 @@ class Music(commands.Cog):
     @commands.command()
     async def seek(self, ctx, time: str):
         player: CustomPlayer = ctx.voice_client
+        if player is None:
+            return await ctx.send(dsettings.not_playing)
         if not player.is_playing:
             return await ctx.send(dsettings.not_playing)
 
