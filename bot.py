@@ -66,7 +66,12 @@ async def on_command_error(ctx, error):
         await ctx.send("MLtech Matrix is missing required permissions. Please contact an Admin")
     else:
         print(error)
-        traceback.format_exc()
+
+@bot.event
+async def on_error(event, *args, **kwargs):
+    print(f"An error has occured: {event}. Traceback:")
+    print(traceback.format_exc())
+    print(f"Additional data: {args} {kwargs}")
 
 #bot logging
 @bot.event
