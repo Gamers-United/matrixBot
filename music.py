@@ -131,10 +131,10 @@ class Music(commands.Cog):
             for item in buttons.buttons:
                     if item.interacted == True:
                         selectionint = item.number
-            
+            print(selectionint)
             #process the selection to add to the track object.
             try:
-                result = results[selectionint-1]
+                result = results[selectionint]
                 await player.queue.put(result)
             except ValueError:
                 await ctx.send(dsettings.search_invalid_selection)

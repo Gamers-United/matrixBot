@@ -197,11 +197,11 @@ class addSong(discord.ui.View):
     def __init__(self, *, timeout=120, ctx):
         super().__init__(timeout=timeout)
         self.ctx = ctx
-        self.buttona = songButton("1")
-        self.buttonb = songButton("2")
-        self.buttonc = songButton("3")
-        self.buttond = songButton("4")
-        self.buttone = songButton("5")
+        self.buttona = songButton("0")
+        self.buttonb = songButton("1")
+        self.buttonc = songButton("2")
+        self.buttond = songButton("3")
+        self.buttone = songButton("4")
         self.add_item(self.buttona)
         self.add_item(self.buttonb)
         self.add_item(self.buttonc)
