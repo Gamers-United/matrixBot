@@ -184,6 +184,8 @@ class Music(commands.Cog):
 
     @commands.command()
     async def queue(self, ctx, page: int = 1):
+        if player is None:
+            await ctx.send("Player is not connected!")
         await ctx.invoke(self.nowplaying)
         player: CustomPlayer = ctx.voice_client
         songs = player.queue.copy()
@@ -193,7 +195,7 @@ class Music(commands.Cog):
             end = start + dsettings.items_per_page
             queue_list = ''
             time_remaining = 0
-            print(f"{start};{end}")
+            print(f"{start}->{type(start)};{end}->{type(end)}")
             for index, track in enumerate(songs[start:end], start=start):
                 queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
                 time_remaining = time_remaining + track.length
