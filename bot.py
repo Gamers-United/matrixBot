@@ -66,7 +66,7 @@ async def on_command_error(ctx, error):
         await ctx.send("MLtech Matrix is missing required permissions. Please contact an Admin")
     if isinstance(error, commands.CommandInvokeError):
         print(f"{error}.\n Traceback:")
-        print(''.join(traceback.format_tb(error.e.__traceback__)))
+        print(''.join(traceback.format_tb(error.__cause__.__traceback__)))
     else:
         print(error)
 
