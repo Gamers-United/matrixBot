@@ -20,18 +20,14 @@ class CustomPlayer(pomice.Player):
         self.queue = pomice.Queue()
         self.context: commands.Context = None
         self.np: discord.Message = None
-        self.is_repeating = False
-        self.repeatedTrack: pomice.Track = None
         self.youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=dsettings.google_api_key)
 
     # handle the next track
     async def handleNextTrack(self) -> None:
         """Handles the next track playing, and now playing prompt with context"""
-        if self.is_repeating:
-            return await self.play(self.repeatedTrack)
         try:
             try:
-                track: pomice.Track = self.queue.pop()
+                track: pomice.Track = self.queue.get()
             except pomice.exceptions.QueueEmpty:
                 return await self.exit()
             await self.play(track)
@@ -45,14 +41,6 @@ class CustomPlayer(pomice.Player):
         track.info["channeluri"] = f"https://youtube.com/channel/{responset}"
         channelurl = track.info["channeluri"]
         return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
-
-    async def stopRepeat(self):
-        self.is_repeating = False
-        self.repeatedTrack = None
-
-    async def startRepeat(self):
-        self.is_repeating = True
-        self.repeatedTrack = self.current
 
     async def exit(self):
         """closes the player down in the guild"""

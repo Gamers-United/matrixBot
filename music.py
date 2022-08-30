@@ -219,11 +219,11 @@ class Music(commands.Cog):
     @commands.command()
     async def repeat(self, ctx):
         player: CustomPlayer = ctx.voice_client
-        if player.is_repeating:
-            player.stopRepeat()
+        if player.queue.is_looping():
+            player.queue.disable_loop()
             await ctx.send(dsettings.repeat_off)
         else:
-            player.startRepeat()
+            player.queue.set_loop_mode(pomice.enums.LoopMode.TRACK)
             await ctx.send(dsettings.repeat_on)
 
     @commands.command()
