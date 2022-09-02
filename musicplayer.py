@@ -34,13 +34,17 @@ class CustomPlayer(pomice.Player):
         except Exception as e:
             print(e)
             return await self.exit()
-        code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
-        request = self.youtube.videos().list(part="snippet", id=code)
-        response = request.execute()
-        responset = response["items"][0]["snippet"]["channelId"]
-        track.info["channeluri"] = f"https://youtube.com/channel/{responset}"
-        channelurl = track.info["channeluri"]
-        return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+        print(track)
+        if (track.uri != None):
+            code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
+            request = self.youtube.videos().list(part="snippet", id=code)
+            response = request.execute()
+            responset = response["items"][0]["snippet"]["channelId"]
+            track.info["channeluri"] = f"https://youtube.com/channel/{responset}"
+            channelurl = track.info["channeluri"]
+            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+        else:
+             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def exit(self):
         """closes the player down in the guild"""

@@ -322,9 +322,12 @@ class Music(commands.Cog):
             #song total
             songMinutes, songSeconds = divmod((player.current.length/1000), 60)
             #format string
-            channelurl = player.current.info["channeluri"]
-            dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
-            song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]({channelurl})**\n{dur}'
+            if (player.current.info != None):
+                channelurl = player.current.info["channeluri"]
+                dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
+                song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]({channelurl})**\n{dur}'
+            else:
+                song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]**\n{dur}'
         embed = discord.Embed(colour=discord.Color.dark_red(), title=dsettings.now_playing_title, description=song)
         await ctx.send(embed=embed)
 
