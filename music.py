@@ -425,7 +425,7 @@ class Music(commands.Cog):
             artist = artist_search["artists"]["items"][0]["uri"]
             top_tracks = player.spotify.artist_top_tracks(artist, country="AU")
             tracks = top_tracks["tracks"]
-            author_name = top_tracks[0]["authors"][0]["name"]
+            author_name = top_tracks[0]["artists"][0]["name"]
             topTracksEmbed = discord.Embed(colour=discord.Color.gold(), title=f"Top {count(tracks)} for {author_name}")
             songs = []
             for song in tracks:
