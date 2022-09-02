@@ -433,7 +433,7 @@ class Music(commands.Cog):
                 song_url = song["external_urls"]["spotify"]
                 album_name = song["album"]["name"]
                 album_url = song["album"]["external_urls"]["spotify"]
-                topTracksEmbed.add_field(inline=False, name=f"{count}. [{song_name}]({song_url}) | [{album_name}]({album_url})")
+                topTracksEmbed.add_field(inline=False, name=f"{count}. [{song_name}]({song_url})", value=f"[{album_name}]({album_url})")
             await ctx.send(embed=topTracksEmbed, view=buttonLIB.topTrackSelector(ctx=ctx, songs=songs))
 
 async def setup(bot):
