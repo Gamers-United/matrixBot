@@ -426,7 +426,7 @@ class Music(commands.Cog):
             top_tracks = player.spotify.artist_top_tracks(artist, country="AU")
             tracks = top_tracks["tracks"]
             author_name = tracks[0]["artists"][0]["name"]
-            topTracksEmbed = discord.Embed(colour=discord.Color.gold(), title=f"Top {count(tracks)} for {author_name}")
+            topTracksEmbed = discord.Embed(colour=discord.Color.gold(), title=f"Top {len(tracks)} for {author_name}")
             songs = []
             for song in tracks:
                 songs.append((song["name"], song["external_urls"]["spotify"]))
