@@ -412,6 +412,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=["top10"])
     async def top(self, ctx, artist: str):
+        player: CustomPlayer = ctx.voice_client
         if not player:
             await ctx.invoke(self.connect)
         player: CustomPlayer = ctx.voice_client
