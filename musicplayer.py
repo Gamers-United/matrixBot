@@ -34,7 +34,7 @@ class CustomPlayer(pomice.Player):
         except Exception as e:
             print(e)
             return await self.exit()
-        print(f"{track.author};{track.ctx};{track.identifier};{track.info};{track.is_seekable};{track.is_stream};{track.isrc};{track.length};{track.original};{track.position};{track.requester};{track.spotify};{track.spotify_track};{track.thumbnail};{track.title};{track.track_id};{track.uri}")
+        print(f"{type(track)};{track.author};{track.ctx};{track.identifier};{track.info};{track.is_seekable};{track.is_stream};{track.isrc};{track.length};{track.original};{track.position};{track.requester};{track.spotify};{track.spotify_track};{track.thumbnail};{track.title};{track.track_id};{track.uri}")
         if (track.uri != None):
             code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
             request = self.youtube.videos().list(part="snippet", id=code)
