@@ -38,7 +38,6 @@ class CustomPlayer(pomice.Player):
         except Exception as e:
             print(e)
             return await self.exit()
-        pprint(vars(track))
         if  not track.spotify:
             code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
             request = self.youtube.videos().list(part="snippet", id=code)
@@ -49,6 +48,7 @@ class CustomPlayer(pomice.Player):
             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
         else:
             result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1), "AU")
+            print(result)
             artisturl = result["artists"][0]["uri"]
             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
