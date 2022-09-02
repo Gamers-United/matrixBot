@@ -48,8 +48,7 @@ class CustomPlayer(pomice.Player):
             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
         else:
             result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1), "AU")
-            print(result)
-            artisturl = result["artists"][0]["uri"]
+            artisturl = result["artists"][0]["external_urls"]["spotify"]
             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def exit(self):
