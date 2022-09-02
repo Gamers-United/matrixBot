@@ -27,6 +27,8 @@ class Music(commands.Cog):
             port=dsettings.lavalink_port,
             password=dsettings.lavalink_password,
             identifier=dsettings.lavalink_identifier,
+            spotify_client_id=dsettings.spotify_client_id,
+            spotify_client_secret=dsettings.spotify_client_secret
         )
         print("Music Module Is Setup & Ready")
 
