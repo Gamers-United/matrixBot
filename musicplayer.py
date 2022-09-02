@@ -39,7 +39,7 @@ class CustomPlayer(pomice.Player):
             print(e)
             return await self.exit()
         pprint(vars(track))
-        if  "youtube" in track.uri:
+        if  not track.spotify:
             code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
             request = self.youtube.videos().list(part="snippet", id=code)
             response = request.execute()
@@ -47,8 +47,10 @@ class CustomPlayer(pomice.Player):
             track.info["channeluri"] = f"https://youtube.com/channel/{responset}"
             channelurl = track.info["channeluri"]
             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
-        elif "spotify" in track.uri:
-            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({track.spotify})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+        else:
+            result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1), "AU")
+            artisturl = result["artists"][0]["uri"]
+            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def exit(self):
         """closes the player down in the guild"""
