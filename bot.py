@@ -120,7 +120,8 @@ async def help(ctx):
     lyrics (for the current song)
     remove 'number in queue to remove'
     skip 'number to skip (default of 1)'
-    suggested""", inline=False)
+    curated
+    top (Optional artist name)""", inline=False)
     embed.add_field(name="Music | Advanced", value="""volume 'level' (0 to 500%)
     filter (GUI Command)
     delfilter (GUI Command)""", inline=False)

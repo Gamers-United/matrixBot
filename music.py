@@ -4,6 +4,7 @@ import pomice
 import math
 import asyncio
 import traceback
+import urllib
 from discord.ext import commands
 from discord import VoiceChannel, Embed, Colour
 from lyrics import Lyrics
@@ -396,8 +397,8 @@ class Music(commands.Cog):
                 await ctx.send(embed=final)
 
     #suggested playlists
-    @commands.command(aliases=["suggested", "sp", "playlists", "suggest"])
-    async def suggestedPlaylists(self, ctx):
+    @commands.command(aliases=["curated", "playlists"])
+    async def curatedPlaylists(self, ctx):
         playlistembed = discord.Embed(colour=discord.Color.gold(), title=dsettings.suggested_playlists_title, description=dsettings.suggested_playlists_description)
         playlistembed.add_field(inline=False, name=dsettings.playlist_1_name, value=dsettings.playlist_1_artists)
         playlistembed.add_field(inline=False, name=dsettings.playlist_2_name, value=dsettings.playlist_2_artists)
@@ -408,6 +409,15 @@ class Music(commands.Cog):
         playlistembed.add_field(inline=False, name=dsettings.playlist_7_name, value=dsettings.playlist_7_artists)
         playlistembed.add_field(inline=False, name=dsettings.playlist_8_name, value=dsettings.playlist_8_artists)
         await ctx.send(embed=playlistembed, view=buttonLIB.playlistPlayer(ctx=ctx, music=self))
+
+    @commands.command(aliases=["top10"])
+    async def top(self, ctx, artist: str):
+        player: CustomPlayer = ctx.voice_client
+        artist_search = player.spotify.search(q=f"artist:{urllib.parse.quote(artist)}", type="album", market="AU")
+        print(artist_search)
+        artist = artist_search["artists"]["items"][0]["uri"]
+        top_tracks = player.spotify.artist_top_tracks(artist)
+        print(top_tracks)
 
 async def setup(bot):
     await bot.add_cog(Music(bot))
