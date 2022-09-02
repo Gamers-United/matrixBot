@@ -13,6 +13,7 @@ import datetime
 import buttonLIB
 from musicplayer import CustomPlayer
 from config import settings as dsettings
+from pprint import pprint
 
 class Music(commands.Cog):
     #initalization
@@ -421,10 +422,10 @@ class Music(commands.Cog):
             return
 
         artist_search = player.spotify.search(q=f"artist:{urllib.parse.quote(artist)}", type="album", market="AU")
-        print(artist_search)
+        pprint(artist_search)
         artist = artist_search["artists"]["items"][0]["uri"]
         top_tracks = player.spotify.artist_top_tracks(artist)
-        print(top_tracks)
+        pprint(top_tracks)
 
 async def setup(bot):
     await bot.add_cog(Music(bot))
