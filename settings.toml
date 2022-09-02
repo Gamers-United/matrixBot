@@ -69,6 +69,10 @@ lyrics_not_found = "No Lyrics Found"
 suggested_playlists_title = "Suggested Playlists"
 suggested_playlists_description = "100 Songs Each. Curated by the B&B Team"
 
+### Top Tracks By Artist
+top_title_artist = "Top 5 songs for"
+select_track = "Select Track"
+
 ### Playlists
 select_playlist = "Select Playlist"
 playlist_1_name = "Volume 1 - Pop"

@@ -214,3 +214,28 @@ class addSong(discord.ui.View):
             return False
         else:
             return True
+
+class topTrackDropdown(discord.ui.Select):
+    def __init__(self, songs, ctx):
+        self.songs = songs
+        self.ctx = ctx
+        options = [
+            discord.SelectOption(label=dsettings.select_track, default=True),
+        ]
+        for song in songs:
+            options.append(discord.SelectOption(label=song[0], value=song[1]))
+        super().__init__(placeholder="Select Track", max_values=1,min_values=1,options=options)
+    async def callback(self, interaction: discord.Interaction):
+        await self.ctx.invoke(self.music.play, query=self.values[0])
+
+class topTrackSelector(discord.ui.View):
+    def __init__(self, *, timeout=120, songs, ctx: discord.ext.commands.Context):
+        super().__init__(timeout=timeout)
+        self.add_item(topTrackDropdown(songs=songs, ctx=ctx))
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: discord.Interaction):
+        if interaction.user != self.ctx.author:
+            return False
+        else:
+            return True

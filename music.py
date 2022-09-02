@@ -411,7 +411,7 @@ class Music(commands.Cog):
         playlistembed.add_field(inline=False, name=dsettings.playlist_8_name, value=dsettings.playlist_8_artists)
         await ctx.send(embed=playlistembed, view=buttonLIB.playlistPlayer(ctx=ctx, music=self))
 
-    @commands.command(aliases=["top10"])
+    @commands.command(aliases=["top5"])
     async def top(self, ctx, artist: str):
         player: CustomPlayer = ctx.voice_client
         if not player:
@@ -420,12 +420,21 @@ class Music(commands.Cog):
         if not player:
             #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
             return
-
-        artist_search = player.spotify.search(q=f"artist:{urllib.parse.quote(artist)}", type="artist", market="AU")
-        pprint(artist_search)
-        artist = artist_search["artists"]["items"][0]["uri"]
-        top_tracks = player.spotify.artist_top_tracks(artist)
-        pprint(top_tracks)
+        if artist != None:
+            artist_search = player.spotify.search(q=f"artist:{urllib.parse.quote(artist)}", type="artist", market="AU")
+            artist = artist_search["artists"]["items"][0]["uri"]
+            top_tracks = player.spotify.artist_top_tracks(artist, country="AU")
+            topTracksEmbed = discord.Embed(colour=discord.Color.gold(), title=dsettings.top_title_artist+" "+artist)
+            songs = []
+            for song in top_tracks["tracks"]:
+                songs.append((song["name"], song["external_urls"]["spotify"]))
+                count = top_tracks["tracks"].index(song)
+                song_name = song["name"]
+                song_url = song["external_urls"]["spotify"]
+                album_name = song["album"]["name"]
+                album_url = song["album"]["external_urls"]["spotify"]
+                topTracksEmbed.add_field(inline=False, name=f"{count}. [{song_name}]({song_url}) | [{album_name}]({album_url})")
+            await ctx.send(embed=topTracksEmbed, view=buttonLIB.topTrackSelector(ctx=ctx, songs=songs))
 
 async def setup(bot):
     await bot.add_cog(Music(bot))
