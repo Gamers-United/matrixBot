@@ -12,6 +12,9 @@ import datetime
 from config import settings as dsettings
 import googleapiclient.discovery
 import googleapiclient.errors
+from spotipy.oauth2 import SpotifyClientCredentials
+import spotipy
+from pprint import pprint
 
 class CustomPlayer(pomice.Player):
     """Custom player class"""
@@ -21,6 +24,7 @@ class CustomPlayer(pomice.Player):
         self.context: commands.Context = None
         self.np: discord.Message = None
         self.youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=dsettings.google_api_key)
+        self.spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=dsettings.spotify_client_id, client_secret=dsettings.spotify_client_secret))
 
     # handle the next track
     async def handleNextTrack(self) -> None:
@@ -34,8 +38,8 @@ class CustomPlayer(pomice.Player):
         except Exception as e:
             print(e)
             return await self.exit()
-        print(f"{type(track)};{track.author};{track.ctx};{track.identifier};{track.info};{track.is_seekable};{track.is_stream};{track.isrc};{track.length};{track.original};{track.position};{track.requester};{track.spotify};{track.spotify_track};{track.thumbnail};{track.title};{track.track_id};{track.uri}")
-        if (track.uri != None):
+        pprint(vars(track))
+        if  "youtube" in track.uri:
             code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
             request = self.youtube.videos().list(part="snippet", id=code)
             response = request.execute()
@@ -43,8 +47,8 @@ class CustomPlayer(pomice.Player):
             track.info["channeluri"] = f"https://youtube.com/channel/{responset}"
             channelurl = track.info["channeluri"]
             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
-        else:
-             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+        elif "spotify" in track.uri:
+            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({track.spotify})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def exit(self):
         """closes the player down in the guild"""
