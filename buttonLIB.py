@@ -221,9 +221,10 @@ class addSong(discord.ui.View):
             return True
 
 class topTrackDropdown(discord.ui.Select):
-    def __init__(self, songs, ctx):
+    def __init__(self, songs, ctx, music):
         self.songs = songs
         self.ctx = ctx
+        self.music = music
         options = [
             discord.SelectOption(label=dsettings.select_track, default=True),
         ]
@@ -231,14 +232,13 @@ class topTrackDropdown(discord.ui.Select):
             options.append(discord.SelectOption(label=song[0], value=song[1]))
         super().__init__(placeholder="Select Track", max_values=1,min_values=1,options=options)
     async def callback(self, interaction: discord.Interaction):
-        print(self.values[0])
         await self.ctx.invoke(self.music.play, query=self.values[0])
         await interaction.response.defer()
 
 class topTrackSelector(discord.ui.View):
-    def __init__(self, *, timeout=120, songs, ctx: discord.ext.commands.Context):
+    def __init__(self, *, timeout=120, songs, ctx: discord.ext.commands.Context, music):
         super().__init__(timeout=timeout)
-        self.add_item(topTrackDropdown(songs=songs, ctx=ctx))
+        self.add_item(topTrackDropdown(songs=songs, ctx=ctx, music=music))
         self.ctx = ctx
 
     async def interaction_check(self, interaction: discord.Interaction):
