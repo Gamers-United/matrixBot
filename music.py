@@ -430,7 +430,7 @@ class Music(commands.Cog):
             songs = []
             for song in tracks:
                 songs.append((song["name"], song["external_urls"]["spotify"]))
-                count = top_tracks["tracks"].index(song)
+                count = top_tracks["tracks"].index(song) + 1
                 song_name = song["name"]
                 song_url = song["external_urls"]["spotify"]
                 album_name = song["album"]["name"]
