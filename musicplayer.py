@@ -49,7 +49,7 @@ class CustomPlayer(pomice.Player):
         else:
             result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1), "AU")
             artisturl = result["artists"][0]["external_urls"]["spotify"]
-            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl}) || [YT]({track.original.uri}})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
 
     async def exit(self):
         """closes the player down in the guild"""

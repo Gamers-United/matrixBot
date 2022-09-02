@@ -412,7 +412,7 @@ class Music(commands.Cog):
         await ctx.send(embed=playlistembed, view=buttonLIB.playlistPlayer(ctx=ctx, music=self))
 
     @commands.command(aliases=["top5"])
-    async def top(self, ctx, artist: str):
+    async def top(self, ctx, *, artist: str):
         player: CustomPlayer = ctx.voice_client
         if not player:
             await ctx.invoke(self.connect)
