@@ -421,7 +421,7 @@ class Music(commands.Cog):
             #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
             return
 
-        artist_search = player.spotify.search(q=f"artist:{urllib.parse.quote(artist)}", type="album", market="AU")
+        artist_search = player.spotify.search(q=f"artist:{urllib.parse.quote(artist)}", type="artist", market="AU")
         pprint(artist_search)
         artist = artist_search["artists"]["items"][0]["uri"]
         top_tracks = player.spotify.artist_top_tracks(artist)
