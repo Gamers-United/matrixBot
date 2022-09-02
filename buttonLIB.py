@@ -60,6 +60,7 @@ class filterButtons(discord.ui.View):
     @discord.ui.select(placeholder="Select Filter", options=filterOptions)
     async def eqButton(self,select:discord.ui.select,interaction:discord.Interaction):
         await self.ctx.send(view=filterButtonsOptions(ctx=self.ctx, setup=filterArgumentOptions[interaction.values[0]], strtype=interaction.values[0]))
+        await interaction.response.defer()
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
@@ -81,6 +82,7 @@ class deleteFilterButtons(discord.ui.View):
         eq = lavapy.Equalizer.flat()
         eq.name = "Equalizer"
         await player.removeFilter(eq)
+        await interaction.response.defer()
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
@@ -131,6 +133,7 @@ class filterButtonsOptions(discord.ui.View):
                 eq = player.filters["Equalizer"]
             eq.levels[int(self.valuea)] = float(self.valueb)
             await player.set_filter(eq, fast_apply=True)
+        await interaction.response.defer()
 
     async def interaction_check(self, interaction: discord.Interaction):
         if interaction.user != self.ctx.author:
@@ -170,6 +173,7 @@ class playlistSelector(discord.ui.Select):
         super().__init__(placeholder="Select Playlist", max_values=1,min_values=1,options=options)
     async def callback(self, interaction: discord.Interaction):
         await self.ctx.invoke(self.music.play, query=playlistURLs[self.values[0]])
+        await interaction.response.defer()
 
 class playlistPlayer(discord.ui.View):
     def __init__(self, *, timeout=120, music, ctx: discord.ext.commands.Context):
@@ -192,6 +196,7 @@ class songButton(discord.ui.Button):
     async def callback(self, interaction: discord.Interaction):
         self.interaction = interaction
         self.interacted = True
+        await interaction.response.defer()
 
 class addSong(discord.ui.View):
     def __init__(self, *, timeout=120, ctx):
@@ -226,7 +231,9 @@ class topTrackDropdown(discord.ui.Select):
             options.append(discord.SelectOption(label=song[0], value=song[1]))
         super().__init__(placeholder="Select Track", max_values=1,min_values=1,options=options)
     async def callback(self, interaction: discord.Interaction):
+        print(self.values[0])
         await self.ctx.invoke(self.music.play, query=self.values[0])
+        await interaction.response.defer()
 
 class topTrackSelector(discord.ui.View):
     def __init__(self, *, timeout=120, songs, ctx: discord.ext.commands.Context):

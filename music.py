@@ -424,16 +424,18 @@ class Music(commands.Cog):
             artist_search = player.spotify.search(q=f"artist:{urllib.parse.quote(artist)}", type="artist", market="AU")
             artist = artist_search["artists"]["items"][0]["uri"]
             top_tracks = player.spotify.artist_top_tracks(artist, country="AU")
-            topTracksEmbed = discord.Embed(colour=discord.Color.gold(), title=dsettings.top_title_artist+" "+artist)
+            tracks = top_tracks["tracks"]
+            author_name = top_tracks["tracks"][0]["author"]["name"]
+            topTracksEmbed = discord.Embed(colour=discord.Color.gold(), title=f"Top {count(tracks)} for {author_name}")
             songs = []
-            for song in top_tracks["tracks"]:
+            for song in tracks:
                 songs.append((song["name"], song["external_urls"]["spotify"]))
                 count = top_tracks["tracks"].index(song)
                 song_name = song["name"]
                 song_url = song["external_urls"]["spotify"]
                 album_name = song["album"]["name"]
                 album_url = song["album"]["external_urls"]["spotify"]
-                topTracksEmbed.add_field(inline=False, name=f"{count}. [{song_name}]({song_url})", value=f"[{album_name}]({album_url})")
+                topTracksEmbed.add_field(inline=False, name=f"{count}", value=f"[{song_name}]({song_url}) [{album_name}]({album_url})")
             await ctx.send(embed=topTracksEmbed, view=buttonLIB.topTrackSelector(ctx=ctx, songs=songs))
 
 async def setup(bot):
