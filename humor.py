@@ -1,5 +1,7 @@
-import discord, random
+import random
+
 from discord.ext import commands
+
 
 class Humor(commands.Cog):
     def __init__(self, bot):
@@ -25,6 +27,7 @@ class Humor(commands.Cog):
         lines = open("copypasta.txt").read().splitlines()
         myline = random.choice(lines)
         await ctx.send(myline)
+
 
 async def setup(bot):
     await bot.add_cog(Humor(bot))

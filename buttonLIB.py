@@ -1,8 +1,9 @@
 import discord
-from discord.ext import commands
-from musicplayer import CustomPlayer
 import pomice
+from discord.ext import commands
+
 from config import settings as dsettings
+from musicplayer import CustomPlayer
 
 filterOptions = [
     discord.SelectOption(label="Select Filter", default=True),
@@ -49,8 +50,10 @@ noOptions = [
 ]
 
 filterArgumentOptions = {
-    "Equalizer": [["Band Options", equalizerBandOptions],["Band Gain", equalizerBandGains], ["N/A", noOptions], ["N/A", noOptions]],
+    "Equalizer": [["Band Options", equalizerBandOptions], ["Band Gain", equalizerBandGains], ["N/A", noOptions],
+                  ["N/A", noOptions]],
 }
+
 
 class filterButtons(discord.ui.View):
     def __init__(self, *, timeout=120, ctx: discord.ext.commands.Context):
@@ -58,8 +61,9 @@ class filterButtons(discord.ui.View):
         self.ctx = ctx
 
     @discord.ui.select(placeholder="Select Filter", options=filterOptions)
-    async def eqButton(self,select:discord.ui.select,interaction:discord.Interaction):
-        await self.ctx.send(view=filterButtonsOptions(ctx=self.ctx, setup=filterArgumentOptions[interaction.values[0]], strtype=interaction.values[0]))
+    async def eqButton(self, select: discord.ui.select, interaction: discord.Interaction):
+        await self.ctx.send(view=filterButtonsOptions(ctx=self.ctx, setup=filterArgumentOptions[interaction.values[0]],
+                                                      strtype=interaction.values[0]))
         await interaction.response.defer()
 
     async def interaction_check(self, interaction: discord.Interaction):
@@ -70,18 +74,17 @@ class filterButtons(discord.ui.View):
 
     async def on_timeout(self):
         await self.ctx.send("Timed out!")
+
 
 class deleteFilterButtons(discord.ui.View):
     def __init__(self, *, timeout=120, ctx: discord.ext.commands.Context):
         super().__init__(timeout=timeout)
         self.ctx = ctx
-    
+
     @discord.ui.select(placeholder="Select Filter to Delete", options=filterOptions)
-    async def eqButton(self,select:discord.ui.select,interaction:discord.Interaction):
+    async def eqButton(self, select: discord.ui.select, interaction: discord.Interaction):
         player: CustomPlayer = self.ctx.voice_client
-        eq = lavapy.Equalizer.flat()
-        eq.name = "Equalizer"
-        await player.removeFilter(eq)
+        eq = pomice.filters.Equalizer(levels = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         await interaction.response.defer()
 
     async def interaction_check(self, interaction: discord.Interaction):
@@ -93,9 +96,14 @@ class deleteFilterButtons(discord.ui.View):
     async def on_timeout(self):
         await self.ctx.send("Timed out!")
 
+
 class filterButtonsOptions(discord.ui.View):
     def __init__(self, *, timeout=120, ctx: discord.ext.commands.Context, setup: list, strtype: str):
         super().__init__(timeout=timeout)
+        self.valuea = None
+        self.valueb = None
+        self.valuec = None
+        self.valued = None
         self.ctx = ctx
         self.viewa = setup[0][0]
         self.viewb = setup[1][0]
@@ -106,29 +114,29 @@ class filterButtonsOptions(discord.ui.View):
         self.optc = setup[2][1]
         self.optd = setup[3][1]
         self.type = strtype
-        self.selectora = discord.ui.select(placeholder=self.viewa, options=self.opta) (self.selectorA)
-        self.selectorb = discord.ui.select(placeholder=self.viewb, options=self.optb) (self.selectorB)
-        self.selectorc = discord.ui.select(placeholder=self.viewc, options=self.optc) (self.selectorC)
-        self.selectord = discord.ui.select(placeholder=self.viewd, options=self.optd) (self.selectorD)
+        self.selectora = discord.ui.select(placeholder=self.viewa, options=self.opta)(self.selectorA)
+        self.selectorb = discord.ui.select(placeholder=self.viewb, options=self.optb)(self.selectorB)
+        self.selectorc = discord.ui.select(placeholder=self.viewc, options=self.optc)(self.selectorC)
+        self.selectord = discord.ui.select(placeholder=self.viewd, options=self.optd)(self.selectorD)
 
-    async def selectorA(self,select:discord.ui.select,interaction:discord.Interaction):
+    async def selectorA(self, select: discord.ui.select, interaction: discord.Interaction):
         self.valuea = select.value
-        
-    async def selectorB(self,select:discord.ui.select,interaction:discord.Interaction):
+
+    async def selectorB(self, select: discord.ui.select, interaction: discord.Interaction):
         self.valueb = select.value
 
-    async def selectorC(self,select:discord.ui.select,interaction:discord.Interaction):
+    async def selectorC(self, select: discord.ui.select, interaction: discord.Interaction):
         self.valuec = select.value
 
-    async def selectorD(self,select:discord.ui.select,interaction:discord.Interaction):
+    async def selectorD(self, select: discord.ui.select, interaction: discord.Interaction):
         self.valued = select.value
 
     @discord.ui.button()
-    async def submitButton(self,button:discord.ui.button,interaction:discord.Interaction):
+    async def submitButton(self, button: discord.ui.button, interaction: discord.Interaction):
         player: CustomPlayer = self.ctx.voice_client
         if self.type == "Equalizer":
             if player.filter is None:
-                eq = pomice.filters.Equalizer()
+                eq = pomice.filters.Equalizer(levels = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
             else:
                 eq = player.filters["Equalizer"]
             eq.levels[int(self.valuea)] = float(self.valueb)
@@ -144,6 +152,7 @@ class filterButtonsOptions(discord.ui.View):
     async def on_timeout(self):
         await self.ctx.send("Timed out!")
 
+
 playlistURLs = {
     dsettings.playlist_1_name: dsettings.playlist_1_url,
     dsettings.playlist_2_name: dsettings.playlist_2_url,
@@ -154,6 +163,7 @@ playlistURLs = {
     dsettings.playlist_7_name: dsettings.playlist_7_url,
     dsettings.playlist_8_name: dsettings.playlist_8_url
 }
+
 
 class playlistSelector(discord.ui.Select):
     def __init__(self, music, ctx):
@@ -170,10 +180,12 @@ class playlistSelector(discord.ui.Select):
             discord.SelectOption(label=dsettings.playlist_7_name),
             discord.SelectOption(label=dsettings.playlist_8_name),
         ]
-        super().__init__(placeholder="Select Playlist", max_values=1,min_values=1,options=options)
+        super().__init__(placeholder="Select Playlist", max_values=1, min_values=1, options=options)
+
     async def callback(self, interaction: discord.Interaction):
         await self.ctx.invoke(self.music.play, query=playlistURLs[self.values[0]])
         await interaction.response.defer()
+
 
 class playlistPlayer(discord.ui.View):
     def __init__(self, *, timeout=120, music, ctx: discord.ext.commands.Context):
@@ -187,16 +199,19 @@ class playlistPlayer(discord.ui.View):
         else:
             return True
 
+
 class songButton(discord.ui.Button):
     def __init__(self, number):
         super().__init__(style=discord.ButtonStyle.success, label=number)
+        self.interaction = None
         self.number = int(number)
         self.interacted = False
-    
+
     async def callback(self, interaction: discord.Interaction):
         self.interaction = interaction
         self.interacted = True
         await interaction.response.defer()
+
 
 class addSong(discord.ui.View):
     def __init__(self, *, timeout=120, ctx):
@@ -220,6 +235,7 @@ class addSong(discord.ui.View):
         else:
             return True
 
+
 class topTrackDropdown(discord.ui.Select):
     def __init__(self, songs, ctx, music):
         self.songs = songs
@@ -230,10 +246,12 @@ class topTrackDropdown(discord.ui.Select):
         ]
         for song in songs:
             options.append(discord.SelectOption(label=song[0], value=song[1]))
-        super().__init__(placeholder="Select Track", max_values=1,min_values=1,options=options)
+        super().__init__(placeholder="Select Track", max_values=1, min_values=1, options=options)
+
     async def callback(self, interaction: discord.Interaction):
         await self.ctx.invoke(self.music.play, query=self.values[0])
         await interaction.response.defer()
+
 
 class topTrackSelector(discord.ui.View):
     def __init__(self, *, timeout=120, songs, ctx: discord.ext.commands.Context, music):

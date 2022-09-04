@@ -1,11 +1,16 @@
-import requests, json, discord, re
+import discord
+import re
+import requests
 from bs4 import BeautifulSoup
+
 from config import settings as dsettings
+
 
 class BearerAuth(requests.auth.AuthBase):
     def __call__(self, r):
         r.headers["authorization"] = "Bearer " + dsettings.genius_token
         return r
+
 
 class Lyrics():
     def SearchForLyrics(query):
@@ -18,14 +23,16 @@ class Lyrics():
             return rson["response"]["hits"]
         else:
             return None
+
     def GenerateEmbed(hits):
-        embed=discord.Embed(title=dsettings.lyrics_search_result, description=dsettings.lyrics_search_description)
+        embed = discord.Embed(title=dsettings.lyrics_search_result, description=dsettings.lyrics_search_description)
         for item in hits:
-            embed.add_field(name=str(hits.index(item)+1), value=item["result"]["full_title"], inline=False)
+            embed.add_field(name=str(hits.index(item) + 1), value=item["result"]["full_title"], inline=False)
         return embed
+
     def lyrics_from_song_api_path(song_api_path):
         song_url = dsettings.genius_api + song_api_path
-        response = requests.get(song_url, params={'access_token':dsettings.genius_token})
+        response = requests.get(song_url, params={'access_token': dsettings.genius_token})
         json = response.json()
         path = json["response"]["song"]["path"]
         page_url = dsettings.genius_path + path
@@ -34,6 +41,7 @@ class Lyrics():
         lyrics = html.find("div", class_=re.compile("^lyrics$|Lyrics__Root")).get_text()
         lyrics = lyrics[:-29]
         return lyrics
+
     def ProduceLyrics(results, selection: int):
         lyrics = Lyrics.lyrics_from_song_api_path(results[selection]["result"]["api_path"])
-        return discord.Embed(title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=lyrics)
+        return discord.Embed(title="Lyrics for " + str(results[selection]["result"]["full_title"]), description=lyrics)

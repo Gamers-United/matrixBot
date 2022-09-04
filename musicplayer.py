@@ -1,30 +1,31 @@
-import re
-import discord
-import pomice
-import math
-import asyncio
-from discord.ext import commands
-from discord import VoiceChannel, Embed, Colour
-from lyrics import Lyrics
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union
-from contextlib import suppress
 import datetime
-from config import settings as dsettings
+import re
+from contextlib import suppress
+
+import discord
 import googleapiclient.discovery
 import googleapiclient.errors
-from spotipy.oauth2 import SpotifyClientCredentials
+import pomice
 import spotipy
-from pprint import pprint
+from discord import VoiceChannel, Colour
+from discord.ext import commands
+from spotipy.oauth2 import SpotifyClientCredentials
+
+from config import settings as dsettings
+
 
 class CustomPlayer(pomice.Player):
     """Custom player class"""
+
     def __init__(self, bot: commands.Bot, channel: VoiceChannel) -> None:
         super().__init__(bot, channel)
         self.queue = pomice.Queue()
         self.context: commands.Context = None
         self.np: discord.Message = None
         self.youtube = googleapiclient.discovery.build("youtube", "v3", developerKey=dsettings.google_api_key)
-        self.spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=dsettings.spotify_client_id, client_secret=dsettings.spotify_client_secret))
+        self.spotify = spotipy.Spotify(
+            client_credentials_manager=SpotifyClientCredentials(client_id=dsettings.spotify_client_id,
+                                                                client_secret=dsettings.spotify_client_secret))
 
     # handle the next track
     async def handleNextTrack(self) -> None:
@@ -38,18 +39,25 @@ class CustomPlayer(pomice.Player):
         except Exception as e:
             print(e)
             return await self.exit()
-        if  not track.spotify:
+        if not track.spotify:
             code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
             request = self.youtube.videos().list(part="snippet", id=code)
             response = request.execute()
             responset = response["items"][0]["snippet"]["channelId"]
             track.info["channeluri"] = f"https://youtube.com/channel/{responset}"
             channelurl = track.info["channeluri"]
-            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title,
+                                                               description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**",
+                                                               colour=Colour.dark_red(),
+                                                               timestamp=datetime.datetime.now()))
         else:
-            result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1), "AU")
+            result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1),
+                                        "AU")
             artisturl = result["artists"][0]["external_urls"]["spotify"]
-            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title, description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl}) | [YT]({track.original.uri})**", colour=Colour.dark_red(), timestamp=datetime.datetime.now()))
+            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title,
+                                                               description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl}) | [YT]({track.original.uri})**",
+                                                               colour=Colour.dark_red(),
+                                                               timestamp=datetime.datetime.now()))
 
     async def exit(self):
         """closes the player down in the guild"""

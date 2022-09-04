@@ -1,22 +1,23 @@
-import os, json, sys
+import asyncio
+import traceback
+from datetime import datetime
+
 import discord
 from discord.ext import commands
-from types import SimpleNamespace
-from datetime import datetime
-import asyncio
-from config import settings as dsettings
-import traceback
 
-#Bot Static
+from config import settings as dsettings
+
+# Bot Static
 prefix = "!"
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=prefix, intents=intents, help_command=None, case_insensitive=True)
 bot.channels = {}
 
-#main bot definitions
+
+# main bot definitions
 @bot.event
 async def on_ready():
-    #only load modules that are in config
+    # only load modules that are in config
     if dsettings.jokes:
         await bot.load_extension('randomresults')
         await bot.load_extension('humor')
@@ -26,12 +27,12 @@ async def on_ready():
         await bot.load_extension('music')
     if dsettings.development:
         await bot.load_extension('dev')
-    
-    #hold the details of the application info inside the bot object
+
+    # hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
-    print("Bot's name is "+str(bot.user))
-    
-    #startup info print
+    print("Bot's name is " + str(bot.user))
+
+    # startup info print
     try:
         guild = discord.utils.get(bot.guilds, id=int(dsettings.guild_main))
         print(f"Found main guild of ID: {str(guild.id)} | Name of: {str(guild.name)}")
@@ -45,15 +46,15 @@ async def on_ready():
     except AttributeError:
         print("Could not find HQ guild!")
 
-    #save these channels for later use
-    try:
-        bot.channels["VOICE"] = bot.get_channel(int(dsettings.channelid_voice_log))
-        bot.channels["INFRACTIONS"] = bot.get_channel(int(dsettings.channelid_infraction_log))
-        bot.channels["ERROR"] = bot.get_channel(int(dsettings.channelid_error_log))
-    except:
+    # save these channels for later use
+    bot.channels["VOICE"] = bot.get_channel(int(dsettings.channelid_voice_log))
+    bot.channels["INFRACTIONS"] = bot.get_channel(int(dsettings.channelid_infraction_log))
+    bot.channels["ERROR"] = bot.get_channel(int(dsettings.channelid_error_log))
+    if bot.channels["VOICE"] is None or bot.channels["INFRACTIONS"] is None or bot.channels["ERROR"] is None:
         print("Error finding channels")
 
-#bot command error
+
+# bot command error
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -70,15 +71,18 @@ async def on_command_error(ctx, error):
     else:
         print(error)
 
-#bot logging
+
+# bot logging
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
     timenow = datetime.now()
-    embed=discord.Embed(title=f"{member.name}", description=str(member.name)+" "+str(timenow))
+    embed = discord.Embed(title=f"{member.name}", description=str(member.name) + " " + str(timenow))
     if not before.channel and after.channel is not None:
-        embed.add_field(name="Joined", value=f"{after.channel.name}/{after.channel.category.name}/{after.channel.guild.name}")
+        embed.add_field(name="Joined",
+                        value=f"{after.channel.name}/{after.channel.category.name}/{after.channel.guild.name}")
     elif before.channel is not None and not after.channel:
-        embed.add_field(name="Left", value=f"{before.channel.name}/{before.channel.category.name}/{before.channel.guild.name}")
+        embed.add_field(name="Left",
+                        value=f"{before.channel.name}/{before.channel.category.name}/{before.channel.guild.name}")
     elif after.afk and before.channel is not None:
         embed.add_field(name="Went AFK", value=f"{before.channel.guild.name}")
     elif not before.self_deaf and after.self_deaf:
@@ -103,10 +107,12 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
         embed.add_field(name="Was Undeafened By An Admin", value=f"{before.channel.guild.name}")
     await bot.channels["VOICE"].send(embed=embed)
 
-#help command
+
+# help command
 @bot.command()
 async def help(ctx):
-    embed=discord.Embed(title="Matrix Help", description="""These are all the commands available, with Matrix.""", color=0x00ff00)
+    embed = discord.Embed(title="Matrix Help", description="""These are all the commands available, with Matrix.""",
+                          color=0x00ff00)
     embed.add_field(name="Music | Basic", value="""play 'spotify link, youtube (music) link, sound cloud link, mp3 link or name'
     connect 'channel'
     disconnect, stop, leave, dc
@@ -146,10 +152,12 @@ async def help(ctx):
     reload""", inline=False)
     await ctx.send(embed=embed)
 
-#run the bot
+
+# run the bot
 async def main():
     async with bot:
         await bot.start(dsettings.token)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

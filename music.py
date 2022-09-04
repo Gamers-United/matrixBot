@@ -1,22 +1,21 @@
+import datetime
+import math
 import re
+import traceback
+
 import discord
 import pomice
-import math
-import asyncio
-import traceback
-import urllib
+from discord import VoiceChannel
 from discord.ext import commands
-from discord import VoiceChannel, Embed, Colour
-from lyrics import Lyrics
-from typing import TYPE_CHECKING, Any, Callable, Dict, List, Optional, Tuple, Type, Union
-import datetime
+
 import buttonLIB
-from musicplayer import CustomPlayer
 from config import settings as dsettings
-from pprint import pprint
+from lyrics import Lyrics
+from musicplayer import CustomPlayer
+
 
 class Music(commands.Cog):
-    #initalization
+    # initialization
     def __init__(self, bot):
         self.bot: discord.ext.commands.bot = bot
         self.pomice = pomice.NodePool()
@@ -48,7 +47,7 @@ class Music(commands.Cog):
             print(e)
             print(''.join(traceback.format_tb(e.__traceback__)))
         await player.context.send(dsettings.song_stuck)
- 
+
     @commands.Cog.listener()
     async def on_pomice_track_exception(self, player: CustomPlayer, track: pomice.Track, _) -> None:
         await player.context.send(dsettings.song_exception)
@@ -59,7 +58,7 @@ class Music(commands.Cog):
             print(''.join(traceback.format_tb(e.__traceback__)))
         await player.handleNextTrack()
 
-    #commands
+    # commands
     @commands.command(aliases=["join", "j"])
     async def connect(self, ctx: commands.Context, channel: VoiceChannel = None) -> None:
         """ Joins the call """
@@ -69,12 +68,12 @@ class Music(commands.Cog):
             except AttributeError:
                 await ctx.send(dsettings.no_voice)
                 return
-        #setup the player
-        player: CustomPlayer = await channel.connect(cls=CustomPlayer, self_deaf=True) 
+        # set up the player
+        player: CustomPlayer = await channel.connect(cls=CustomPlayer, self_deaf=True)
         player.context = ctx
         await ctx.send(f"Connected to {channel.mention}")
 
-    @commands.command(aliases=['dc','stop','leave'])
+    @commands.command(aliases=['dc', 'stop', 'leave'])
     async def disconnect(self, ctx: commands.Context) -> None:
         """ Disconnects the player from the voice channel and clears its queue. """
         player: CustomPlayer = ctx.voice_client
@@ -95,15 +94,15 @@ class Music(commands.Cog):
         if not player:
             await ctx.invoke(self.connect)
         player: CustomPlayer = ctx.voice_client
-        
+
         if not player:
-            #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
+            # since we just tried to join, if it failed to join, then the person must not be in an accessible VC.
             return
-        if player.is_paused == True and query is None:
+        if player.is_paused and query is None:
             await player.set_pause(False)
             await ctx.send(dsettings.unpause)
             return
-        #handle playing
+        # handle playing
         results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytsearch)
         if not results:
             await ctx.send(dsettings.no_results)
@@ -115,14 +114,17 @@ class Music(commands.Cog):
             player.queue.put(results[0])
         else:
             # generate embed and send it out here
-            itemListEmbed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results")
+            itemlistembed = discord.Embed(colour=discord.Colour.green(), title="Song Search Results")
             top5 = results[:5]
             for item in top5:
-                itemListEmbed.add_field(name=(f"{str(results.index(item)+1)}. {str(item.title)} - {str(item.author)}"), value=str(item.info["uri"]), inline=False)
+                itemlistembed.add_field(
+                    name=f"{str(results.index(item) + 1)}. {str(item.title)} - {str(item.author)}",
+                    value=str(item.info["uri"]), inline=False)
 
-            #NEW -- Use buttons now
+            # NEW -- Use buttons now
             buttons = buttonLIB.addSong(ctx=ctx)
-            await ctx.send(embed=itemListEmbed, view=buttons)
+            await ctx.send(embed=itemlistembed, view=buttons)
+
             def check(interaction: discord.Interaction):
                 if interaction.user != ctx.author:
                     return False
@@ -132,22 +134,22 @@ class Music(commands.Cog):
             await self.bot.wait_for('interaction', check=check)
             selectionint = None
             for item in buttons.buttons:
-                    if item.interacted == True:
-                        selectionint = item.number
+                if item.interacted:
+                    selectionint = item.number
 
-            #process the selection to add to the track object.
+            # process the selection to add to the track object.
             try:
-                result = results[selectionint-1]
+                result = results[selectionint - 1]
                 player.queue.put(result)
             except ValueError:
                 await ctx.send(dsettings.search_invalid_selection)
 
         await ctx.send(dsettings.search_added_to_queue)
-        #make sure the player is playing at this stage
+        # make sure the player is playing at this stage
         if not player.is_playing:
             await player.handleNextTrack()
 
-    #managment commands
+    # managment commands
     @commands.command()
     async def skip(self, ctx, number: int = 1):
         player: CustomPlayer = ctx.voice_client
@@ -157,12 +159,12 @@ class Music(commands.Cog):
             await ctx.send(dsettings.skip_song)
         elif number > 1:
             if player.queue.count() < number:
-                return await ctx.send(dsettings.skip_larger_than_queue)  
-            for i in range(1,number):
+                return await ctx.send(dsettings.skip_larger_than_queue)
+            for i in range(1, number):
                 player.queue.pop()
             await player.stop()
             await player.set_pause(False)
-            return await ctx.send("Removed first "+str(number)+" songs!")
+            return await ctx.send("Removed first " + str(number) + " songs!")
 
     @commands.command()
     async def remove(self, ctx, index: int = 0):
@@ -170,7 +172,7 @@ class Music(commands.Cog):
         if player.queue.count() == 0:
             await ctx.send(dsettings.no_queue)
             return
-        elif index > player.queue.count(): 
+        elif index > player.queue.count():
             await ctx.send(dsettings.remove_larger_than_queue)
             return
         elif index < 0:
@@ -194,7 +196,7 @@ class Music(commands.Cog):
 
         await ctx.invoke(self.nowplaying)
         songs = player.queue.copy()
-        if len(songs) > 0 :
+        if len(songs) > 0:
             pages = math.ceil(len(songs) / dsettings.items_per_page)
             start = (page - 1) * dsettings.items_per_page
             end = start + dsettings.items_per_page
@@ -204,10 +206,12 @@ class Music(commands.Cog):
                 queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
                 time_remaining = time_remaining + track.length
 
-            embed = discord.Embed(colour=discord.Color.blurple(), description=f'**{len(songs)} tracks**\n\n{queue_list}')
-            #player current
-            playerMinutes, playerSeconds = divmod((time_remaining/1000), 60)
-            embed.set_footer(text=f'Viewing page {page}/{pages}! Time Remaining: {int(playerMinutes)}m{int(playerSeconds)}s')
+            embed = discord.Embed(colour=discord.Color.blurple(),
+                                  description=f'**{len(songs)} tracks**\n\n{queue_list}')
+            # player current
+            pminutes, pseconds = divmod((time_remaining / 1000), 60)
+            embed.set_footer(
+                text=f'Viewing page {page}/{pages}! Time Remaining: {int(pminutes)}m{int(pseconds)}s')
             await ctx.send(embed=embed)
 
     @commands.command()
@@ -232,7 +236,7 @@ class Music(commands.Cog):
             return await ctx.send(dsettings.not_playing)
         if not player.is_playing:
             return await ctx.send(dsettings.not_playing)
-            
+
         if player.queue.is_looping():
             player.queue.disable_loop()
             await ctx.send(dsettings.repeat_off)
@@ -248,16 +252,15 @@ class Music(commands.Cog):
         if not player.is_playing:
             return await ctx.send(dsettings.not_playing)
 
-        # Possible REGEX searches
-        # HIGHEST TO LOWEST PRIORITY
-        # FIND TYPE: <minutes>.<partial minutes> -- \n([0-9]\.[0-9]+)\n -- group contains e.g. 5.5, split by "." and times second part by 60.
-        # FIND TYPE: <minutes>:<seconds> -- ([0-9]+:[0-9]+) -- group contains e.g. 5:30, split by ":"
-        # FIND TYPE: <minutes>M+<seconds> -- ([0-9\.]+([ms]| [ms])) -- for each match, group 1 is value, group 2 is unit (possibly including a \n)
-        # IF NOTHING ELSE MATCHES. INTERPRET AS SECONDS BY ITSELF -- \n([0-9]+\n)
-        # OTHERWISE ERROR
+        # Possible REGEX searches HIGHEST TO the LOWEST PRIORITY FIND TYPE: <minutes>.<partial minutes> -- \n([0-9]\.[
+        # 0-9]+)\n -- group contains e.g. 5.5, split by "." and times second part by 60. FIND TYPE:
+        # <minutes>:<seconds> -- ([0-9]+:[0-9]+) -- group contains e.g. 5:30, split by ":" FIND TYPE:
+        # <minutes>M+<seconds> -- ([0-9\.]+([ms]| [ms])) -- for each match, group 1 is value, group 2 is unit (
+        # possibly including a \n) IF NOTHING ELSE MATCHES. INTERPRET AS SECONDS BY ITSELF -- \n([0-9]+\n) OTHERWISE
+        # ERROR
         time_dict = {"m": 60, "s": 1}
 
-        ## CASE 1
+        # CASE 1
         try:
             t = re.search("([0-9]\.[0-9]+)", time)
             time = int(float(t.group(1)) * 60)
@@ -265,7 +268,7 @@ class Music(commands.Cog):
             pass
             # I guess it's not this format...
 
-        ## CASE 2
+        # CASE 2
         try:
             t = re.search("([0-9]+:[0-9]+)", time)
             r = t.group(1).split(":")
@@ -274,7 +277,7 @@ class Music(commands.Cog):
             pass
             # I guess it's not this format...
 
-        ## CASE 3
+        # CASE 3
         try:
             t = re.findall("([0-9\.]+([ms]| [ms]))", time)
             ovalue = int(t[0].group(1))
@@ -285,30 +288,30 @@ class Music(commands.Cog):
                 ttype = t[1].group(2)
                 ttime = tvalue * time_dict[ttype]
             except:
-                passadd_field
+                pass
                 # I guess this only contains either minutes or seconds...
             time = otime + ttime
         except:
             pass
             # I guess it's not this format...
-        
-        ## CASE 4
+
+        # CASE 4
         try:
             t = re.search("\n([0-9]+\n)", time)
             time = int(t.group(1).strip("\n"))
         except:
             pass
             # I guess it's not this format...
-        
+
         if time is None:
             await ctx.send(dsettings.seek_invalid_time)
             return
 
-        #seek the player
+        # seek the player
         print(time)
-        await player.seek(float(time*1000))
+        await player.seek(float(time * 1000))
         await ctx.send(f'Moved track to **{str(datetime.timedelta(seconds=int(time)))}**')
- 
+
     @commands.command(aliases=['np'])
     async def nowplaying(self, ctx):
         player: CustomPlayer = ctx.voice_client
@@ -318,15 +321,16 @@ class Music(commands.Cog):
             return
         if player.current.is_stream:
             dur = 'LIVE'
+            song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]**\n{dur}'
         else:
-            #player current
-            playerMinutes, playerSeconds = divmod((player.position/1000), 60)
-            #song total
-            songMinutes, songSeconds = divmod((player.current.length/1000), 60)
-            #format string
-            if (player.current.info != None):
+            # player current
+            pminutes, pseconds = divmod((player.position / 1000), 60)
+            # song total
+            sminutes, sseconds = divmod((player.current.length / 1000), 60)
+            # format string
+            dur = f"{str(int(pminutes))}:{str(int(pseconds))} out of {str(int(sminutes))}:{str(int(sseconds))}"
+            if player.current.info != None:
                 channelurl = player.current.info["channeluri"]
-                dur = f"{str(int(playerMinutes))}:{str(int(playerSeconds))} out of {str(int(songMinutes))}:{str(int(songSeconds))}"
                 song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]({channelurl})**\n{dur}'
             else:
                 song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]**\n{dur}'
@@ -349,7 +353,7 @@ class Music(commands.Cog):
             await ctx.send(dsettings.unpaused)
             await player.set_pause(False)
 
-    #filters
+    # filters
     @commands.command(aliases=['setFilter', 'newFilter'])
     async def filter(self, ctx):
         await ctx.send(view=buttonLIB.filterButtons(ctx=ctx))
@@ -366,10 +370,10 @@ class Music(commands.Cog):
             await ctx.send(f"Set volume to {level}%")
 
     @commands.command(aliases=['removeFilter', 'rFilter'])
-    async def delfilter(self,ctx):
-        await ctx.send(view=buttonLIB.deleteFilterButtons(ctx))
+    async def delfilter(self, ctx):
+        await ctx.send(view=buttonLIB.deleteFilterButtons(ctx=ctx))
 
-    #lyrics
+    # lyrics
     @commands.command()
     async def lyrics(self, ctx):
         player: CustomPlayer = ctx.voice_client
@@ -378,29 +382,37 @@ class Music(commands.Cog):
             await ctx.send(dsettings.lyrics_not_found)
         else:
             await ctx.send(embed=Lyrics.GenerateEmbed(results))
+
             def check(message):
                 return message.author == ctx.author
+
             msg = await self.bot.wait_for('message', check=check, timeout=30)
             selection = int(msg.content) - 1
             lyr = Lyrics.lyrics_from_song_api_path(results[selection]["result"]["api_path"])
-            if(len(lyr)>4095):
-                n=4095
-                chunks = [lyr[i:i+n] for i in range(0, len(lyr), n)]
+            if len(lyr) > 4095:
+                n = 4095
+                chunks = [lyr[i:i + n] for i in range(0, len(lyr), n)]
                 for item in chunks:
                     if chunks.index(item) == 0:
-                        final = discord.Embed(colour=discord.Color.blurple(), title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=item)
+                        final = discord.Embed(colour=discord.Color.blurple(),
+                                              title="Lyrics for " + str(results[selection]["result"]["full_title"]),
+                                              description=item)
                         await ctx.send(embed=final)
                     else:
-                        final = discord.Embed(colour=discord.Color.blurple(), title="Lyrics for "+str(results[selection]["result"]["full_title"]+" Continued"), description=item)
+                        final = discord.Embed(colour=discord.Color.blurple(), title="Lyrics for " + str(
+                            results[selection]["result"]["full_title"] + " Continued"), description=item)
                         await ctx.send(embed=final)
             else:
-                final = discord.Embed(colour=discord.Color.blurple(), title="Lyrics for "+str(results[selection]["result"]["full_title"]), description=lyr)
+                final = discord.Embed(colour=discord.Color.blurple(),
+                                      title="Lyrics for " + str(results[selection]["result"]["full_title"]),
+                                      description=lyr)
                 await ctx.send(embed=final)
 
-    #suggested playlists
+    # suggested playlists
     @commands.command(aliases=["curated", "playlists"])
     async def curatedPlaylists(self, ctx):
-        playlistembed = discord.Embed(colour=discord.Color.gold(), title=dsettings.suggested_playlists_title, description=dsettings.suggested_playlists_description)
+        playlistembed = discord.Embed(colour=discord.Color.gold(), title=dsettings.suggested_playlists_title,
+                                      description=dsettings.suggested_playlists_description)
         playlistembed.add_field(inline=False, name=dsettings.playlist_1_name, value=dsettings.playlist_1_artists)
         playlistembed.add_field(inline=False, name=dsettings.playlist_2_name, value=dsettings.playlist_2_artists)
         playlistembed.add_field(inline=False, name=dsettings.playlist_3_name, value=dsettings.playlist_3_artists)
@@ -418,9 +430,9 @@ class Music(commands.Cog):
             await ctx.invoke(self.connect)
         player: CustomPlayer = ctx.voice_client
         if not player:
-            #since we just tried to join, if it failed to join, then the person must not be in a accessible VC.
+            # since we just tried to join, if it failed to join, then the person must not be in an accessible VC.
             return
-        if artist != None:
+        if artist is not None:
             artist_search = player.spotify.search(q=f"artist:{artist}", type="artist", market="AU")
             artistr = artist_search["artists"]["items"][0]["uri"]
             top_tracks = player.spotify.artist_top_tracks(artistr, country="AU")
@@ -435,8 +447,9 @@ class Music(commands.Cog):
                 song_url = song["external_urls"]["spotify"]
                 album_name = song["album"]["name"]
                 album_url = song["album"]["external_urls"]["spotify"]
-                topTracksEmbed.add_field(inline=False, name=f"{count}. **{song_name}**", value=f"[Link]({song_url})")
+                topTracksEmbed.add_field(inline=False, name=f"{count}. **{song_name}**", value=f"[Link]({song_url})| [{album_name}]({album_url})")
             await ctx.send(embed=topTracksEmbed, view=buttonLIB.topTrackSelector(ctx=ctx, songs=songs, music=self))
+
 
 async def setup(bot):
     await bot.add_cog(Music(bot))
