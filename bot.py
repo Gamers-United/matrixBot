@@ -1,7 +1,7 @@
 import asyncio
 import traceback
 from datetime import datetime
-
+import sankeyServer, socketserver
 import discord
 from discord.ext import commands
 
@@ -161,5 +161,11 @@ async def main():
         await bot.start(dsettings.token)
 
 
+async def httpServer():
+    httpd = socketserver.TCPServer(sankeyServer.HOST, sankeyServer.Handler)
+    httpd.serve_forever()
+
+
 if __name__ == "__main__":
     asyncio.run(main())
+    asyncio.run(httpServer())
