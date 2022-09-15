@@ -27,6 +27,8 @@ async def on_ready():
         await bot.load_extension('music')
     if dsettings.development:
         await bot.load_extension('dev')
+    if dsettings.games:
+        await bot.load_extension('games')
 
     # hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
