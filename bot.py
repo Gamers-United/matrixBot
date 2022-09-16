@@ -36,7 +36,7 @@ async def on_ready():
         print(" success.")
     if dsettings.games:
         print("Loading gaming modules.", end="")
-        await bot.load_extension('games')
+        #await bot.load_extension('games')
         print(" success.")
 
     # hold the details of the application info inside the bot object
