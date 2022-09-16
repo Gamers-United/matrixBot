@@ -39,6 +39,8 @@ async def on_ready():
         await bot.load_extension('games')
         print(" success.", end="")
 
+    print("")
+
     # hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
     print("Bot's name is " + str(bot.user))
