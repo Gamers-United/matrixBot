@@ -1,3 +1,4 @@
+import asyncio
 import os
 import re
 import uuid
@@ -59,4 +60,4 @@ class GameCommands(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(GameCommands(bot))
-    bot.loop.create_task(GameCommands.webServer())
+    await asyncio.create_task(GameCommands.webServer())
