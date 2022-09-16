@@ -156,16 +156,21 @@ async def help(ctx):
 
 
 # run the bot
-async def main():
+async def runBot():
     async with bot:
         await bot.start(dsettings.token)
 
 
-async def httpServer():
+async def runHTTP():
     httpd = socketserver.TCPServer(sankeyServer.HOST, sankeyServer.Handler)
     httpd.serve_forever()
 
 
+async def main():
+    botTask = asyncio.create_task(runBot())
+    httpTask = asyncio.create_task(runHTTP())
+    await botTask
+    await httpTask
+
 if __name__ == "__main__":
     asyncio.run(main())
-    asyncio.run(httpServer())
