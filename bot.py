@@ -18,15 +18,20 @@ bot.channels = {}
 async def on_ready():
     # only load modules that are in config
     if dsettings.jokes:
+        print("Loading jokes modules.")
         await bot.load_extension('randomresults')
         await bot.load_extension('humor')
     if dsettings.voice:
+        print("Loading voice modules.")
         await bot.load_extension('voice')
     if dsettings.music:
+        print("Loading music modules.")
         await bot.load_extension('music')
     if dsettings.development:
+        print("Loading development modules.")
         await bot.load_extension('dev')
     if dsettings.games:
+        print("Loading gaming modules.")
         await bot.load_extension('games')
 
     # hold the details of the application info inside the bot object
