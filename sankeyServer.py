@@ -1,3 +1,4 @@
+import socketserver
 import urllib.parse
 import http.server
 import re
@@ -17,3 +18,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             return
 
         return http.server.SimpleHTTPRequestHandler.do_GET(self)
+
+async def webserver():
+    httpd = socketserver.TCPServer(HOST, Handler)
+    httpd.serve_forever()
