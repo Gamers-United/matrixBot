@@ -1,7 +1,6 @@
 import asyncio
 import traceback
 from datetime import datetime
-import sankeyServer
 import discord
 from discord.ext import commands
 
@@ -159,8 +158,6 @@ async def help(ctx):
 async def main():
     async with bot:
         await bot.start(dsettings.token)
-        bot.loop.create_task(sankeyServer.webserver())
-
 
 if __name__ == "__main__":
     asyncio.run(main())
