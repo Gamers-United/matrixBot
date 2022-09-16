@@ -21,18 +21,23 @@ async def on_ready():
         print("Loading jokes modules.")
         await bot.load_extension('randomresults')
         await bot.load_extension('humor')
+        print(" success.", end="")
     if dsettings.voice:
         print("Loading voice modules.")
         await bot.load_extension('voice')
+        print(" success.", end="")
     if dsettings.music:
         print("Loading music modules.")
         await bot.load_extension('music')
+        print(" success.", end="")
     if dsettings.development:
         print("Loading development modules.")
         await bot.load_extension('dev')
+        print(" success.", end="")
     if dsettings.games:
         print("Loading gaming modules.")
         await bot.load_extension('games')
+        print(" success.", end="")
 
     # hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
