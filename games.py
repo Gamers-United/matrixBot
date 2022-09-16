@@ -60,4 +60,4 @@ class GameCommands(commands.Cog):
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(GameCommands(bot))
-    await asyncio.create_task(GameCommands.webServer())
+    #await asyncio.create_task(GameCommands.webServer())
