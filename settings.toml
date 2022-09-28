@@ -15,7 +15,7 @@ jokes = true
 music = true
 development = true
 voice = true
-games = true
+games = false
 
 ## Lyrics
 genius_api = "https://api.genius.com"
@@ -69,6 +69,7 @@ volume_too_low = "Volume too low!"
 lyrics_not_found = "No Lyrics Found"
 suggested_playlists_title = "Suggested Playlists"
 suggested_playlists_description = "100 Songs Each. Curated by the B&B Team"
+music_timeout = "Timeout reached, please try again."
 
 ### Top Tracks By Artist
 select_track = "Select Track"

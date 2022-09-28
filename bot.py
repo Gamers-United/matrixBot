@@ -1,10 +1,12 @@
 import asyncio
 import traceback
+import multiprocessing
 from datetime import datetime
 
 import discord
 from discord.ext import commands
 
+import games
 from config import settings as dsettings
 
 # Bot Static
@@ -162,4 +164,6 @@ async def main():
 
 
 if __name__ == "__main__":
+    p = multiprocessing.Process(target=games.webServer)
+    p.start()
     asyncio.run(main())

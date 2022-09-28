@@ -131,7 +131,10 @@ class Music(commands.Cog):
                 else:
                     return True
 
-            await self.bot.wait_for('interaction', check=check)
+            try:
+                await self.bot.wait_for('interaction', check=check, timeout = 60)
+            except TimeoutError as e:
+                return ctx.send(dsettings.music_timeout)
             selectionint = None
             for item in buttons.buttons:
                 if item.interacted:
