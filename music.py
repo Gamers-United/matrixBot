@@ -31,7 +31,6 @@ class Music(commands.Cog):
             spotify_client_id=dsettings.spotify_client_id,
             spotify_client_secret=dsettings.spotify_client_secret
         )
-        print("Music Module Is Setup & Ready")
 
     # Handle the listeners
     @commands.Cog.listener()

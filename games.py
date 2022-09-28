@@ -40,6 +40,7 @@ def webServer(self):
     await self.site.start()
 
 
+
 class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
