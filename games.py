@@ -22,6 +22,7 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     queue.put(aid)
     queue.cancel_join_thread()
 
+
 def webServer(self):
     async def handler(request: aiohttp.web_request.Request):
         url = str(request.url)
@@ -38,7 +39,6 @@ def webServer(self):
     self.site = web.TCPSite(runner, '0.0.0.0', 2003)
     await self.bot.wait_until_ready()
     await self.site.start()
-
 
 
 class GameCommands(commands.Cog):
