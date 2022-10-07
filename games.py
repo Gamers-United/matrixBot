@@ -30,7 +30,7 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
 def webServer():
     async def handler(request: aiohttp.web_request.Request):
         url = str(request.rel_url)
-        if "matrix.mltech.au" not in str(request.host):
+        if "matrix.mltech.au:2003" not in str(request.host):
             return web.Response(status=404)
         try:
             auuid = re.search("\/sankey\/(.+)", url).group(1)
@@ -48,6 +48,7 @@ def webServer():
 class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        os.rmdir("./sankey/*")
 
     @commands.command()
     async def solve(self, ctx, *, items: str):
