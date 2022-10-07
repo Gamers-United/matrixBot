@@ -42,6 +42,7 @@ def webServer():
     logging.basicConfig(level=logging.DEBUG)
     app = web.Application()
     app.router.add_get("/", handler)
+    app.router.add_get("/sankey/", handler)
     web.run_app(app, port=2003)
 
 
