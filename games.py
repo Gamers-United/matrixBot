@@ -23,9 +23,9 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     aid = str(uuid.uuid4())
     solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
     queue.put(aid)
+    queue.cancel_join_thread()
     final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
     queue.put(final_resources)
-    queue.cancel_join_thread()
     queue.put(solver.craftablePrintHolder)
     queue.put(solver.currentTier)
 
