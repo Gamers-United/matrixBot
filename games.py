@@ -28,9 +28,13 @@ def webServer():
         url = str(request.url)
         if "matrix.mltech.au" not in url:
             return web.Response(status=404)
-        auuid = re.search(":2003\/(.+)", url).group(1)
-        async with aiofiles.open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
-            return web.Response(body=f.read())
+        try:
+            auuid = re.search(":2003\/(.+)", url).group(1)
+            async with aiofiles.open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
+                return web.Response(body=f.read())
+        except AttributeError:
+            return web.Response(body="Error: No Content.")
+
 
     app = web.Application()
     app.router.add_get("/", handler)
