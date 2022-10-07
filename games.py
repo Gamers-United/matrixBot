@@ -31,7 +31,7 @@ def webServer():
     async def handler(request: aiohttp.web_request.Request):
         url = str(request.rel_url)
         if "matrix.mltech.au:2003" not in str(request.host):
-            return web.Response(status=404)
+            return web.Response(status=404, body=str(request.host))
         try:
             auuid = re.search("\/sankey\/(.+)", url).group(1)
             async with aiofiles.open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
