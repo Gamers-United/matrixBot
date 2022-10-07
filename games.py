@@ -29,11 +29,11 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
 
 def webServer():
     async def handler(request: aiohttp.web_request.Request):
-        url = str(request.url)
-        if "matrix.mltech.au" not in url:
+        url = str(request.rel_url)
+        if "matrix.mltech.au" not in str(request.host):
             return web.Response(status=404)
         try:
-            auuid = re.search(":2003\/(.+)", url).group(1)
+            auuid = re.search("\/sankey\/(.+)", url).group(1)
             async with aiofiles.open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
                 return web.Response(body=f.read())
         except AttributeError:
@@ -68,7 +68,7 @@ class GameCommands(commands.Cog):
         p.start()
         p.join()
         htmlid = queue.get()
-        await ctx.send(f"https://matrix.mltech.au:2003/sankey/{htmlid}.html")
+        await ctx.send(f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
 
 
 async def setup(bot: commands.Bot):
