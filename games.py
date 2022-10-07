@@ -23,7 +23,7 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     queue.cancel_join_thread()
 
 
-def webServer(self):
+def webServer():
     async def handler(request: aiohttp.web_request.Request):
         url = str(request.url)
         if "matrix.mltech.au" not in url:
