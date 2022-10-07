@@ -34,8 +34,8 @@ def webServer():
             return web.Response(body=f"Invalid Host: {request.host}")
         try:
             auuid = re.search("\/sankey\/(.+)", url).group(1)
-            async with aiofiles.open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
-                return web.Response(body=f.read())
+            with open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
+                return web.Response(body=str(f.read()))
         except AttributeError:
             return web.Response(body="Error: No Content.")
 
