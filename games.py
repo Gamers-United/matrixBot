@@ -12,7 +12,6 @@ from discord.ext import commands
 
 def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: str, qty: float)]
     v2_loc = os.getcwd() + "/calculator/v2"
-    print(v2_loc)
     sys.path.insert(0, v2_loc)
     from calculator import v2
     solver = v2.solver.Solver()
