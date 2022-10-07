@@ -25,9 +25,9 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     queue.put(aid)
     final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
     queue.put(final_resources)
+    queue.cancel_join_thread()
     queue.put(solver.craftablePrintHolder)
     queue.put(solver.currentTier)
-    queue.cancel_join_thread()
 
 
 def webServer():
