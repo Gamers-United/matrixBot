@@ -1,11 +1,10 @@
-import logging
 import multiprocessing
 import os
 import re
 import uuid
 import sys
+import discord
 
-import aiofiles
 import aiohttp.web_request
 from aiohttp import web
 from discord.ext import commands
@@ -24,6 +23,7 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     aid = str(uuid.uuid4())
     solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
     queue.put(aid)
+    queue.put((solver.ingredientTiersHolder, solver.craftableTiersHolder, solver.craftablePrintHolder, solver.currentTier))
     queue.cancel_join_thread()
 
 
@@ -70,7 +70,17 @@ class GameCommands(commands.Cog):
         p.start()
         p.join()
         htmlid = queue.get()
-        await ctx.send(f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
+        data = queue.get() # (solver.ingredientTiersHolder, solver.craftableTiersHolder, solver.craftablePrintHolder, solver.currentTier)
+        ith = data[0]
+        cth = data[1]
+        cph = data[2]
+        ct = data[3]
+        embed = discord.Embed(title=f"Crafting Steps For items: {str(craftables)}", url=f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
+        for i in range(0, ct):
+            embed.add_field(name = f"Tier: {i} Crafts", value=cph[i])
+        await ctx.send(embed=embed)
+        final_resources = ith[ct]
+        await ctx.send(f"Total Resources: {final_resources}")
 
 
 async def setup(bot: commands.Bot):
