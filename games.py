@@ -39,7 +39,7 @@ def webServer():
         except AttributeError:
             return web.Response(body="Error: No Content.")
 
-    logging.basicConfig(level=logging.DEBUG)
+    #logging.basicConfig(level=logging.DEBUG)
     app = web.Application()
     app.router.add_get("/", handler)
     app.router.add_get("/sankey/{id}", handler)
