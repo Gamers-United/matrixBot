@@ -24,7 +24,12 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
     queue.put(aid)
     final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
-    queue.put((final_resources, solver.craftablePrintHolder, solver.currentTier))
+    queue.put(final_resources)
+    print("packing final resources complete")
+    queue.put(solver.craftablePrintHolder)
+    print("packing craftable print complete")
+    queue.put(solver.currentTier)
+    print("packing current tier complete")
     queue.cancel_join_thread()
 
 
@@ -71,10 +76,12 @@ class GameCommands(commands.Cog):
         p.start()
         p.join()
         htmlid = queue.get()
-        data = queue.get()  # (solver.ingredientTiersHolder[ct], solver.craftablePrintHolder, solver.currentTier)
-        final_resources = data[0]
-        cph = data[2]
-        ct = data[3]
+        final_resources = queue.get()
+        print("final resources received")
+        cph = queue.get()
+        print("craftable print holder received")
+        ct = queue.get()
+        print("current tier received")
         embed = discord.Embed(title=f"Crafting Steps For items: {str(craftables)}",
                               url=f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
         for i in range(0, ct):
