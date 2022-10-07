@@ -29,10 +29,12 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
 def webServer():
     async def handler(request: aiohttp.web_request.Request):
         url = str(request.url)
+        print(url)
         if "matrix.mltech.au" not in url:
             return web.Response(status=404)
         try:
             auuid = re.search(":2003\/(.+)", url).group(1)
+            print(auuid)
             async with aiofiles.open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
                 return web.Response(body=f.read())
         except AttributeError:
