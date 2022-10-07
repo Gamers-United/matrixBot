@@ -42,14 +42,14 @@ def webServer():
     logging.basicConfig(level=logging.DEBUG)
     app = web.Application()
     app.router.add_get("/", handler)
-    app.router.add_get("/sankey/", handler)
+    app.router.add_get("/sankey/{id}", handler)
     web.run_app(app, port=2003)
 
 
 class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        os.rmdir("./sankey/*")
+        os.system("cd sankey && rm *")
 
     @commands.command()
     async def solve(self, ctx, *, items: str):
