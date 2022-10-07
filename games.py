@@ -25,11 +25,8 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     queue.put(aid)
     final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
     queue.put(final_resources)
-    print("packing final resources complete")
     queue.put(solver.craftablePrintHolder)
-    print("packing craftable print complete")
     queue.put(solver.currentTier)
-    print("packing current tier complete")
     queue.cancel_join_thread()
 
 
@@ -69,7 +66,7 @@ class GameCommands(commands.Cog):
                 b = f"{a[0]}:{a[1]}"
                 qty = float(a[2])
             else:
-                b += f"{a[0]}:{a[1]}"
+                b = f"{a[0]}:{a[1]}"
                 qty = 1.0
             output.append((b, qty))
         p = multiprocessing.Process(target=solveCraftablesProblem, args=(output, queue))
@@ -77,17 +74,14 @@ class GameCommands(commands.Cog):
         p.join()
         htmlid = queue.get()
         final_resources = queue.get()
-        print("final resources received")
         cph = queue.get()
-        print("craftable print holder received")
         ct = queue.get()
-        print("current tier received")
-        embed = discord.Embed(title=f"Crafting Steps For items: {str(craftables)}",
-                              url=f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
-        for i in range(0, ct):
-            embed.add_field(name=f"Tier: {i} Crafts", value=cph[i])
+        craftables_string = ",".join(craftables)
+        embed = discord.Embed(title=f"**Crafting Steps For:** {craftables_string}", url=f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
         await ctx.send(embed=embed)
-        await ctx.send(f"Total Resources: {final_resources}")
+        for i in range(0, ct):
+            await ctx.send(f"**Tier {i} Crafts:**\n{cph[i]}")
+        await ctx.send(f"**Total Resources:**\n{final_resources}")
 
 
 async def setup(bot: commands.Bot):
