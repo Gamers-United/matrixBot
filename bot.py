@@ -43,7 +43,7 @@ async def on_ready():
 
     # hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
-    print("Bot's name is " + str(bot.user))
+    print("Bots name is " + str(bot.user))
 
     # startup info print
     try:

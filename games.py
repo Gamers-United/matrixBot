@@ -35,10 +35,10 @@ def webServer(self):
     app = web.Application()
     app.router.add_get("/", handler)
     runner = web.AppRunner(app)
-    await runner.setup()
+    runner.setup()
     self.site = web.TCPSite(runner, '0.0.0.0', 2003)
-    await self.bot.wait_until_ready()
-    await self.site.start()
+    self.bot.wait_until_ready()
+    self.site.start()
 
 
 class GameCommands(commands.Cog):
