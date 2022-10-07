@@ -35,7 +35,7 @@ def webServer():
         try:
             auuid = re.search("\/sankey\/(.+)", url).group(1)
             with open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
-                return web.Response(body=str(f.read()))
+                return web.Response(body=str(f.read()), content_type='text/html')
         except AttributeError:
             return web.Response(body="Error: No Content.")
 
