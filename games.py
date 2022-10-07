@@ -2,6 +2,7 @@ import multiprocessing
 import os
 import re
 import uuid
+import sys
 
 import aiofiles
 import aiohttp.web_request
@@ -10,6 +11,8 @@ from discord.ext import commands
 
 
 def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: str, qty: float)]
+    v2_loc = os.getcwd() + "/calculator/v2"
+    sys.path.insert(0, v2_loc)
     from calculator import v2
     solver = v2.solver.Solver()
     for item in items:
