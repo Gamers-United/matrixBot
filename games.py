@@ -23,7 +23,8 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
     aid = str(uuid.uuid4())
     solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
     queue.put(aid)
-    queue.put((solver.ingredientTiersHolder[solver.currentTier], solver.craftablePrintHolder, solver.currentTier))
+    final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
+    queue.put((final_resources, solver.craftablePrintHolder, solver.currentTier))
     queue.cancel_join_thread()
 
 
@@ -39,7 +40,7 @@ def webServer():
         except AttributeError:
             return web.Response(body="Error: No Content.")
 
-    #logging.basicConfig(level=logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
     app = web.Application()
     app.router.add_get("/", handler)
     app.router.add_get("/sankey/{id}", handler)
@@ -70,15 +71,15 @@ class GameCommands(commands.Cog):
         p.start()
         p.join()
         htmlid = queue.get()
-        data = queue.get() # (solver.ingredientTiersHolder[ct], solver.craftablePrintHolder, solver.currentTier)
-        ith = data[0]
+        data = queue.get()  # (solver.ingredientTiersHolder[ct], solver.craftablePrintHolder, solver.currentTier)
+        final_resources = data[0]
         cph = data[2]
         ct = data[3]
-        embed = discord.Embed(title=f"Crafting Steps For items: {str(craftables)}", url=f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
+        embed = discord.Embed(title=f"Crafting Steps For items: {str(craftables)}",
+                              url=f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
         for i in range(0, ct):
-            embed.add_field(name = f"Tier: {i} Crafts", value=cph[i])
+            embed.add_field(name=f"Tier: {i} Crafts", value=cph[i])
         await ctx.send(embed=embed)
-        final_resources = ith
         await ctx.send(f"Total Resources: {final_resources}")
 
 
