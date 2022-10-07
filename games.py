@@ -56,7 +56,7 @@ class GameCommands(commands.Cog):
 
     @commands.command()
     async def solve(self, ctx, *, items: str):
-        queue = multiprocessing.SimpleQueue()
+        queue = multiprocessing.Queue()
         craftables = items.split(" ")
         output = []
         b = None
