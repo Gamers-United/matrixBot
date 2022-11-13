@@ -177,7 +177,7 @@ class Music(commands.Cog):
             if number > player.queue.count:
                 return await ctx.send(dsettings.skip_larger_than_queue)
             for i in range(1, number):
-                player.queue.pop()
+                player.queue.get()
             await player.stop()
             await player.set_pause(False)
             return await ctx.send("Removed first " + str(number) + " songs!")
