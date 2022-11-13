@@ -146,7 +146,8 @@ async def help(ctx):
     remove 'number in queue to remove'
     skip 'number to skip (default of 1)'
     curated
-    top (Optional artist name)""", inline=False)
+    top (Optional artist name)
+    recommended (based upon last 5 songs)""", inline=False)
     embed.add_field(name="Music | Advanced", value="""volume 'level' (0 to 500%)
     filter (GUI Command)
     delfilter (GUI Command)""", inline=False)
