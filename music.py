@@ -31,7 +31,7 @@ class Music(commands.Cog):
             del self.last_played_tracks[player.channel.id][-1]
 
     async def cog_load(self):
-        await self.bot.wait_until_ready()
+        #await self.bot.wait_until_ready()
         await self.pomice.create_node(
             bot=self.bot,
             host=dsettings.lavalink_host,
