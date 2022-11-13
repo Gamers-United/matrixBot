@@ -500,12 +500,15 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         if not player:
             return
-        a = []
-        for sid in self.last_played_tracks[player.channel.id]:
-            result = player.spotify.track(sid, "AU")
-            a.append(result["name"])
-        out = ",".join(a)
-        await ctx.send(out)
+        try:
+            a = []
+            for sid in self.last_played_tracks[player.channel.id]:
+                result = player.spotify.track(sid, "AU")
+                a.append(result["name"])
+            out = ",".join(a)
+            await ctx.send(out)
+        except KeyError:
+            await ctx.send("Please play at least one song before requesting the play history.")
 
 
 async def setup(bot):
