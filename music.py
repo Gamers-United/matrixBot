@@ -19,6 +19,16 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot: discord.ext.commands.bot = bot
         self.pomice = pomice.NodePool()
+        self.last_played_tracks: {[]} = {}
+
+    def insert_last_played(self, track: pomice.Track, player: CustomPlayer):
+        spotify_track_search = player.spotify.search(q=f"isrc:{track.isrc}", type="track", market="AU", limit=1)
+        spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
+        if self.last_played_tracks[player.channel.id] is None:
+            self.last_played_tracks[player.channel.id] = []
+        self.last_played_tracks[player.channel.id].append(spotify_track_id)
+        if len(self.last_played_tracks[player.channel.id]) > 5:
+            del self.last_played_tracks[player.channel.id][-1]
 
     async def cog_load(self):
         await self.bot.wait_until_ready()
@@ -35,6 +45,7 @@ class Music(commands.Cog):
     # Handle the listeners
     @commands.Cog.listener()
     async def on_pomice_track_end(self, player: CustomPlayer, track: pomice.Track, _) -> None:
+        self.insert_last_played(track, player)
         await player.handleNextTrack()
 
     @commands.Cog.listener()
@@ -43,6 +54,7 @@ class Music(commands.Cog):
         try:
             await self.bot.get_channel(int(dsettings.channelid_error_log)).send(_)
         except Exception as e:
+            print(f"Exception while playing song: {track.uri}")
             print(e)
             print(''.join(traceback.format_tb(e.__traceback__)))
         await player.context.send(dsettings.song_stuck)
@@ -53,6 +65,7 @@ class Music(commands.Cog):
         try:
             await self.bot.get_channel(int(dsettings.channelid_error_log)).send(_)
         except Exception as e:
+            print(f"Exception while playing song: {track.uri}")
             print(e)
             print(''.join(traceback.format_tb(e.__traceback__)))
         await player.handleNextTrack()
@@ -102,7 +115,7 @@ class Music(commands.Cog):
             await ctx.send(dsettings.unpause)
             return
         # handle playing
-        results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytsearch)
+        results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytmsearch)
         if not results:
             await ctx.send(dsettings.no_results)
             return
@@ -131,7 +144,7 @@ class Music(commands.Cog):
                     return True
 
             try:
-                await self.bot.wait_for('interaction', check=check, timeout = 60)
+                await self.bot.wait_for('interaction', check=check, timeout=60)
             except TimeoutError as e:
                 return ctx.send(dsettings.music_timeout)
             selectionint = None
@@ -151,7 +164,7 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.handleNextTrack()
 
-    # managment commands
+    # management commands
     @commands.command()
     async def skip(self, ctx, number: int = 1):
         player: CustomPlayer = ctx.voice_client
@@ -160,7 +173,8 @@ class Music(commands.Cog):
             await player.set_pause(False)
             await ctx.send(dsettings.skip_song)
         elif number > 1:
-            if player.queue.count() < number:
+            queue_count = player.queue.count()
+            if number > queue_count:
                 return await ctx.send(dsettings.skip_larger_than_queue)
             for i in range(1, number):
                 player.queue.pop()
@@ -331,10 +345,10 @@ class Music(commands.Cog):
             sminutes, sseconds = divmod((player.current.length / 1000), 60)
             # format string
             dur = f"{str(int(pminutes))}:{str(int(pseconds))} out of {str(int(sminutes))}:{str(int(sseconds))}"
-            if player.current.info != None:
+            try:
                 channelurl = player.current.info["channeluri"]
                 song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]({channelurl})**\n{dur}'
-            else:
+            except KeyError:
                 song = f'**[{player.current.title}]({player.current.uri})** | **[{player.current.author}]**\n{dur}'
         embed = discord.Embed(colour=discord.Color.dark_red(), title=dsettings.now_playing_title, description=song)
         await ctx.send(embed=embed)
@@ -425,7 +439,8 @@ class Music(commands.Cog):
         playlistembed.add_field(inline=False, name=dsettings.playlist_8_name, value=dsettings.playlist_8_artists)
         await ctx.send(embed=playlistembed, view=buttonLIB.playlistPlayer(ctx=ctx, music=self))
 
-    @commands.command(aliases=["top5"])
+    # Spotify built features
+    @commands.command()
     async def top(self, ctx, *, artist: str):
         player: CustomPlayer = ctx.voice_client
         if not player:
@@ -436,7 +451,11 @@ class Music(commands.Cog):
             return
         if artist is not None:
             artist_search = player.spotify.search(q=f"artist:{artist}", type="artist", market="AU")
-            artistr = artist_search["artists"]["items"][0]["uri"]
+            try:
+                artistr = artist_search["artists"]["items"][0]["uri"]
+            except IndexError:
+                await ctx.send("Could not find artist.")
+                return
             top_tracks = player.spotify.artist_top_tracks(artistr, country="AU")
             tracks = top_tracks["tracks"]
             author_name = tracks[0]["artists"][0]["name"]
@@ -449,8 +468,27 @@ class Music(commands.Cog):
                 song_url = song["external_urls"]["spotify"]
                 album_name = song["album"]["name"]
                 album_url = song["album"]["external_urls"]["spotify"]
-                topTracksEmbed.add_field(inline=False, name=f"{count}. **{song_name}**", value=f"[Link]({song_url})| [{album_name}]({album_url})")
+                topTracksEmbed.add_field(inline=False, name=f"{count}. **{song_name}**",
+                                         value=f"[YT]({song_url})| [{album_name}]({album_url})")
             await ctx.send(embed=topTracksEmbed, view=buttonLIB.topTrackSelector(ctx=ctx, songs=songs, music=self))
+        else:
+            await ctx.send("Please specify an artist you would like to get the top songs for.")
+
+    @commands.command(aliases=["recommend", "recommended"])
+    async def recommendations(self, ctx, count: int = 1):
+        if count > 100:
+            return await ctx.send("Too many recommendations requested. Maximum: 100")
+        player: CustomPlayer = ctx.voice_client
+        if not player:
+            await ctx.invoke(self.connect)
+        player: CustomPlayer = ctx.voice_client
+        if not player:
+            # since we just tried to join, if it failed to join, then the person must not be in an accessible VC.
+            return
+        track_request = player.spotify.recommendations(seed_tracks=",".join(self.last_played_tracks[player.channel]), limit=count, market="AU")
+        for item in track_request["tracks"]:
+            await ctx.invoke(self.play, query=item["external_urls"]["spotify"])
+        await ctx.send(f"Added {count} recommendations to queue.")
 
 
 async def setup(bot):
