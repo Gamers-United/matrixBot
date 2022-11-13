@@ -29,7 +29,7 @@ class Music(commands.Cog):
         except KeyError:
             self.last_played_tracks[player.channel.id] = [spotify_track_id]
         if len(self.last_played_tracks[player.channel.id]) > 5:
-            del self.last_played_tracks[player.channel.id][-1]
+            del self.last_played_tracks[player.channel.id][0]
 
     async def cog_load(self):
         await self.bot.wait_until_ready()
