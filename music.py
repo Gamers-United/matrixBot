@@ -499,6 +499,7 @@ class Music(commands.Cog):
             await ctx.invoke(self.connect)
         player: CustomPlayer = ctx.voice_client
         if not player:
+            return
         await ctx.send(",".join(self.last_played_tracks[player.channel.id]))
 
 
