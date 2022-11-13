@@ -500,7 +500,12 @@ class Music(commands.Cog):
         player: CustomPlayer = ctx.voice_client
         if not player:
             return
-        await ctx.send(",".join(self.last_played_tracks[player.channel.id]))
+        a = []
+        for sid in self.last_played_tracks[player.channel.id]:
+            result = player.spotify.track(sid, "AU")
+            a.append(result["name"])
+        out = ",".join(a)
+        await ctx.send(out)
 
 
 async def setup(bot):
