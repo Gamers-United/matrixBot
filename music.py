@@ -24,9 +24,10 @@ class Music(commands.Cog):
     def insert_last_played(self, track: pomice.Track, player: CustomPlayer):
         spotify_track_search = player.spotify.search(q=f"isrc:{track.isrc}", type="track", market="AU", limit=1)
         spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
-        if self.last_played_tracks[player.channel.id] is None:
-            self.last_played_tracks[player.channel.id] = []
-        self.last_played_tracks[player.channel.id].append(spotify_track_id)
+        try:
+            self.last_played_tracks[player.channel.id].append(spotify_track_id)
+        except KeyError:
+            self.last_played_tracks[player.channel.id] = [spotify_track_id]
         if len(self.last_played_tracks[player.channel.id]) > 5:
             del self.last_played_tracks[player.channel.id][-1]
 
@@ -173,8 +174,7 @@ class Music(commands.Cog):
             await player.set_pause(False)
             await ctx.send(dsettings.skip_song)
         elif number > 1:
-            queue_count = player.queue.count()
-            if number > queue_count:
+            if number > player.queue.count:
                 return await ctx.send(dsettings.skip_larger_than_queue)
             for i in range(1, number):
                 player.queue.pop()
