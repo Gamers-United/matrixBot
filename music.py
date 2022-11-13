@@ -487,7 +487,8 @@ class Music(commands.Cog):
             return
         if len(self.last_played_tracks[player.channel.id]) < 5:
             await ctx.send("Please play at least 5 songs in this channel before requesting recommendations!")
-        track_request = player.spotify.recommendations(seed_tracks=",".join(self.last_played_tracks[player.channel.id]), limit=count, market="AU")
+        track_string = ",".join(self.last_played_tracks[player.channel.id])
+        track_request = player.spotify.recommendations(seed_tracks=track_string, limit=count, market="AU")
         for item in track_request["tracks"]:
             await ctx.invoke(self.play, query=item["external_urls"]["spotify"])
         await ctx.send(f"Added {count} recommendations to queue.")
