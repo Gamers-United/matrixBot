@@ -1,5 +1,11 @@
+import sys
+
+import stacktracer
+#stacktracer.trace_start("trace.html",interval=1,auto=True)
+
 import asyncio
 import traceback
+import logging
 import multiprocessing
 from datetime import datetime
 import discord
@@ -167,11 +173,8 @@ async def help(ctx):
 
 
 # run the bot
-async def main():
-    async with bot:
-        await bot.start(dsettings.token)
-
 if __name__ == "__main__":
     p = multiprocessing.Process(target=games.webServer)
     p.start()
-    asyncio.run(main())
+    log_handler = logging.basicConfig(stream=sys.stdout, level=logging.WARN)
+    bot.run(dsettings.token, log_handler=log_handler)
