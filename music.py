@@ -492,6 +492,15 @@ class Music(commands.Cog):
             await ctx.invoke(self.play, query=item["external_urls"]["spotify"])
         await ctx.send(f"Added {count} recommendations to queue.")
 
+    @commands.command(aliases=["get_last_played"])
+    async def last_played(self, ctx):
+        player: CustomPlayer = ctx.voice_client
+        if not player:
+            await ctx.invoke(self.connect)
+        player: CustomPlayer = ctx.voice_client
+        if not player:
+        await ctx.send(",".join(self.last_played_tracks[player.channel.id]))
+
 
 async def setup(bot):
     await bot.add_cog(Music(bot))
