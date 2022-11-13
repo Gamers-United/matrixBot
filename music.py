@@ -485,7 +485,9 @@ class Music(commands.Cog):
         if not player:
             # since we just tried to join, if it failed to join, then the person must not be in an accessible VC.
             return
-        track_request = player.spotify.recommendations(seed_tracks=",".join(self.last_played_tracks[player.channel]), limit=count, market="AU")
+        if len(self.last_played_tracks[player.channel.id]) < 5:
+            await ctx.send("Please play at least 5 songs in this channel before requesting recommendations!")
+        track_request = player.spotify.recommendations(seed_tracks=",".join(self.last_played_tracks[player.channel.id]), limit=count, market="AU")
         for item in track_request["tracks"]:
             await ctx.invoke(self.play, query=item["external_urls"]["spotify"])
         await ctx.send(f"Added {count} recommendations to queue.")
