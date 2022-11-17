@@ -26,7 +26,7 @@ class Music(commands.Cog):
             spotify_track_search = player.spotify.search(q=f"isrc:{track.isrc}", type="track", market="AU", limit=1)
             spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
         except IndexError:
-            return
+            pass
         try:
             self.last_played_tracks[player.channel.id].append(spotify_track_id)
         except KeyError:
