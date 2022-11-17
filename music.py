@@ -22,8 +22,11 @@ class Music(commands.Cog):
         self.last_played_tracks: {[]} = {}
 
     def insert_last_played(self, track: pomice.Track, player: CustomPlayer):
-        spotify_track_search = player.spotify.search(q=f"isrc:{track.isrc}", type="track", market="AU", limit=1)
-        spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
+        try:
+            spotify_track_search = player.spotify.search(q=f"isrc:{track.isrc}", type="track", market="AU", limit=1)
+            spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
+        except IndexError:
+            return
         try:
             self.last_played_tracks[player.channel.id].append(spotify_track_id)
         except KeyError:
