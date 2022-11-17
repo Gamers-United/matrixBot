@@ -477,7 +477,7 @@ class Music(commands.Cog):
         else:
             await ctx.send("Please specify an artist you would like to get the top songs for.")
 
-    @commands.command(aliases=["recommend", "recommended"])
+    @commands.command(aliases=["recommend", "recommended", "recommendation"])
     async def recommendations(self, ctx, count: int = 1):
         if count > 100:
             return await ctx.send("Too many recommendations requested. Maximum: 100")
