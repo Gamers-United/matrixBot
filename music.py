@@ -22,7 +22,8 @@ class Music(commands.Cog):
         self.last_played_tracks: {[]} = {}
 
     def insert_last_played(self, track: pomice.Track, player: CustomPlayer):
-        spotify_track_id = 0
+        global spotify_track_search
+        global spotify_track_id
         try:
             spotify_track_search = player.spotify.search(q=f"isrc:{track.isrc}", type="track", market="AU", limit=1)
             spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
@@ -33,7 +34,7 @@ class Music(commands.Cog):
             if len(self.last_played_tracks[player.channel.id]) > 5:
                 del self.last_played_tracks[player.channel.id][0]
         except IndexError:
-            print(f"Song did not count towards recommendations for channel: {player.channel.id}")
+            print(f"Song did not count towards recommendations for channel: {player.channel.id}\n{spotify_track_search}")
 
     async def cog_load(self):
         await self.bot.wait_until_ready()
