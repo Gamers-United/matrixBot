@@ -22,19 +22,22 @@ class Music(commands.Cog):
         self.last_played_tracks: {[]} = {}
 
     def insert_last_played(self, track: pomice.Track, player: CustomPlayer):
-        global spotify_track_search
-        global spotify_track_id
         try:
             spotify_track_search = player.spotify.search(q=f"isrc:{track.isrc}", type="track", market="AU", limit=1)
             spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
-            try:
-                self.last_played_tracks[player.channel.id].append(spotify_track_id)
-            except KeyError:
-                self.last_played_tracks[player.channel.id] = [spotify_track_id]
-            if len(self.last_played_tracks[player.channel.id]) > 5:
-                del self.last_played_tracks[player.channel.id][0]
         except IndexError:
-            print(f"Song did not count towards recommendations for channel: {player.channel.id}\n{spotify_track_search}")
+            try:
+                spotify_track_search = player.spotify.search(q=f"track:{track.title}", type="track", market="AU", limit=1)
+                spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
+            except IndexError:
+                print(f"Song did not count towards recommendations for channel: {player.channel.id}\n{spotify_track_search}")
+                return
+        try:
+            self.last_played_tracks[player.channel.id].append(spotify_track_id)
+        except KeyError:
+            self.last_played_tracks[player.channel.id] = [spotify_track_id]
+        if len(self.last_played_tracks[player.channel.id]) > 5:
+            del self.last_played_tracks[player.channel.id][0]
 
     async def cog_load(self):
         await self.bot.wait_until_ready()
@@ -190,10 +193,10 @@ class Music(commands.Cog):
     @commands.command()
     async def remove(self, ctx, index: int = 0):
         player: CustomPlayer = ctx.voice_client
-        if player.queue.count() == 0:
+        if player.queue.count == 0:
             await ctx.send(dsettings.no_queue)
             return
-        elif index > player.queue.count():
+        elif index > player.queue.count:
             await ctx.send(dsettings.remove_larger_than_queue)
             return
         elif index < 0:
