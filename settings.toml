@@ -23,7 +23,7 @@ genius_route_search = "/search"
 genius_path = "https://genius.com"
 
 ## Music
-lavalink_host = "10.100.1.56"
+lavalink_host = "103.48.200.23"
 lavalink_port = "19999"
 lavalink_identifier = "Main"
 items_per_page = 10

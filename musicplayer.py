@@ -7,7 +7,7 @@ import googleapiclient.discovery
 import googleapiclient.errors
 import pomice
 import spotipy
-from discord import VoiceChannel, Colour
+from discord import VoiceChannel, Colour, Message
 from discord.ext import commands
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -28,7 +28,7 @@ class CustomPlayer(pomice.Player):
                                                                 client_secret=dsettings.spotify_client_secret))
 
     # handle the next track
-    async def handleNextTrack(self) -> None:
+    async def handleNextTrack(self) -> Message | None:
         """Handles the next track playing, and now playing prompt with context"""
         try:
             try:
