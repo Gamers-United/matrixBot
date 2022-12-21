@@ -32,7 +32,7 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
 def webServer():
     async def handler(request: aiohttp.web_request.Request):
         url = str(request.rel_url)
-        if "matrix.mltech.au:2003" not in str(request.host):
+        if "matrix.mltech.au:6000" not in str(request.host):
             return web.Response(body=f"Invalid Host: {request.host}")
         try:
             auuid = re.search("\/sankey\/(.+)", url).group(1)
@@ -45,7 +45,7 @@ def webServer():
     app = web.Application()
     app.router.add_get("/", handler)
     app.router.add_get("/sankey/{id}", handler)
-    web.run_app(app, port=2003)
+    web.run_app(app, port=6000)
 
 
 class GameCommands(commands.Cog):
@@ -75,7 +75,7 @@ class GameCommands(commands.Cog):
         cph = queue.get()
         ct = queue.get()
         craftables_string = ",".join(craftables)
-        embed = discord.Embed(title=f"**Crafting Steps For:** {craftables_string}", url=f"http://matrix.mltech.au:2003/sankey/{htmlid}.html")
+        embed = discord.Embed(title=f"**Crafting Steps For:** {craftables_string}", url=f"http://matrix.mltech.au:6000/sankey/{htmlid}.html")
         await ctx.send(embed=embed)
         for i in range(0, ct):
             await ctx.send(f"**Tier {i} Crafts:**\n{cph[i]}")
