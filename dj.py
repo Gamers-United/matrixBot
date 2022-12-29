@@ -3,8 +3,8 @@ import sys
 from discord import opus
 from discord.ext import commands
 
-if 'linux' in sys.platform:
-    opus.load_opus('opus')
+#if 'linux' in sys.platform:
+#    opus.load_opus('opus')
 
 import pyVBAN
 import pyaudio
