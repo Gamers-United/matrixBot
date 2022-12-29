@@ -36,6 +36,9 @@ class DevCommands(commands.Cog):
             if dsettings.games:
                 await self.bot.unload_extension('games')
                 await self.bot.load_extension('games')
+            if dsettings.dj:
+                await self.bot.unload_extension('dj')
+                await self.bot.load_extension('dj')
         else:
             await ctx.send(dsettings.nopermission)
 

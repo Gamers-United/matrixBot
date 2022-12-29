@@ -16,6 +16,7 @@ music = true
 development = true
 voice = true
 games = true
+dj = true
 
 ## Lyrics
 genius_api = "https://api.genius.com"

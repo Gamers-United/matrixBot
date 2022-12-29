@@ -46,6 +46,10 @@ async def on_ready():
         print("Loading gaming modules.", end="")
         await bot.load_extension('games')
         print(" success.")
+    if dsettings.dj:
+        print("Loading DJ modules.", end="")
+        await bot.load_extension('dj')
+        print(" success.")
 
     # hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
