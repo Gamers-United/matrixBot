@@ -5,9 +5,10 @@ import pyaudio
 
 class VBAN_Recv(object):
 	"""docstring for VBAN_Recv"""
-	def __init__(self, senderIp, streamName, port, outDeviceIndex ,verbose=False):
+	def __init__(self, senderIp, streamName, port, outDeviceIndex, pipe_end, verbose=False):
 		super(VBAN_Recv, self).__init__()
 		self.streamName = streamName
+		self.pipe_end = pipe_end
 		self.senderIp = senderIp
 		self.const_VBAN_SRList = [6000, 12000, 24000, 48000, 96000, 192000, 384000, 8000, 16000, 32000, 64000, 128000, 256000, 512000,11025, 22050, 44100, 88200, 176400, 352800, 705600] 
 		self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # UDP
@@ -24,7 +25,8 @@ class VBAN_Recv(object):
 		self.stream_streamName = ""
 		self.stream_frameCounter = 0
 		self.p = pyaudio.PyAudio()
-		self.stream = self.p.open(format = self.p.get_format_from_width(2), channels = self.channels, rate = self.sampRate, output = True, output_device_index=self.outDeviceIndex)
+		if outDeviceIndex:
+			self.stream = self.p.open(format = self.p.get_format_from_width(2), channels = self.channels, rate = self.sampRate, output = True, output_device_index=self.outDeviceIndex)
 		self.rawPcm = None
 		self.running = True
 		self.verbose = verbose
@@ -54,7 +56,7 @@ class VBAN_Recv(object):
 		self.stream_frameCounter = struct.unpack("<L",data[24:28])[0]
 
 	def runonce(self):
-		if self.stream == None:
+		if self.stream == None and self.outDeviceIndex is not None:
 			print("Quit has been called")
 			return
 		data, addr = self.sock.recvfrom(2048) # buffer size is normally 1436 bytes Max size for vban
@@ -70,7 +72,11 @@ class VBAN_Recv(object):
 				return
 			if self.channels != self.stream_chanNum or self.sampRate != self.stream_sampRate:
 				self._correctPyAudioStream()
-			self.stream.write(self.rawPcm)
+			if self.outDeviceIndex is not None:
+				self.stream.write(self.rawPcm)
+			else:
+				self.pipe_end.send(self.rawPcm)
+
 
 	def runforever(self):
 		while self.running:
