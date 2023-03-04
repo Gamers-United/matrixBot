@@ -48,7 +48,8 @@ class Music(commands.Cog):
             password=dsettings.lavalink_password,
             identifier=dsettings.lavalink_identifier,
             spotify_client_id=dsettings.spotify_client_id,
-            spotify_client_secret=dsettings.spotify_client_secret
+            spotify_client_secret=dsettings.spotify_client_secret,
+            apple_music = True
         )
 
     # Handle the listeners
@@ -276,13 +277,13 @@ class Music(commands.Cog):
         if not player.is_playing:
             return await ctx.send(dsettings.not_playing)
 
-        # Possible REGEX searches HIGHEST TO the LOWEST PRIORITY FIND TYPE: <minutes>.<partial minutes> -- \n([0-9]\.[
-        # 0-9]+)\n -- group contains e.g. 5.5, split by "." and times second part by 60. FIND TYPE:
-        # <minutes>:<seconds> -- ([0-9]+:[0-9]+) -- group contains e.g. 5:30, split by ":" FIND TYPE:
+        # Possible REGEX searches HIGHEST TO the LOWEST PRIORITY FIND TYPE:
+        # <minutes>.<partial minutes> -- \n([0-9]\.[0-9]+)\n -- e.g. 5.5, split by "." and times second part by 60.
+        # <minutes>:<seconds> -- ([0-9]+:[0-9]+) -- group contains e.g. 5:30, split by ":"
         # <minutes>M+<seconds> -- ([0-9\.]+([ms]| [ms])) -- for each match, group 1 is value, group 2 is unit (
-        # possibly including a \n) IF NOTHING ELSE MATCHES. INTERPRET AS SECONDS BY ITSELF -- \n([0-9]+\n) OTHERWISE
-        # ERROR
-        time_dict = {"m": 60, "s": 1}
+        # possibly including a \n) IF NOTHING ELSE MATCHES. INTERPRET AS SECONDS BY ITSELF -- \n([0-9]+\n)
+        # OTHERWISE ERROR
+        time_dict = {"m": 60, "s": 1, "M": 60, "S": 1}
 
         # CASE 1
         try:
@@ -303,7 +304,7 @@ class Music(commands.Cog):
 
         # CASE 3
         try:
-            t = re.findall("([0-9\.]+([ms]| [ms]))", time)
+            t = re.findall("([0-9\.]+)([MmSs]| [MmSs])", time)
             ovalue = int(t[0].group(1))
             otype = t[0].group(2)
             otime = ovalue * time_dict[otype]
@@ -321,8 +322,8 @@ class Music(commands.Cog):
 
         # CASE 4
         try:
-            t = re.search("\n([0-9]+\n)", time)
-            time = int(t.group(1).strip("\n"))
+            t = re.search("([0-9]+)", time)
+            time = int(t.group(1))
         except:
             pass
             # I guess it's not this format...
