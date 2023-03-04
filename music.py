@@ -334,7 +334,6 @@ class Music(commands.Cog):
             return
 
         # seek the player
-        print(time)
         await player.seek(float(time * 1000))
         await ctx.send(f'Moved track to **{str(datetime.timedelta(seconds=int(time)))}**')
 
