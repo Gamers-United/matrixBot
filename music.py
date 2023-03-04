@@ -314,18 +314,18 @@ class Music(commands.Cog):
         # CASE 3
         try:
             t = re.findall("([0-9\.]+)([MmSs]| [MmSs])", time_str)
-            ovalue = int(t[0].group(1))
-            otype = t[0].group(2)
-            otime = ovalue * time_dict[otype]
-            ttime = 0
+            value_1 = int(t[0][0])
+            type_1 = t[0][1]
+            time_1 = value_1 * time_dict[type_1]
+            time_2 = 0
             try:
-                tvalue = int(t[1].group(1))
-                ttype = t[1].group(2)
-                ttime = tvalue * time_dict[ttype]
+                value_2 = int(t[1][0])
+                type_2 = t[1][1]
+                time_2 = value_2 * time_dict[type_2]
             except:
                 pass
                 # I guess this only contains either minutes or seconds...
-            time = otime + ttime
+            time = time_1 + time_2
         except:
             pass
             # I guess it's not this format...
