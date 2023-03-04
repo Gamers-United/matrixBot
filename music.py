@@ -285,6 +285,14 @@ class Music(commands.Cog):
         # OTHERWISE ERROR
         time_dict = {"m": 60, "s": 1, "M": 60, "S": 1}
 
+        # CASE 4
+        try:
+            t = re.search("([0-9]+)", time)
+            time = int(t.group(1))
+        except:
+            pass
+            # I guess it's not this format...
+
         # CASE 1
         try:
             t = re.search("([0-9]\.[0-9]+)", time)
@@ -320,13 +328,6 @@ class Music(commands.Cog):
             pass
             # I guess it's not this format...
 
-        # CASE 4
-        try:
-            t = re.search("([0-9]+)", time)
-            time = int(t.group(1))
-        except:
-            pass
-            # I guess it's not this format...
 
         if time is None:
             await ctx.send(dsettings.seek_invalid_time)
