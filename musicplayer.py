@@ -39,7 +39,7 @@ class CustomPlayer(pomice.Player):
         except Exception as e:
             print(e)
             return await self.exit()
-        if not track.spotify:
+        if track.track_type == pomice.TrackType.YOUTUBE:
             code = re.search("https:\/\/www\.youtube\.com\/watch\?v=(.+)", track.uri).group(1)
             request = self.youtube.videos().list(part="snippet", id=code)
             response = request.execute()
@@ -56,12 +56,17 @@ class CustomPlayer(pomice.Player):
                                                                description=f"**[{track.title}]({track.uri})** | **{track.author}**",
                                                                colour=Colour.dark_red(),
                                                                timestamp=datetime.datetime.now()))
-        else:
+        elif track.track_type == pomice.TrackType.SPOTIFY:
             result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1),
                                         "AU")
             artisturl = result["artists"][0]["external_urls"]["spotify"]
             return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title,
                                                                description=f"**[{track.title}]({track.uri})** | **[{track.author}]({artisturl}) | [YT]({track.original.uri})**",
+                                                               colour=Colour.dark_red(),
+                                                               timestamp=datetime.datetime.now()))
+        else:
+            return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title,
+                                                               description=f"**[{track.title}]({track.uri})** | **{track.author}**",
                                                                colour=Colour.dark_red(),
                                                                timestamp=datetime.datetime.now()))
 
