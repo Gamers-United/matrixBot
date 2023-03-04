@@ -40,17 +40,16 @@ class Music(commands.Cog):
             del self.last_played_tracks[player.channel.id][0]
 
     async def cog_load(self):
-        print(dsettings.lavalink_password)
         await self.bot.wait_until_ready()
         await self.pomice.create_node(
             bot=self.bot,
             host=dsettings.lavalink_host,
             port=dsettings.lavalink_port,
-            password=dsettings.lavalink_password,
             identifier=dsettings.lavalink_identifier,
+            password=dsettings.lavalink_password,
             spotify_client_id=dsettings.spotify_client_id,
             spotify_client_secret=dsettings.spotify_client_secret,
-            apple_music = True
+            apple_music=True
         )
 
     # Handle the listeners
