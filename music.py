@@ -270,7 +270,7 @@ class Music(commands.Cog):
             await ctx.send(dsettings.repeat_on)
 
     @commands.command()
-    async def seek(self, ctx, time: str):
+    async def seek(self, ctx, time_str: str):
         player: CustomPlayer = ctx.voice_client
         if player is None:
             return await ctx.send(dsettings.not_playing)
@@ -284,10 +284,11 @@ class Music(commands.Cog):
         # possibly including a \n) IF NOTHING ELSE MATCHES. INTERPRET AS SECONDS BY ITSELF -- \n([0-9]+\n)
         # OTHERWISE ERROR
         time_dict = {"m": 60, "s": 1, "M": 60, "S": 1}
+        time = 0
 
         # CASE 4
         try:
-            t = re.search("([0-9]+)", time)
+            t = re.search("([0-9]+)", time_str)
             time = int(t.group(1))
         except:
             pass
@@ -295,7 +296,7 @@ class Music(commands.Cog):
 
         # CASE 1
         try:
-            t = re.search("([0-9]\.[0-9]+)", time)
+            t = re.search("([0-9]\.[0-9]+)", time_str)
             time = int(float(t.group(1)) * 60)
         except:
             pass
@@ -303,7 +304,7 @@ class Music(commands.Cog):
 
         # CASE 2
         try:
-            t = re.search("([0-9]+:[0-9]+)", time)
+            t = re.search("([0-9]+:[0-9]+)", time_str)
             r = t.group(1).split(":")
             time = (int(r[0]) * 60) + int(r[1])
         except:
@@ -312,10 +313,11 @@ class Music(commands.Cog):
 
         # CASE 3
         try:
-            t = re.findall("([0-9\.]+)([MmSs]| [MmSs])", time)
+            t = re.findall("([0-9\.]+)([MmSs]| [MmSs])", time_str)
             ovalue = int(t[0].group(1))
             otype = t[0].group(2)
             otime = ovalue * time_dict[otype]
+            ttime = 0
             try:
                 tvalue = int(t[1].group(1))
                 ttype = t[1].group(2)
@@ -327,7 +329,6 @@ class Music(commands.Cog):
         except:
             pass
             # I guess it's not this format...
-
 
         if time is None:
             await ctx.send(dsettings.seek_invalid_time)
