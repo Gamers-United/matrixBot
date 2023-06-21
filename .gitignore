@@ -4,4 +4,10 @@ __pycache__/**
 .vscode
 # Ignore dynaconf secret files
 .secrets.*
+# Ignore Sankey Temp
 sankey/**
+# Jetbrains IDE
+*.iws
+.idea/workspace.xml
+.idea/shelf
+.idea/usage.statistics.xml

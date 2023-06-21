@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Project Python" pattern="file[matrix]:*.py&amp;&amp;!file[matrix]:calculator//*&amp;&amp;!file:pyVBAN.py" />
+</component>
