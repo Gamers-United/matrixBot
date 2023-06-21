@@ -4,12 +4,14 @@
 #  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 #  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU AGPL v3.0 for more details.
 
+import random
+
 import d20
 import discord
-import random
 from discord.ext import commands
 
 from config import settings as dsettings
+
 
 class Random(commands.Cog):
     def __init__(self, bot):

@@ -54,14 +54,14 @@ class CustomPlayer(pomice.Player):
             channelurl = track.info["channeluri"]
             if channelurl is not None:
                 return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title,
-                                                               description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**",
-                                                               colour=Colour.dark_red(),
-                                                               timestamp=datetime.datetime.now()))
+                                                                   description=f"**[{track.title}]({track.uri})** | **[{track.author}]({channelurl})**",
+                                                                   colour=Colour.dark_red(),
+                                                                   timestamp=datetime.datetime.now()))
             else:
                 return await self.context.send(embed=discord.Embed(title=dsettings.now_playing_title,
-                                                               description=f"**[{track.title}]({track.uri})** | **{track.author}**",
-                                                               colour=Colour.dark_red(),
-                                                               timestamp=datetime.datetime.now()))
+                                                                   description=f"**[{track.title}]({track.uri})** | **{track.author}**",
+                                                                   colour=Colour.dark_red(),
+                                                                   timestamp=datetime.datetime.now()))
         elif track.track_type == pomice.TrackType.SPOTIFY:
             result = self.spotify.track(re.search("https:\/\/open\.spotify\.com\/track\/(.+)", track.uri).group(1),
                                         "AU")

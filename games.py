@@ -7,11 +7,11 @@
 import multiprocessing
 import os
 import re
-import uuid
 import sys
-import discord
+import uuid
 
 import aiohttp.web_request
+import discord
 from aiohttp import web
 from discord.ext import commands
 
@@ -81,7 +81,8 @@ class GameCommands(commands.Cog):
         cph = queue.get()
         ct = queue.get()
         craftables_string = ",".join(craftables)
-        embed = discord.Embed(title=f"**Crafting Steps For:** {craftables_string}", url=f"http://matrix.mltech.au:6000/sankey/{htmlid}.html")
+        embed = discord.Embed(title=f"**Crafting Steps For:** {craftables_string}",
+                              url=f"http://matrix.mltech.au:6000/sankey/{htmlid}.html")
         await ctx.send(embed=embed)
         for i in range(0, ct):
             await ctx.send(f"**Tier {i} Crafts:**\n{cph[i]}")

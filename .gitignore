@@ -11,3 +11,5 @@ sankey/**
 .idea/workspace.xml
 .idea/shelf
 .idea/usage.statistics.xml
+# Venv
+venv/*

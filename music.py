@@ -33,10 +33,12 @@ class Music(commands.Cog):
             spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
         except IndexError:
             try:
-                spotify_track_search = player.spotify.search(q=f"track:{track.title}", type="track", market="AU", limit=1)
+                spotify_track_search = player.spotify.search(q=f"track:{track.title}", type="track", market="AU",
+                                                             limit=1)
                 spotify_track_id = spotify_track_search["tracks"]["items"][0]["id"]
             except IndexError:
-                print(f"Song did not count towards recommendations for channel: {player.channel.id}\n{spotify_track_search}")
+                print(
+                    f"Song did not count towards recommendations for channel: {player.channel.id}\n{spotify_track_search}")
                 return
         try:
             self.last_played_tracks[player.channel.id].append(spotify_track_id)
@@ -503,7 +505,8 @@ class Music(commands.Cog):
             return
         if len(self.last_played_tracks[player.channel.id]) < 5:
             await ctx.send("Please play at least 5 songs in this channel before requesting recommendations!")
-        track_request = player.spotify.recommendations(seed_tracks=self.last_played_tracks[player.channel.id], limit=count, market="AU")
+        track_request = player.spotify.recommendations(seed_tracks=self.last_played_tracks[player.channel.id],
+                                                       limit=count, market="AU")
         for item in track_request["tracks"]:
             await ctx.invoke(self.play, query=item["external_urls"]["spotify"])
         await ctx.send(f"Added {count} recommendations to queue.")

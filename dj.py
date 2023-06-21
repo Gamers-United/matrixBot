@@ -4,11 +4,12 @@
 #  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 #  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU AGPL v3.0 for more details.
 
+import multiprocessing
+
 import discord.opus
 from discord.ext import commands
-import multiprocessing
+
 import pyVBAN
-import pyaudio
 
 
 class DJReceiver(commands.Cog):
@@ -43,6 +44,7 @@ Send stream before running command.""")
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(DJReceiver(bot))
+
 
 def recieve_vban_stream(ip, stream_name, pipe_end):
     cl = pyVBAN.VBAN_Recv(ip, stream_name, 6020, None, pipe_end)

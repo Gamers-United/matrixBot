@@ -90,7 +90,7 @@ class deleteFilterButtons(discord.ui.View):
     @discord.ui.select(placeholder="Select Filter to Delete", options=filterOptions)
     async def eqButton(self, select: discord.ui.select, interaction: discord.Interaction):
         player: CustomPlayer = self.ctx.voice_client
-        eq = pomice.filters.Equalizer(levels = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        eq = pomice.filters.Equalizer(levels=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
         await interaction.response.defer()
 
     async def interaction_check(self, interaction: discord.Interaction):
@@ -142,7 +142,7 @@ class filterButtonsOptions(discord.ui.View):
         player: CustomPlayer = self.ctx.voice_client
         if self.type == "Equalizer":
             if player.filter is None:
-                eq = pomice.filters.Equalizer(levels = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                eq = pomice.filters.Equalizer(levels=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
             else:
                 eq = player.filters["Equalizer"]
             eq.levels[int(self.valuea)] = float(self.valueb)

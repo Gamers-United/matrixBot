@@ -4,12 +4,10 @@
 #  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 #  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU AGPL v3.0 for more details.
 
-import sys
-
-import traceback
-import logging
 import multiprocessing
+import traceback
 from datetime import datetime
+
 import discord
 from discord.ext import commands
 
@@ -55,7 +53,7 @@ async def on_ready():
 
     # hold the details of the application info inside the bot object
     bot.appInfo = await bot.application_info()
-    print("Bot's name is " + str(bot.user))
+    print("Bots name is " + str(bot.user))
 
     # startup info print
     try:
@@ -100,8 +98,8 @@ async def on_command_error(ctx, error):
 # bot logging
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
-    timenow = datetime.now()
-    embed = discord.Embed(title=f"{member.name}", description=str(member.name) + " " + str(timenow))
+    time_now = datetime.now()
+    embed = discord.Embed(title=f"{member.name}", description=str(member.name) + " " + str(time_now))
     if not before.channel and after.channel is not None:
         embed.add_field(name="Joined",
                         value=f"{after.channel.name}/{after.channel.category.name}/{after.channel.guild.name}")
@@ -183,5 +181,5 @@ async def help(ctx):
 if __name__ == "__main__":
     p = multiprocessing.Process(target=games.webServer)
     p.start()
-    log_handler = logging.basicConfig(stream=sys.stdout, level=logging.WARN)
-    bot.run(dsettings.token, log_handler=log_handler)
+    # For File: log_handler = logging.FileHandler(filename=f"{str(datetime.now())}-matrix-bot.log")
+    bot.run(dsettings.token)
