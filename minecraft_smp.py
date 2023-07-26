@@ -30,7 +30,7 @@ class MinecraftSMPServers(Base):
 
 class MinecraftSMP:
     def __init__(self, bot):
-        self.db = create_engine("sqlite://smp.db")
+        self.db = create_engine("sqlite:///smp.db")
         Base.metadata.create_all(self.db)
         self.bot: discord.ext.commands.Bot = bot
 
