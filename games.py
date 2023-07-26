@@ -42,8 +42,11 @@ class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.bot.smp = MinecraftSMP(bot)
-        self.bot.ws = await self.webServer()
         os.system("cd sankey && rm *")
+
+    async def cog_load(self) -> None:
+        await super().cog_load()
+        self.bot.ws = await self.webServer()
 
     async def webServer(self):
         async def handler(request: aiohttp.web_request.Request):
