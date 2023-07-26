@@ -63,7 +63,6 @@ class GameCommands(commands.Cog):
                 return web.Response(body="Error: No Content.")
 
         async def onDeath(request: aiohttp.web_request.Request):
-            print(f"Received Packet: {await request.read()}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 json_data = await request.json()
                 await request.app["bot"].smp.user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
@@ -73,30 +72,15 @@ class GameCommands(commands.Cog):
             return web.Response(status=401)
 
         async def onNewPlayer(request: aiohttp.web_request.Request):
-            print(f"Received Packet: {await request.read()}")
+            if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
+                json_data = await request.json()
+                await request.app["bot"].smp.user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
+                                           json_data["message"])
+                return web.Response(status=200)
 
-            try:
-                # Check Authorization header
-                if request.headers.get("Authorization") == f"Bearer {dsettings.web_api_token}":
-                    # Parse JSON data from the request body
-                    json_data = await request.json()
-                    print("Received JSON Data:", json_data)
-
-                    # Process the JSON data as needed
-                    if "uuid" in json_data and "name" in json_data:
-                        await request.app["bot"].smp.new_user(json_data["uuid"], json_data["name"])
-                        return web.Response(status=200)
-                    else:
-                        return web.Response(text="Invalid JSON Data", status=400)
-                else:
-                    return web.Response(text="Unauthorized", status=401)
-            except json.JSONDecodeError as e:
-                return web.Response(text="Invalid JSON Data", status=400)
-            except Exception as e:
-                return web.Response(text="Error processing request", status=500)
+            return web.Response(status=401)
 
         async def onReset(request: aiohttp.web_request.Request):
-            print(f"Received Packet: {await request.read()}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 await request.app["bot"].smp.reset()
                 return web.Response(status=200)
