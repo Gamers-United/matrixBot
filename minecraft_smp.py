@@ -75,6 +75,7 @@ class MinecraftSMP:
             session.commit()
         await self.update_message()
 
-    def reset(self):
+    async def reset(self):
         with Session(self.db) as session:
             session.query(MinecraftSMPUsers).delete()
+        await self.update_message()
