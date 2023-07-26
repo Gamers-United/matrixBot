@@ -63,9 +63,11 @@ class GameCommands(commands.Cog):
                 return web.Response(body="Error: No Content.")
 
         async def onDeath(request: aiohttp.web_request.Request):
-            print(f"Headers:{request.headers}\nText:{await request.text()}")
+            print(f"Headers:{request.headers}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
-                json_data = await request.json()
+                text_data = await request.text()
+                print(f"Text:{text_data}")
+                json_data = json.loads(text_data)
                 await request.app["bot"].smp.user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
                                            json_data["message"])
                 return web.Response(status=200)
@@ -73,9 +75,11 @@ class GameCommands(commands.Cog):
             return web.Response(status=401)
 
         async def onNewPlayer(request: aiohttp.web_request.Request):
-            print(f"Headers:{request.headers}\nText:{await request.text()}")
+            print(f"Headers:{request.headers}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
-                json_data = await request.json()
+                text_data = await request.text()
+                print(f"Text:{text_data}")
+                json_data = json.loads(text_data)
                 await request.app["bot"].smp.user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
                                            json_data["message"])
                 return web.Response(status=200)
@@ -83,7 +87,7 @@ class GameCommands(commands.Cog):
             return web.Response(status=401)
 
         async def onReset(request: aiohttp.web_request.Request):
-            print(f"Headers:{request.headers}\nText:{await request.text()}")
+            print(f"Headers:{request.headers}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 await request.app["bot"].smp.reset()
                 return web.Response(status=200)
