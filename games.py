@@ -128,6 +128,10 @@ class GameCommands(commands.Cog):
         self.bot.smp.add_message(msg.id, msg.channel.id)
         await self.bot.smp.update_message()
 
+    @commands.command()
+    async def updateSMPMessage(self, ctx):
+        await self.bot.smp.update_message()
+
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(GameCommands(bot))

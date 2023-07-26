@@ -48,7 +48,7 @@ class MinecraftSMP:
 
     async def update_message(self):
         with Session(self.db) as session:
-            message = session.get(MinecraftSMPServers, 0)
+            message = session.get(MinecraftSMPServers, 1)
             msg = await self.bot.get_channel(message.channel_id).fetch_message(message.message_id)
             await msg.edit(embed=self.generate_embed())
 
