@@ -22,7 +22,7 @@ from minecraft_smp import MinecraftSMP
 class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.minecraft_db = None
+        self.bot["smp"] = MinecraftSMP(bot)
         os.system("cd sankey && rm *")
 
     async def webServer(self):
@@ -40,8 +40,8 @@ class GameCommands(commands.Cog):
         async def onDeath(request: aiohttp.web_request.Request):
             if request.headers["Authorization"] == dsettings.web_api_token:
                 json_data = await request.json()
-                request.app["db"].user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
-                                             json_data["message"])
+                request.app["bot"]["smp"].user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
+                                           json_data["message"])
                 return web.Response(status=200)
             else:
                 return web.Response(status=401)
@@ -49,7 +49,7 @@ class GameCommands(commands.Cog):
         async def onNewPlayer(request: aiohttp.web_request.Request):
             if request.headers["Authorization"] == dsettings.web_api_token:
                 json_data = await request.json()
-                request.app["db"].new_user(json_data["uuid"], json_data["name"])
+                request.app["bot"]["smp"].new_user(json_data["uuid"], json_data["name"])
                 request.app["db"].reset()
                 return web.Response(status=200)
             else:
@@ -57,15 +57,14 @@ class GameCommands(commands.Cog):
 
         async def onReset(request: aiohttp.web_request.Request):
             if request.headers["Authorization"] == dsettings.web_api_token:
-                request.app["db"].reset()
+                request.app["bot"]["smp"].reset()
                 return web.Response(status=200)
             else:
                 return web.Response(status=401)
 
         # logging.basicConfig(level=logging.DEBUG)
         app = web.Application()
-        app["db"] = MinecraftSMP(self.bot)
-        self.minecraft_db = app["db"]
+        app["bot"] = self.bot
 
         app.router.add_get("/", handler)
         app.router.add_get("/sankey/{id}", handler)
@@ -126,7 +125,7 @@ class GameCommands(commands.Cog):
     @commands.command()
     async def createSMPMessage(self, ctx):
         await ctx.send("Created a SMP message. This message will update shortly.")
-        await self.minecraft_db.update_message()
+        await self.bot["smp"].update_message()
 
 
 async def setup(bot: commands.Bot):
