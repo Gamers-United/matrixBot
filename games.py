@@ -22,7 +22,7 @@ from minecraft_smp import MinecraftSMP
 class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.bot["smp"] = MinecraftSMP(bot)
+        self.bot.smp = MinecraftSMP(bot)
         os.system("cd sankey && rm *")
 
     async def webServer(self):
@@ -125,8 +125,8 @@ class GameCommands(commands.Cog):
     @commands.command()
     async def createSMPMessage(self, ctx):
         msg = await ctx.send("Created a SMP message. This message will update shortly.")
-        self.bot["smp"].add_message(msg.id, msg.channel.id)
-        await self.bot["smp"].update_message()
+        self.bot.smp.add_message(msg.id, msg.channel.id)
+        await self.bot.smp.update_message()
 
 
 async def setup(bot: commands.Bot):
