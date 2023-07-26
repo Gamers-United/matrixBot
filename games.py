@@ -64,7 +64,7 @@ class GameCommands(commands.Cog):
         async def onDeath(request: aiohttp.web_request.Request):
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 json_data = await request.json()
-                request.app["bot"]["smp"].user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
+                request.app["bot"].smp.user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
                                            json_data["message"])
                 return web.Response(status=200)
             else:
@@ -73,7 +73,7 @@ class GameCommands(commands.Cog):
         async def onNewPlayer(request: aiohttp.web_request.Request):
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 json_data = await request.json()
-                request.app["bot"]["smp"].new_user(json_data["uuid"], json_data["name"])
+                request.app["bot"].smp.new_user(json_data["uuid"], json_data["name"])
                 request.app["db"].reset()
                 return web.Response(status=200)
             else:
@@ -81,7 +81,7 @@ class GameCommands(commands.Cog):
 
         async def onReset(request: aiohttp.web_request.Request):
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
-                request.app["bot"]["smp"].reset()
+                request.app["bot"].smp.reset()
                 return web.Response(status=200)
             else:
                 return web.Response(status=401)
