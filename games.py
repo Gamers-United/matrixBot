@@ -74,7 +74,7 @@ class GameCommands(commands.Cog):
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 json_data = await request.json()
                 await request.app["bot"].smp.new_user(json_data["uuid"], json_data["name"])
-                request.app["db"].reset()
+                request.app["bot"].smp.reset()
                 return web.Response(status=200)
             else:
                 return web.Response(status=401)
