@@ -19,6 +19,25 @@ from config import settings as dsettings
 from minecraft_smp import MinecraftSMP
 
 
+def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: str, qty: float)]
+    v2_loc = os.getcwd() + "/calculator/v2"
+    sys.path.insert(0, v2_loc)
+    from calculator import v2
+    solver = v2.solver.Solver()
+    for item in items:
+        name = item[0]
+        qty = item[1]
+        solver.addSolvable(v2.globalvar.gameIngredients[name].getQty(qty))
+    solver.solve()
+    aid = str(uuid.uuid4())
+    solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
+    queue.put(aid)
+    final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
+    queue.put(final_resources)
+    queue.put(solver.craftablePrintHolder)
+    queue.put(solver.currentTier)
+
+
 class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -75,24 +94,6 @@ class GameCommands(commands.Cog):
 
         web.run_app(app, port=6000)
 
-    def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: str, qty: float)]
-        v2_loc = os.getcwd() + "/calculator/v2"
-        sys.path.insert(0, v2_loc)
-        from calculator import v2
-        solver = v2.solver.Solver()
-        for item in items:
-            name = item[0]
-            qty = item[1]
-            solver.addSolvable(v2.globalvar.gameIngredients[name].getQty(qty))
-        solver.solve()
-        aid = str(uuid.uuid4())
-        solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
-        queue.put(aid)
-        final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
-        queue.put(final_resources)
-        queue.put(solver.craftablePrintHolder)
-        queue.put(solver.currentTier)
-
     @commands.command()
     async def solve(self, ctx, *, items: str):
         queue = multiprocessing.Queue()
@@ -108,7 +109,7 @@ class GameCommands(commands.Cog):
                 b = f"{a[0]}:{a[1]}"
                 qty = 1.0
             output.append((b, qty))
-        p = multiprocessing.Process(target=self.solveCraftablesProblem, args=(output, queue))
+        p = multiprocessing.Process(target=solveCraftablesProblem, args=(output, queue))
         p.start()
         htmlid = queue.get()
         final_resources = queue.get()
