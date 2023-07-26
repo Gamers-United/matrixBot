@@ -40,13 +40,14 @@ def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: 
 
 class GameCommands(commands.Cog):
     def __init__(self, bot):
+        self.site = None
         self.bot = bot
         self.bot.smp = MinecraftSMP(bot)
         os.system("cd sankey && rm *")
 
     async def cog_load(self) -> None:
         await super().cog_load()
-        self.bot.ws = await self.webServer()
+        self.bot.loop.create_task(self.webServer())
 
     async def webServer(self):
         async def handler(request: aiohttp.web_request.Request):
@@ -96,7 +97,10 @@ class GameCommands(commands.Cog):
         app.router.add_post("/minecraft/death", onDeath)
         app.router.add_post("/minecraft/reset", onReset)
 
-        web.run_app(app, port=6020)
+        runner = web.AppRunner(app)
+        await runner.setup()
+        self.site = web.TCPSite(runner, "0.0.0.0", 6020)
+        await self.site.start()
 
     @commands.command()
     async def solve(self, ctx, *, items: str):
