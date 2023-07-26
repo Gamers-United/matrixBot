@@ -62,7 +62,7 @@ class GameCommands(commands.Cog):
                 return web.Response(body="Error: No Content.")
 
         async def onDeath(request: aiohttp.web_request.Request):
-            print(f"Received Packet: {request.content}")
+            print(f"Received Packet: {request.text()}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 json_data = await request.json()
                 await request.app["bot"].smp.user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
@@ -72,7 +72,7 @@ class GameCommands(commands.Cog):
                 return web.Response(status=401)
 
         async def onNewPlayer(request: aiohttp.web_request.Request):
-            print(f"Received Packet: {request.content}")
+            print(f"Received Packet: {request.text()}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 json_data = await request.json()
                 await request.app["bot"].smp.new_user(json_data["uuid"], json_data["name"])
@@ -82,7 +82,7 @@ class GameCommands(commands.Cog):
                 return web.Response(status=401)
 
         async def onReset(request: aiohttp.web_request.Request):
-            print(f"Received Packet: {request.content}")
+            print(f"Received Packet: {request.text()}")
             if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
                 await request.app["bot"].smp.reset()
                 return web.Response(status=200)
