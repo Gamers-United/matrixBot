@@ -63,7 +63,7 @@ class MinecraftSMP:
         with Session(self.db) as session:
             player = session.get(MinecraftSMPUsers, uuid)
             player.health_max = float(health_max)
-            player.dead = bool(dead)
+            player.dead = True if dead == "true" else False
             player.death_message = death_message
             session.commit()
         await self.update_message()
