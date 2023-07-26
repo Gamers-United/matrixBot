@@ -52,7 +52,7 @@ class GameCommands(commands.Cog):
     async def webServer(self):
         async def handler(request: aiohttp.web_request.Request):
             url = str(request.rel_url)
-            if "matrix.mltech.au:6000" not in str(request.host):
+            if "matrix.mltech.au:6020" not in str(request.host):
                 return web.Response(body=f"Invalid Host: {request.host}")
             try:
                 auuid = re.search("\/sankey\/(.+)", url).group(1)
