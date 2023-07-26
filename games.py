@@ -42,6 +42,7 @@ class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.bot.smp = MinecraftSMP(bot)
+        self.bot.ws = await self.webServer()
         os.system("cd sankey && rm *")
 
     async def webServer(self):
@@ -92,7 +93,7 @@ class GameCommands(commands.Cog):
         app.router.add_post("/minecraft/death", onDeath)
         app.router.add_post("/minecraft/reset", onReset)
 
-        web.run_app(app, port=6000)
+        web.run_app(app, port=6020)
 
     @commands.command()
     async def solve(self, ctx, *, items: str):
@@ -117,7 +118,7 @@ class GameCommands(commands.Cog):
         ct = queue.get()
         craftables_string = ",".join(craftables)
         embed = discord.Embed(title=f"**Crafting Steps For:** {craftables_string}",
-                              url=f"http://matrix.mltech.au:6000/sankey/{htmlid}.html")
+                              url=f"http://matrix.mltech.au:6020/sankey/{htmlid}.html")
         await ctx.send(embed=embed)
         for i in range(0, ct):
             await ctx.send(f"**Tier {i} Crafts:**\n{cph[i]}")
