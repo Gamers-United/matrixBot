@@ -34,7 +34,7 @@ class MinecraftSMP:
         Base.metadata.create_all(self.db)
         self.bot: discord.ext.commands.Bot = bot
 
-    def generate_embed(self) -> discord.Embed:
+    async def generate_embed(self) -> discord.Embed:
         embed = discord.Embed(title="BNB Hardcore Survival Player List")
 
         with Session(self.db) as session:
@@ -52,25 +52,28 @@ class MinecraftSMP:
             msg = await self.bot.get_channel(message.channel_id).fetch_message(message.message_id)
             await msg.edit(embed=self.generate_embed(), content="")
 
-    def new_user(self, uuid, name):
+    async def new_user(self, uuid, name):
         with Session(self.db) as session:
             user = MinecraftSMPUsers(name=name, health_max=20.0, id=uuid, dead=False)
             session.add(user)
             session.commit()
+        await self.update_message()
 
-    def user_death(self, uuid, health_max, dead, death_message):
+    async def user_death(self, uuid, health_max, dead, death_message):
         with Session(self.db) as session:
             player = session.get(MinecraftSMPUsers, uuid)
             player.health_max = health_max
             player.dead = dead
             player.death_message = death_message
             session.commit()
+        await self.update_message()
 
-    def add_message(self, msg_id, chan_id):
+    async def add_message(self, msg_id, chan_id):
         with Session(self.db) as session:
             server = MinecraftSMPServers(message_id=msg_id, channel_id=chan_id)
             session.add(server)
             session.commit()
+        await self.update_message()
 
     def reset(self):
         with Session(self.db) as session:
