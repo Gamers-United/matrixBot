@@ -66,6 +66,12 @@ class MinecraftSMP:
             player.death_message = death_message
             session.commit()
 
+    def add_message(self, msg_id, chan_id):
+        with Session(self.db) as session:
+            server = MinecraftSMPServers(message_id=msg_id, channel_id=chan_id)
+            session.add(server)
+            session.commit()
+
     def reset(self):
         with Session(self.db) as session:
             session.query(MinecraftSMPUsers).delete()
