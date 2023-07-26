@@ -54,7 +54,7 @@ class MinecraftSMP:
 
     async def new_user(self, uuid, name):
         with Session(self.db) as session:
-            user = MinecraftSMPUsers(name=name, health_max=20.0, id=uuid, dead=False)
+            user = MinecraftSMPUsers(name=name, health_max=20.0, id=uuid, dead=False, death_message="")
             session.add(user)
             session.commit()
         await self.update_message()
