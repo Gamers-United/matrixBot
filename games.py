@@ -134,8 +134,7 @@ class GameCommands(commands.Cog):
     @commands.command()
     async def createSMPMessage(self, ctx):
         msg = await ctx.send("Created a SMP message. This message will update shortly.")
-        self.bot.smp.add_message(msg.id, msg.channel.id)
-        await self.bot.smp.update_message()
+        await self.bot.smp.add_message(msg.id, msg.channel.id)
 
     @commands.command()
     async def updateSMPMessage(self, ctx):
