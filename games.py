@@ -73,13 +73,26 @@ class GameCommands(commands.Cog):
 
         async def onNewPlayer(request: aiohttp.web_request.Request):
             print(f"Received Packet: {request}")
-            if request.headers["Authorization"] == f"Bearer {dsettings.web_api_token}":
-                json_data = await request.json()
-                await request.app["bot"].smp.new_user(json_data["uuid"], json_data["name"])
-                await request.app["bot"].smp.reset()
-                return web.Response(status=200)
-            else:
-                return web.Response(status=401)
+
+            try:
+                # Check Authorization header
+                if request.headers.get("Authorization") == f"Bearer {dsettings.web_api_token}":
+                    # Parse JSON data from the request body
+                    json_data = await request.json()
+                    print("Received JSON Data:", json_data)
+
+                    # Process the JSON data as needed
+                    if "uuid" in json_data and "name" in json_data:
+                        await request.app["bot"].smp.new_user(json_data["uuid"], json_data["name"])
+                        return web.Response(status=200)
+                    else:
+                        return web.Response(text="Invalid JSON Data", status=400)
+                else:
+                    return web.Response(text="Unauthorized", status=401)
+            except json.JSONDecodeError as e:
+                return web.Response(text="Invalid JSON Data", status=400)
+            except Exception as e:
+                return web.Response(text="Error processing request", status=500)
 
         async def onReset(request: aiohttp.web_request.Request):
             print(f"Received Packet: {request}")
