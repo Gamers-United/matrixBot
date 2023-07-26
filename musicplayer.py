@@ -78,5 +78,5 @@ class CustomPlayer(pomice.Player):
 
     async def exit(self):
         """closes the player down in the guild"""
-        with suppress((discord.HTTPException), (KeyError)):
+        with suppress(discord.HTTPException, KeyError):
             await self.destroy()

@@ -179,7 +179,5 @@ async def help(ctx):
 
 # run the bot
 if __name__ == "__main__":
-    p = multiprocessing.Process(target=games.webServer)
-    p.start()
     # For File: log_handler = logging.FileHandler(filename=f"{str(datetime.now())}-matrix-bot.log")
     bot.run(dsettings.token)

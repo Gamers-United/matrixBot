@@ -3,7 +3,6 @@
 #  A copy of this license should have been provided with the code download, if not see https://www.gnu.org/licenses/
 #  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 #  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU AGPL v3.0 for more details.
-
 import multiprocessing
 import os
 import re
@@ -15,49 +14,85 @@ import discord
 from aiohttp import web
 from discord.ext import commands
 
+from config import settings as dsettings
 
-def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: str, qty: float)]
-    v2_loc = os.getcwd() + "/calculator/v2"
-    sys.path.insert(0, v2_loc)
-    from calculator import v2
-    solver = v2.solver.Solver()
-    for item in items:
-        name = item[0]
-        qty = item[1]
-        solver.addSolvable(v2.globalvar.gameIngredients[name].getQty(qty))
-    solver.solve()
-    aid = str(uuid.uuid4())
-    solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
-    queue.put(aid)
-    final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
-    queue.put(final_resources)
-    queue.put(solver.craftablePrintHolder)
-    queue.put(solver.currentTier)
-
-
-def webServer():
-    async def handler(request: aiohttp.web_request.Request):
-        url = str(request.rel_url)
-        if "matrix.mltech.au:6000" not in str(request.host):
-            return web.Response(body=f"Invalid Host: {request.host}")
-        try:
-            auuid = re.search("\/sankey\/(.+)", url).group(1)
-            with open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
-                return web.Response(body=str(f.read()), content_type='text/html')
-        except AttributeError:
-            return web.Response(body="Error: No Content.")
-
-    # logging.basicConfig(level=logging.DEBUG)
-    app = web.Application()
-    app.router.add_get("/", handler)
-    app.router.add_get("/sankey/{id}", handler)
-    web.run_app(app, port=6000)
+from minecraft_smp import MinecraftSMP
 
 
 class GameCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.minecraft_db = None
         os.system("cd sankey && rm *")
+
+    async def webServer(self):
+        async def handler(request: aiohttp.web_request.Request):
+            url = str(request.rel_url)
+            if "matrix.mltech.au:6000" not in str(request.host):
+                return web.Response(body=f"Invalid Host: {request.host}")
+            try:
+                auuid = re.search("\/sankey\/(.+)", url).group(1)
+                with open(os.getcwd() + "/sankey/" + auuid, mode='r') as f:
+                    return web.Response(body=str(f.read()), content_type='text/html')
+            except AttributeError:
+                return web.Response(body="Error: No Content.")
+
+        async def onDeath(request: aiohttp.web_request.Request):
+            if request.headers["Authorization"] == dsettings.web_api_token:
+                json_data = await request.json()
+                request.app["db"].user_death(json_data["uuid"], json_data["life_remaining"], json_data["dead"],
+                                             json_data["message"])
+                return web.Response(status=200)
+            else:
+                return web.Response(status=401)
+
+        async def onNewPlayer(request: aiohttp.web_request.Request):
+            if request.headers["Authorization"] == dsettings.web_api_token:
+                json_data = await request.json()
+                request.app["db"].new_user(json_data["uuid"], json_data["name"])
+                request.app["db"].reset()
+                return web.Response(status=200)
+            else:
+                return web.Response(status=401)
+
+        async def onReset(request: aiohttp.web_request.Request):
+            if request.headers["Authorization"] == dsettings.web_api_token:
+                request.app["db"].reset()
+                return web.Response(status=200)
+            else:
+                return web.Response(status=401)
+
+        # logging.basicConfig(level=logging.DEBUG)
+        app = web.Application()
+        app["db"] = MinecraftSMP(self.bot)
+        self.minecraft_db = app["db"]
+
+        app.router.add_get("/", handler)
+        app.router.add_get("/sankey/{id}", handler)
+
+        app.router.add_post("/minecraft/new_player", onNewPlayer)
+        app.router.add_post("/minecraft/death", onDeath)
+        app.router.add_post("/minecraft/reset", onReset)
+
+        web.run_app(app, port=6000)
+
+    def solveCraftablesProblem(items: [], queue: multiprocessing.Queue):  # [(name: str, qty: float)]
+        v2_loc = os.getcwd() + "/calculator/v2"
+        sys.path.insert(0, v2_loc)
+        from calculator import v2
+        solver = v2.solver.Solver()
+        for item in items:
+            name = item[0]
+            qty = item[1]
+            solver.addSolvable(v2.globalvar.gameIngredients[name].getQty(qty))
+        solver.solve()
+        aid = str(uuid.uuid4())
+        solver.writeSankey(os.getcwd() + "/sankey/" + aid + ".html")
+        queue.put(aid)
+        final_resources = str(solver.ingredientTiersHolder[solver.currentTier])
+        queue.put(final_resources)
+        queue.put(solver.craftablePrintHolder)
+        queue.put(solver.currentTier)
 
     @commands.command()
     async def solve(self, ctx, *, items: str):
@@ -74,7 +109,7 @@ class GameCommands(commands.Cog):
                 b = f"{a[0]}:{a[1]}"
                 qty = 1.0
             output.append((b, qty))
-        p = multiprocessing.Process(target=solveCraftablesProblem, args=(output, queue))
+        p = multiprocessing.Process(target=self.solveCraftablesProblem, args=(output, queue))
         p.start()
         htmlid = queue.get()
         final_resources = queue.get()
@@ -87,6 +122,11 @@ class GameCommands(commands.Cog):
         for i in range(0, ct):
             await ctx.send(f"**Tier {i} Crafts:**\n{cph[i]}")
         await ctx.send(f"**Total Resources:**\n{final_resources}")
+
+    @commands.command()
+    async def createSMPMessage(self, ctx):
+        await ctx.send("Created a SMP message. This message will update shortly.")
+        await self.minecraft_db.update_message()
 
 
 async def setup(bot: commands.Bot):
