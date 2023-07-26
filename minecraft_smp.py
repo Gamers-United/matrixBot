@@ -34,7 +34,7 @@ class MinecraftSMP:
         Base.metadata.create_all(self.db)
         self.bot: discord.ext.commands.Bot = bot
 
-    async def generate_embed(self) -> discord.Embed:
+    def generate_embed(self) -> discord.Embed:
         embed = discord.Embed(title="BNB Hardcore Survival Player List")
 
         with Session(self.db) as session:
