@@ -14,7 +14,7 @@ class Base(DeclarativeBase):
 
 class MinecraftSMPUsers(Base):
     __tablename__ = "minecraft_smp_users"
-    id: Mapped[int] = mapped_column(primary_key=True)
+    id: Mapped[str] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
     health_max: Mapped[float] = mapped_column(Float())
     dead: Mapped[bool] = mapped_column(Boolean())
@@ -62,8 +62,8 @@ class MinecraftSMP:
     async def user_death(self, uuid, health_max, dead, death_message):
         with Session(self.db) as session:
             player = session.get(MinecraftSMPUsers, uuid)
-            player.health_max = health_max
-            player.dead = dead
+            player.health_max = float(health_max)
+            player.dead = bool(dead)
             player.death_message = death_message
             session.commit()
         await self.update_message()
