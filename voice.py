@@ -40,9 +40,9 @@ class voice(commands.Cog):
                         await asyncio.sleep(10)
                     c.execute("SELECT category_id FROM guilds WHERE guild_id = ?", (guild_id,))
                     voice_channel = c.fetchone()
-                    c.execute("SELECT channelName, channelLimit FROM userSettings WHERE userID = ?", (member.id,))
+                    c.execute("SELECT channel_name, channel_limit FROM user_settings WHERE userID = ?", (member.id,))
                     setting = c.fetchone()
-                    c.execute("SELECT channelLimit FROM guild_settings WHERE guildID = ?", (guild_id,))
+                    c.execute("SELECT channel_limit FROM guild_settings WHERE guildID = ?", (guild_id,))
                     guild_settings = c.fetchone()
                     if setting is None:
                         name = f"{member.name}'s channel"
@@ -100,7 +100,7 @@ class voice(commands.Cog):
             c.execute("INSERT INTO guilds VALUES (?, ?, ?, ?)", (guild_id, author_id, channel_id, category_id))
         else:
             c.execute(
-                "UPDATE guilds SET guild_id = ?, ownerID = ?, channel_id = ?, category_id = ? WHERE guild_id = ?",
+                "UPDATE guilds SET guild_id = ?, owner_id = ?, channel_id = ?, category_id = ? WHERE guild_id = ?",
                 (guild_id, author_id, channel_id, category_id, guild_id))
         await ctx.channel.send("**You are all setup and ready to go!**")
         conn.commit()
@@ -111,13 +111,13 @@ class voice(commands.Cog):
         conn = sqlite3.connect('voice.db')
         c = conn.cursor()
         if ctx.author.id == ctx.guild.owner.id:
-            c.execute("SELECT * FROM guild_settings WHERE guildID = ?", (ctx.guild.id,))
+            c.execute("SELECT * FROM guild_settings WHERE guild_id = ?", (ctx.guild.id,))
             voice_channel = c.fetchone()
             if voice_channel is None:
                 c.execute("INSERT INTO guild_settings VALUES (?, ?, ?)",
                           (ctx.guild.id, f"{ctx.author.name}'s channel", num))
             else:
-                c.execute("UPDATE guild_settings SET channelLimit = ? WHERE guildID = ?", (num, ctx.guild.id))
+                c.execute("UPDATE guild_settings SET channel_limit = ? WHERE guild_id = ?", (num, ctx.guild.id))
             await ctx.send("You have changed the default channel limit for your server!")
         else:
             await ctx.channel.send(f"{ctx.author.mention} only the owner of the server can setup the bot!")
@@ -221,12 +221,12 @@ class voice(commands.Cog):
             channel = self.bot.get_channel(channel_id)
             await channel.edit(user_limit=limit)
             await ctx.channel.send(f'{ctx.author.mention} You have set the channel limit to be ' + '{}!'.format(limit))
-            c.execute("SELECT channelName FROM userSettings WHERE userID = ?", (author_id,))
+            c.execute("SELECT channel_name FROM user_settings WHERE user_id = ?", (author_id,))
             voice_channel = c.fetchone()
             if voice_channel is None:
-                c.execute("INSERT INTO userSettings VALUES (?, ?, ?)", (author_id, f'{ctx.author.name}', limit))
+                c.execute("INSERT INTO user_settings VALUES (?, ?, ?)", (author_id, f'{ctx.author.name}', limit))
             else:
-                c.execute("UPDATE userSettings SET channelLimit = ? WHERE userID = ?", (limit, author_id))
+                c.execute("UPDATE user_settings SET channel_limit = ? WHERE user_id = ?", (limit, author_id))
         conn.commit()
         conn.close()
 
@@ -244,12 +244,12 @@ class voice(commands.Cog):
             channel = self.bot.get_channel(voice_channel_id)
             await channel.edit(name=name)
             await ctx.channel.send(f'{ctx.author.mention} You have changed the channel name to ' + '{}!'.format(name))
-            c.execute("SELECT channelName FROM userSettings WHERE userID = ?", (author_id,))
+            c.execute("SELECT channel_name FROM user_settings WHERE user_id = ?", (author_id,))
             voice_channel = c.fetchone()
             if voice_channel is None:
-                c.execute("INSERT INTO userSettings VALUES (?, ?, ?)", (author_id, name, 0))
+                c.execute("INSERT INTO user_settings VALUES (?, ?, ?)", (author_id, name, 0))
             else:
-                c.execute("UPDATE userSettings SET channelName = ? WHERE userID = ?", (name, author_id))
+                c.execute("UPDATE user_settings SET channel_name = ? WHERE user_id = ?", (name, author_id))
         conn.commit()
         conn.close()
 
