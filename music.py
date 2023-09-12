@@ -52,7 +52,7 @@ class Music(commands.Cog):
         await self.pomice.create_node(
             bot=self.bot,
             host=dsettings.lavalink_host,
-            port=dsettings.lavalink_port,
+            port=int(dsettings.lavalink_port),
             identifier=dsettings.lavalink_identifier,
             password=dsettings.lavalink_password,
             spotify_client_id=dsettings.spotify_client_id,
