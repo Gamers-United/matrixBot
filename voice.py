@@ -319,19 +319,19 @@ class voice(commands.Cog):
         conn.commit()
         conn.close()
 
-    @voice.command()
+    @commands.command()
     async def muteAll(self, ctx):
-        if ctx.guild.id == dsettings.guild_secondary:
+        if ctx.guild.id == int(dsettings.guild_secondary):
             if ctx.author.voice and ctx.author.voice.channel:
-                if ctx.channel.permissions_for(ctx.author.voice.channel).mute_members:
+                if ctx.author.voice.channel.permissions_for(ctx.author).mute_members:
                     for member in ctx.author.voice.channel.members:
                         await member.edit(mute=True)
 
-    @voice.command()
+    @commands.command()
     async def unMuteAll(self, ctx):
-        if ctx.guild.id == dsettings.guild_secondary:
+        if ctx.guild.id == int(dsettings.guild_secondary):
             if ctx.author.voice and ctx.author.voice.channel:
-                if ctx.channel.permissions_for(ctx.author.voice.channel).mute_members:
+                if ctx.author.voice.channel.permissions_for(ctx.author).mute_members:
                     for member in ctx.author.voice.channel.members:
                         await member.edit(mute=False)
 
