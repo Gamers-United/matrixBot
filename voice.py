@@ -12,6 +12,8 @@ import sqlite3
 import discord
 from discord.ext import commands
 
+from config import settings as dsettings
+
 
 class voice(commands.Cog):
     def __init__(self, bot):
@@ -316,6 +318,22 @@ class voice(commands.Cog):
             await ctx.channel.send(f'{ctx.author.mention} You have changed the channel visibility to visible.')
         conn.commit()
         conn.close()
+
+    @voice.command()
+    async def muteAll(self, ctx):
+        if ctx.guild.id == dsettings.guild_secondary:
+            if ctx.author.voice and ctx.author.voice.channel:
+                if ctx.channel.permissions_for(ctx.author.voice.channel).mute_members:
+                    for member in ctx.author.voice.channel.members:
+                        await member.edit(mute=True)
+
+    @voice.command()
+    async def unMuteAll(self, ctx):
+        if ctx.guild.id == dsettings.guild_secondary:
+            if ctx.author.voice and ctx.author.voice.channel:
+                if ctx.channel.permissions_for(ctx.author.voice.channel).mute_members:
+                    for member in ctx.author.voice.channel.members:
+                        await member.edit(mute=False)
 
 
 async def setup(bot):

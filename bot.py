@@ -4,14 +4,12 @@
 #  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
 #  warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU AGPL v3.0 for more details.
 
-import multiprocessing
 import traceback
 from datetime import datetime
 
 import discord
 from discord.ext import commands
 
-import games
 from config import settings as dsettings
 
 # Bot Static
