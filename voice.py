@@ -324,16 +324,16 @@ class voice(commands.Cog):
         if ctx.guild.id == int(dsettings.guild_secondary):
             if ctx.author.voice and ctx.author.voice.channel:
                 if ctx.author.voice.channel.permissions_for(ctx.author).mute_members:
-                    for member in ctx.author.voice.channel.members:
-                        await member.edit(mute=True)
+                    tasks = [member.edit(mute=True) for member in ctx.author.voice.channel.members]
+                    await asyncio.gather(*tasks)
 
     @commands.command()
     async def unMuteAll(self, ctx):
         if ctx.guild.id == int(dsettings.guild_secondary):
             if ctx.author.voice and ctx.author.voice.channel:
                 if ctx.author.voice.channel.permissions_for(ctx.author).mute_members:
-                    for member in ctx.author.voice.channel.members:
-                        await member.edit(mute=False)
+                    tasks = [member.edit(mute=False) for member in ctx.author.voice.channel.members]
+                    await asyncio.gather(*tasks)
 
 
 async def setup(bot):
