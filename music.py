@@ -133,7 +133,7 @@ class Music(commands.Cog):
             await ctx.send(dsettings.unpause)
             return
         # handle playing
-        results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytsearch)
+        results = await player.get_tracks(query=query, ctx=ctx, search_type=pomice.SearchType.ytmsearch)
         if not results:
             await ctx.send(dsettings.no_results)
             return
